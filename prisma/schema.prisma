@@ -1,0 +1,681 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// AUTH & AUDITING
+// ============================================================
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  username     String    @unique
+  email        String    @unique
+  passwordHash String
+  roleId       Int
+  role         Role      @relation(fields: [roleId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  // Auditing fields for User itself (optional for bootstrap)
+  createdById  Int?
+  updatedById  Int?
+  deletedById  Int?
+  createdBy    User?     @relation("UserCreatedBy", fields: [createdById], references: [id])
+  updatedBy    User?     @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy    User?     @relation("UserDeletedBy", fields: [deletedById], references: [id])
+
+  // Inverse relations for User auditing itself
+  usersCreated User[]    @relation("UserCreatedBy")
+  usersUpdated User[]    @relation("UserUpdatedBy")
+  usersDeleted User[]    @relation("UserDeletedBy")
+
+  // Inverse relations for other models
+  rolesCreated          Role[]          @relation("RoleCreatedBy")
+  rolesUpdated          Role[]          @relation("RoleUpdatedBy")
+  rolesDeleted          Role[]          @relation("RoleDeletedBy")
+  companiesCreated      Company[]       @relation("CompanyCreatedBy")
+  companiesUpdated      Company[]       @relation("CompanyUpdatedBy")
+  companiesDeleted      Company[]       @relation("CompanyDeletedBy")
+  brandsCreated         Brand[]         @relation("BrandCreatedBy")
+  brandsUpdated         Brand[]         @relation("BrandUpdatedBy")
+  brandsDeleted         Brand[]         @relation("BrandDeletedBy")
+  campaignsCreated      Campaign[]      @relation("CampaignCreatedBy")
+  campaignsUpdated      Campaign[]      @relation("CampaignUpdatedBy")
+  campaignsDeleted      Campaign[]      @relation("CampaignDeletedBy")
+  catalogPdfsCreated    CatalogPdf[]    @relation("CatalogPdfCreatedBy")
+  catalogPdfsUpdated    CatalogPdf[]    @relation("CatalogPdfUpdatedBy")
+  catalogPdfsDeleted    CatalogPdf[]    @relation("CatalogPdfDeletedBy")
+  categoriesCreated     Category[]      @relation("CategoryCreatedBy")
+  categoriesUpdated     Category[]      @relation("CategoryUpdatedBy")
+  categoriesDeleted     Category[]      @relation("CategoryDeletedBy")
+  genderSegmentsCreated GenderSegment[] @relation("GenderSegmentCreatedBy")
+  genderSegmentsUpdated GenderSegment[] @relation("GenderSegmentUpdatedBy")
+  genderSegmentsDeleted GenderSegment[] @relation("GenderSegmentDeletedBy")
+  productsCreated       Product[]       @relation("ProductCreatedBy")
+  productsUpdated       Product[]       @relation("ProductUpdatedBy")
+  productsDeleted       Product[]       @relation("ProductDeletedBy")
+  stockMovementsCreated StockMovement[] @relation("StockMovementCreatedBy")
+  clientsCreated        Client[]        @relation("ClientCreatedBy")
+  clientsUpdated        Client[]        @relation("ClientUpdatedBy")
+  clientsDeleted        Client[]        @relation("ClientDeletedBy")
+  externalDebtsCreated  ExternalDebt[]  @relation("ExternalDebtCreatedBy")
+  externalDebtsUpdated  ExternalDebt[]  @relation("ExternalDebtUpdatedBy")
+  campaignOrdersCreated CampaignOrder[] @relation("CampaignOrderCreatedBy")
+  campaignOrdersUpdated CampaignOrder[] @relation("CampaignOrderUpdatedBy")
+  campaignOrdersDeleted CampaignOrder[] @relation("CampaignOrderDeletedBy")
+  directSalesCreated    DirectSale[]    @relation("DirectSaleCreatedBy")
+  directSalesUpdated    DirectSale[]    @relation("DirectSaleUpdatedBy")
+  directSalesDeleted    DirectSale[]    @relation("DirectSaleDeletedBy")
+  paymentsCreated       Payment[]       @relation("PaymentCreatedBy")
+  paymentsUpdated       Payment[]       @relation("PaymentUpdatedBy")
+
+  auditLogs             AuditLog[]
+
+  @@index([roleId])
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("users")
+}
+
+model Role {
+  id           Int              @id @default(autoincrement())
+  name         String           @unique
+  description  String?
+  users        User[]
+  permissions  RolePermission[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  deletedAt    DateTime?
+
+  // Auditing fields (optional for bootstrap)
+  createdById  Int?
+  updatedById  Int?
+  deletedById  Int?
+  createdBy    User?            @relation("RoleCreatedBy", fields: [createdById], references: [id])
+  updatedBy    User?            @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy    User?            @relation("RoleDeletedBy", fields: [deletedById], references: [id])
+
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("roles")
+}
+
+model Permission {
+  id           Int              @id @default(autoincrement())
+  code         String           @unique
+  name         String
+  description  String?
+  roles        RolePermission[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String   // "CREATE", "UPDATE", "DELETE"
+  entity    String   // "Client", "Product", "DirectSale", "Payment", etc.
+  entityId  Int
+  details   Json?    // Datos del registro o diferencias (ej. { "amount": 150, "client": "Juan" })
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@map("audit_logs")
+}
+
+// ============================================================
+// TABLAS MAESTRAS
+// ============================================================
+
+model Company {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  logoUrl   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User      @relation("CompanyCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("CompanyUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?     @relation("CompanyDeletedBy", fields: [deletedById], references: [id])
+
+  brands    Brand[]
+  campaigns Campaign[]
+
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("companies")
+}
+
+model Brand {
+  id        Int       @id @default(autoincrement())
+  companyId Int
+  name      String
+  logoUrl   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User      @relation("BrandCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("BrandUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?     @relation("BrandDeletedBy", fields: [deletedById], references: [id])
+
+  company            Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  products           Product[]
+  catalogPdfs        CatalogPdf[]
+  campaignOrderItems CampaignOrderItem[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("brands")
+}
+
+// ============================================================
+// CAMPAÑAS Y CATÁLOGOS PDF
+// ============================================================
+
+model Campaign {
+  id        Int       @id @default(autoincrement())
+  companyId Int
+  number    String
+  startDate DateTime
+  endDate   DateTime
+  paymentDate DateTime?
+  isActive  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User      @relation("CampaignCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("CampaignUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?     @relation("CampaignDeletedBy", fields: [deletedById], references: [id])
+
+  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  catalogPdfs    CatalogPdf[]
+  campaignOrders CampaignOrder[]
+  payments       Payment[]
+
+  @@unique([companyId, number])
+  @@index([companyId])
+  @@index([isActive])
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("campaigns")
+}
+
+model CatalogPdf {
+  id         Int       @id @default(autoincrement())
+  campaignId Int
+  brandId    Int
+  pdfUrl     String
+  title      String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User      @relation("CatalogPdfCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("CatalogPdfUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?     @relation("CatalogPdfDeletedBy", fields: [deletedById], references: [id])
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  brand    Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, brandId])
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("catalog_pdfs")
+}
+
+// ============================================================
+// PRODUCTOS EN STOCK
+// ============================================================
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User      @relation("CategoryCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("CategoryUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?     @relation("CategoryDeletedBy", fields: [deletedById], references: [id])
+
+  products    Product[]
+
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("categories")
+}
+
+model GenderSegment {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User      @relation("GenderSegmentCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("GenderSegmentUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?     @relation("GenderSegmentDeletedBy", fields: [deletedById], references: [id])
+
+  products  Product[]
+
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("gender_segments")
+}
+
+model Product {
+  id              Int            @id @default(autoincrement())
+  brandId         Int
+  categoryId      Int
+  genderSegmentId Int?
+  code            String?
+  name            String
+  description     String?
+  images          ProductImage[]
+  price           Float
+  costPrice       Float?
+  stock           Int            @default(0)
+  isAvailable     Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User           @relation("ProductCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?          @relation("ProductUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?          @relation("ProductDeletedBy", fields: [deletedById], references: [id])
+
+  brand           Brand            @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  category        Category         @relation(fields: [categoryId], references: [id])
+  genderSegment   GenderSegment?   @relation(fields: [genderSegmentId], references: [id])
+  directSaleItems DirectSaleItem[]
+  stockMovements  StockMovement[]
+
+  @@index([brandId])
+  @@index([categoryId])
+  @@index([genderSegmentId])
+  @@index([code])
+  @@index([isAvailable])
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("products")
+}
+
+// ============================================================
+// KARDEX / MOVIMIENTOS DE STOCK
+// ============================================================
+
+model StockMovement {
+  id        Int                 @id @default(autoincrement())
+  productId Int
+  quantity  Int
+  type      StockMovementType
+  reason    StockMovementReason
+  notes     String?
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  // Auditing fields
+  createdById Int
+  createdBy   User              @relation("StockMovementCreatedBy", fields: [createdById], references: [id])
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([createdAt])
+  @@index([createdById])
+  @@map("stock_movements")
+}
+
+enum StockMovementType {
+  INPUT
+  OUTPUT
+}
+
+enum StockMovementReason {
+  PURCHASE
+  SALE
+  GIFT
+  PERSONAL_USE
+  LOSS_OR_DAMAGE
+  ADJUSTMENT
+  RETURN
+  LOAN
+}
+
+// ============================================================
+// CLIENTES
+// ============================================================
+
+model Client {
+  id         Int       @id @default(autoincrement())
+  name       String
+  phone      String?
+  address    String?
+  notes      String?
+  shareToken String    @unique @default(cuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User      @relation("ClientCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("ClientUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?     @relation("ClientDeletedBy", fields: [deletedById], references: [id])
+
+  campaignOrders CampaignOrder[]
+  directSales    DirectSale[]
+  payments       Payment[]
+  externalDebts  ExternalDebt[]
+
+  @@index([name])
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("clients")
+}
+
+// ============================================================
+// DEUDAS EXTERNAS / ADICIONALES
+// ============================================================
+
+model ExternalDebt {
+  id          Int       @id @default(autoincrement())
+  clientId    Int
+  amount      Float
+  reason      String    // E.g., "Saldo inicial", "Producto de otra vendedora"
+  notes       String?   // Detalles adicionales
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  createdBy   User      @relation("ExternalDebtCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("ExternalDebtUpdatedBy", fields: [updatedById], references: [id])
+
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([createdAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("external_debts")
+}
+
+// ============================================================
+// PEDIDOS DE CAMPAÑA
+// ============================================================
+
+model CampaignOrder {
+  id          Int                 @id @default(autoincrement())
+  clientId    Int
+  campaignId  Int
+  status      CampaignOrderStatus @default(PENDING)
+  notes       String?
+  discount    Float               @default(0)
+  total       Float?
+  deliveredAt DateTime?
+  paymentDate DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  deletedAt   DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User                @relation("CampaignOrderCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?               @relation("CampaignOrderUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?               @relation("CampaignOrderDeletedBy", fields: [deletedById], references: [id])
+
+  client   Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  campaign Campaign            @relation(fields: [campaignId], references: [id])
+  items    CampaignOrderItem[]
+
+  @@index([clientId])
+  @@index([campaignId])
+  @@index([status])
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("campaign_orders")
+}
+
+model CampaignOrderItem {
+  id                  Int               @id @default(autoincrement())
+  campaignOrderId     Int
+  brandId             Int
+  productCode         String?
+  productName         String
+  catalogPrice        Float
+  costPrice           Float?
+  quantity            Int
+  arrivalStatus       ItemArrivalStatus @default(PENDING)
+  substituteCode      String?
+  substituteName      String?
+  substitutePrice     Float?
+  substituteCostPrice Float?
+
+  campaignOrder CampaignOrder @relation(fields: [campaignOrderId], references: [id], onDelete: Cascade)
+  brand         Brand         @relation(fields: [brandId], references: [id])
+
+  @@index([campaignOrderId])
+  @@index([brandId])
+  @@map("campaign_order_items")
+}
+
+enum CampaignOrderStatus {
+  PENDING
+  ARRIVED
+  VERIFIED
+  PACKED
+  DELIVERED
+  CANCELLED
+}
+
+enum ItemArrivalStatus {
+  PENDING
+  RECEIVED
+  MISSING
+  SUBSTITUTED
+}
+
+// ============================================================
+// VENTAS DIRECTAS
+// ============================================================
+
+model DirectSale {
+  id          Int       @id @default(autoincrement())
+  clientId    Int
+  discount    Float     @default(0)
+  total       Float
+  notes       String?
+  deliveredAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  deletedById Int?
+  createdBy   User      @relation("DirectSaleCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("DirectSaleUpdatedBy", fields: [updatedById], references: [id])
+  deletedBy   User?     @relation("DirectSaleDeletedBy", fields: [deletedById], references: [id])
+
+  client Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  items  DirectSaleItem[]
+
+  @@index([clientId])
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedById])
+  @@map("direct_sales")
+}
+
+model DirectSaleItem {
+  id           Int @id @default(autoincrement())
+  directSaleId Int
+  productId    Int
+  quantity     Int
+  unitPrice    Float
+
+  directSale DirectSale @relation(fields: [directSaleId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [productId], references: [id])
+
+  @@index([directSaleId])
+  @@index([productId])
+  @@map("direct_sale_items")
+}
+
+// ============================================================
+// PAGOS
+// ============================================================
+
+model Payment {
+  id         Int           @id @default(autoincrement())
+  clientId   Int
+  campaignId Int?
+  amount     Float
+  method     PaymentMethod @default(CASH)
+  note       String?
+  paidAt     DateTime      @default(now())
+
+  // Auditing fields
+  createdById Int
+  updatedById Int?
+  createdBy   User          @relation("PaymentCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?         @relation("PaymentUpdatedBy", fields: [updatedById], references: [id])
+
+  client   Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+
+  @@index([clientId])
+  @@index([campaignId])
+  @@index([paidAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  CASH
+  YAPE
+  PLIN
+  BANK_TRANSFER
+  OTHER
+}
+
+// ============================================================
+// CONFIGURACIÓN DEL SISTEMA
+// ============================================================
+
+model SystemConfig {
+  id                 Int      @id @default(autoincrement())
+  lock               Boolean  @default(true) @unique
+  systemName         String   @default("Lauren Arica")
+  systemLogoUrl      String?
+  whatsappNumber     String   @default("51987654321")
+  showPricePublic    Boolean  @default(true)
+  showStockPublic    Boolean  @default(true)
+  showCatalogsPublic Boolean  @default(true)
+  updatedAt          DateTime @updatedAt
+
+  @@map("system_configs")
+}
+
+model ProductImage {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  url       String
+  position  Int      @default(0)
+  isMain    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([isMain])
+  @@map("product_images")
+}
