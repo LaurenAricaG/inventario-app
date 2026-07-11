@@ -1,356 +1,315 @@
-import {
-  FiTrendingUp,
-  FiAlertCircle,
-  FiPackage,
-  FiShoppingBag,
-  FiPlus,
-  FiArrowRight,
-  FiSearch,
-  FiCalendar,
-  FiClock,
-} from "react-icons/fi";
-import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import Dashboard from "@/components/dashboard";
 
-export default function DashboardPage() {
+interface DBOrderItem {
+  arrivalStatus: string;
+  substitutePrice: number | null;
+  catalogPrice: number;
+  quantity: number;
+}
+
+interface DBOrder {
+  discount: number;
+  total: number | null;
+  items: DBOrderItem[];
+}
+
+const getOrderTotal = (order: DBOrder) => {
+  if (order.total !== null && order.total !== undefined) return order.total;
+  const subtotal = order.items.reduce((sum, item) => {
+    if (item.arrivalStatus === "MISSING") return sum;
+    const price =
+      item.arrivalStatus === "SUBSTITUTED" && item.substitutePrice !== null
+        ? item.substitutePrice
+        : item.catalogPrice;
+    return sum + item.quantity * price;
+  }, 0);
+  return Math.max(0, subtotal - order.discount);
+};
+
+export default async function DashboardPage() {
+  const session = await auth();
+  const permissions = session?.user?.permissions ?? [];
+
+  // 1. Fetch active campaigns (or fallbacks)
+  const activeCampaigns = await prisma.campaign.findMany({
+    where: { isActive: true, deletedAt: null },
+    include: { company: true },
+  });
+
+  const campaignsToUse = activeCampaigns.length > 0
+    ? activeCampaigns
+    : await prisma.campaign.findMany({
+        where: { deletedAt: null },
+        include: { company: true },
+        orderBy: { endDate: "desc" },
+        take: 2,
+      });
+
+  const activeCampaignIds = campaignsToUse.map((c) => c.id);
+
+  // 2. Fetch campaign orders (to compute campaign sales)
+  const campaignOrders = activeCampaignIds.length > 0
+    ? await prisma.campaignOrder.findMany({
+        where: {
+          campaignId: { in: activeCampaignIds },
+          deletedAt: null,
+        },
+        include: {
+          items: true,
+          campaign: { include: { company: true } },
+        },
+      })
+    : [];
+
+  const nonCancelledOrders = campaignOrders.filter((o) => o.status !== "CANCELLED");
+  const campaignSalesTotal = nonCancelledOrders.reduce((sum, o) => sum + getOrderTotal(o), 0);
+  const campaignOrdersCount = nonCancelledOrders.length;
+  const readyForDeliveryCount = nonCancelledOrders.filter((o) => o.status === "PACKED").length;
+
+  // 3. Fetch products and categories count
+  const stockAggregate = await prisma.product.aggregate({
+    _sum: { stock: true },
+    where: { deletedAt: null },
+  });
+  const totalStock = stockAggregate._sum.stock || 0;
+
+  const categoriesCount = await prisma.category.count({
+    where: { deletedAt: null },
+  });
+
+  // 4. Fetch clients data for balances and debtors
+  const clients = await prisma.client.findMany({
+    where: { deletedAt: null },
+    include: {
+      directSales: {
+        where: { deletedAt: null },
+        select: { total: true, createdAt: true },
+      },
+      campaignOrders: {
+        where: { deletedAt: null },
+        include: {
+          items: true,
+          campaign: { include: { company: true } },
+        },
+      },
+      externalDebts: {
+        select: { amount: true, createdAt: true },
+      },
+      payments: {
+        select: { amount: true },
+      },
+    },
+  });
+
+  let totalOutstanding = 0;
+  let debtorsCount = 0;
+
+  const today = new Date();
+
+  const allDebtorsList = clients.map((client) => {
+    const deliveredOrders = client.campaignOrders.filter((o) => o.status === "DELIVERED");
+    
+    const totalSales =
+      client.directSales.reduce((sum, s) => sum + s.total, 0) +
+      deliveredOrders.reduce((sum, o) => sum + getOrderTotal(o), 0);
+      
+    const totalDebts = client.externalDebts.reduce((sum, d) => sum + d.amount, 0);
+    const totalPayments = client.payments.reduce((sum, p) => sum + p.amount, 0);
+    const debt = totalSales + totalDebts - totalPayments;
+
+    if (debt > 0.01) {
+      totalOutstanding += debt;
+      debtorsCount++;
+    }
+
+    // Find the latest transaction date for "Origen"
+    let latestTxDate: Date | null = null;
+    let originLabel = "Ninguno";
+
+    client.directSales.forEach((s) => {
+      const d = new Date(s.createdAt);
+      if (!latestTxDate || d > latestTxDate) {
+        latestTxDate = d;
+        originLabel = "Venta Directa";
+      }
+    });
+
+    client.campaignOrders.forEach((o) => {
+      const d = new Date(o.createdAt);
+      if (!latestTxDate || d > latestTxDate) {
+        latestTxDate = d;
+        originLabel = `Campaña ${o.campaign.number}`;
+      }
+    });
+
+    client.externalDebts.forEach((ed) => {
+      const d = new Date(ed.createdAt);
+      if (!latestTxDate || d > latestTxDate) {
+        latestTxDate = d;
+        originLabel = "Deuda Externa";
+      }
+    });
+
+    let isOverdue = false;
+    if (debt > 0.01) {
+      const hasOverdueOrder = deliveredOrders.some((order) => {
+        const orderDueDate = order.paymentDate 
+          ? new Date(order.paymentDate) 
+          : order.campaign.paymentDate 
+            ? new Date(order.campaign.paymentDate) 
+            : null;
+        return orderDueDate ? orderDueDate < today : false;
+      });
+      isOverdue = hasOverdueOrder;
+    }
+
+    return {
+      name: client.name,
+      phone: client.phone || "Sin teléfono",
+      lastOrder: originLabel,
+      debt,
+      status: (isOverdue ? "Vencido" : "Pendiente") as "Vencido" | "Pendiente",
+    };
+  });
+
+  const pendingDebtors = allDebtorsList
+    .filter((d) => d.debt > 0.01)
+    .sort((a, b) => b.debt - a.debt)
+    .slice(0, 5);
+
+  // Fetch full clients list for FormPayments searchable dropdown
+  const clientsList = await prisma.client.findMany({
+    where: { deletedAt: null },
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  });
+
+  // 5. Fetch Recent Activities (sales, payments, orders)
+  const [recentPayments, recentSales, recentOrders] = await Promise.all([
+    prisma.payment.findMany({
+      take: 5,
+      orderBy: { paidAt: "desc" },
+      include: { client: { select: { name: true } } },
+    }),
+    prisma.directSale.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: { client: { select: { name: true } } },
+    }),
+    prisma.campaignOrder.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: {
+        client: { select: { name: true } },
+        campaign: { select: { number: true } },
+      },
+    }),
+  ]);
+
+  const activities: {
+    id: string;
+    type: "payment" | "sale" | "order";
+    date: string;
+    description: string;
+    clientName: string;
+    amount: number;
+  }[] = [];
+
+  recentPayments.forEach((p) => {
+    activities.push({
+      id: `p-${p.id}`,
+      type: "payment",
+      date: p.paidAt.toISOString(),
+      description: `Abonó S/. ${p.amount.toFixed(2)}`,
+      clientName: p.client.name,
+      amount: p.amount,
+    });
+  });
+
+  recentSales.forEach((s) => {
+    activities.push({
+      id: `s-${s.id}`,
+      type: "sale",
+      date: s.createdAt.toISOString(),
+      description: `Compró por S/. ${s.total.toFixed(2)} (Venta Directa)`,
+      clientName: s.client.name,
+      amount: s.total,
+    });
+  });
+
+  recentOrders.forEach((o) => {
+    activities.push({
+      id: `o-${o.id}`,
+      type: "order",
+      date: o.createdAt.toISOString(),
+      description: `Pedido de Campaña ${o.campaign.number}`,
+      clientName: o.client.name,
+      amount: o.total || 0,
+    });
+  });
+
+  const sortedActivities = activities
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5);
+
   const metrics = [
     {
       title: "Ventas de campaña",
-      value: "S/. 1,240.00",
-      description: "Campaña 07 actual",
-      icon: FiTrendingUp,
+      value: `S/. ${campaignSalesTotal.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      description: campaignsToUse.length > 0 
+        ? `Campaña ${campaignsToUse[0].number} (${campaignsToUse[0].company.name})`
+        : "Sin campaña activa",
+      iconKey: "trending-up",
       accentClass: "bg-success-bg text-success-text",
-      borderClass: "border-l-success-text",
       bordercard: "success-text",
     },
     {
       title: "Por cobrar (deudas)",
-      value: "S/. 420.00",
-      description: "6 clientes pendientes",
-      icon: FiAlertCircle,
+      value: `S/. ${totalOutstanding.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      description: `${debtorsCount} ${debtorsCount === 1 ? 'cliente pendiente' : 'clientes pendientes'}`,
+      iconKey: "alert-circle",
       accentClass: "bg-danger-bg text-danger-text",
-      borderClass: "border-l-danger-text",
       bordercard: "danger-text",
     },
     {
       title: "Productos en stock",
-      value: "84 uds.",
-      description: "12 categorías",
-      icon: FiPackage,
+      value: `${totalStock} uds.`,
+      description: `${categoriesCount} ${categoriesCount === 1 ? 'categoría' : 'categorías'}`,
+      iconKey: "package",
       accentClass: "bg-info-bg text-info-text",
-      borderClass: "border-l-info-text",
       bordercard: "info-text",
     },
     {
       title: "Pedidos de campaña",
-      value: "14 pedidos",
-      description: "4 listos para entrega",
-      icon: FiShoppingBag,
-      accentClass: "bg-beauty-50 text-beauty-600",
-      borderClass: "border-l-beauty-400",
+      value: `${campaignOrdersCount} ${campaignOrdersCount === 1 ? 'pedido' : 'pedidos'}`,
+      description: `${readyForDeliveryCount} listos para entrega`,
+      iconKey: "shopping-bag",
+      accentClass: "bg-beauty-50 text-beauty-600 dark:bg-beauty-900/60 dark:text-beauty-200",
       bordercard: "beauty-200",
     },
   ];
 
-  const pendingDebtors = [
-    {
-      name: "Lauren Arica",
-      phone: "987 654 321",
-      lastOrder: "Campaña 06",
-      debt: 130.0,
-      status: "Vencido",
-    },
-    {
-      name: "María González",
-      phone: "951 753 852",
-      lastOrder: "Campaña 07",
-      debt: 85.5,
-      status: "Pendiente",
-    },
-    {
-      name: "Ana Valdivia",
-      phone: "963 852 741",
-      lastOrder: "Venta Directa",
-      debt: 45.0,
-      status: "Pendiente",
-    },
-    {
-      name: "Gabriela Torres",
-      phone: "954 123 654",
-      lastOrder: "Campaña 07",
-      debt: 120.0,
-      status: "Vencido",
-    },
-    {
-      name: "Carmen Rosa",
-      phone: "921 456 789",
-      lastOrder: "Campaña 06",
-      debt: 39.5,
-      status: "Pendiente",
-    },
-  ];
-
-  const totalDebt = pendingDebtors.reduce((sum, d) => sum + d.debt, 0);
-
-  function getInitials(name: string) {
-    return name
-      .split(" ")
-      .slice(0, 2)
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase();
-  }
-
-  // Colores de avatar por índice, usando las clases del token system
-  const avatarColors = [
-    "bg-beauty-100 text-beauty-800",
-    "bg-info-bg text-info-text",
-    "bg-success-bg text-success-text",
-    "bg-warning-bg text-warning-text",
-    "bg-danger-bg text-danger-text",
-  ];
+  // Serialize Date objects before passing them to the Client Component
+  const serializedActiveCampaigns = activeCampaigns.map((camp) => ({
+    id: camp.id,
+    number: camp.number,
+    startDate: camp.startDate.toISOString(),
+    endDate: camp.endDate.toISOString(),
+    company: { name: camp.company.name },
+  }));
 
   return (
-    <div className="space-y-6">
-      {/* Encabezado */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-text-primary">
-            Resumen del negocio
-          </h2>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Control de inventario, deudas y pedidos activos
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 bg-beauty-600 hover:bg-beauty-800 text-white rounded-xl text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400">
-            <FiPlus className="w-4 h-4" />
-            Nuevo pedido
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-bg-card hover:bg-beauty-50 border border-border-default hover:border-beauty-200 text-text-primary hover:text-beauty-800 rounded-xl text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400">
-            <FiPlus className="w-4 h-4" />
-            Nuevo cliente
-          </button>
-        </div>
-      </div>
-
-      {/* Tarjetas de métricas */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => {
-          const Icon = metric.icon;
-          return (
-            <div
-              key={index}
-              className="bg-bg-card border border-border-default border-l-6 rounded-2xl p-5 flex items-start justify-between hover:shadow-sm transition-shadow duration-300"
-              style={{ borderLeftColor: `var(--${metric.bordercard})` }}
-            >
-              {/* Usamos style inline solo para el color dinámico del borde izquierdo */}
-              <div className="space-y-1.5 flex-1">
-                <p className="text-[11px] font-medium text-text-tertiary uppercase tracking-wider">
-                  {metric.title}
-                </p>
-                <p className="text-xl font-semibold text-text-primary tracking-tight">
-                  {metric.value}
-                </p>
-                <p className="text-xs text-text-secondary">
-                  {metric.description}
-                </p>
-              </div>
-              <div
-                className={`p-2.5 rounded-xl ${metric.accentClass} ml-3 shrink-0`}
-              >
-                <Icon className="w-4 h-4" />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Cuerpo principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Tabla de deudas */}
-        <div className="lg:col-span-2 bg-bg-card border border-border-default rounded-2xl overflow-hidden">
-          {/* Header de la tabla */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border-default">
-            <div>
-              <h3 className="font-semibold text-text-primary text-sm">
-                Deudas pendientes por cobrar
-              </h3>
-              <p className="text-xs text-text-secondary mt-0.5">
-                Clientes con saldos sin pagar
-              </p>
-            </div>
-            <Link
-              href="/admin/clientes"
-              className="text-xs font-semibold text-beauty-600 hover:text-beauty-800 flex items-center gap-1 transition-colors"
-            >
-              Ver todos
-              <FiArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          {/* Tabla */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-border-default/60">
-                  <th className="px-6 py-3 text-[10px] font-medium text-text-tertiary uppercase tracking-wider">
-                    Cliente
-                  </th>
-                  <th className="px-4 py-3 text-[10px] font-medium text-text-tertiary uppercase tracking-wider">
-                    Origen
-                  </th>
-                  <th className="px-4 py-3 text-[10px] font-medium text-text-tertiary uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th className="px-6 py-3 text-[10px] font-medium text-text-tertiary uppercase tracking-wider text-right">
-                    Deuda
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {pendingDebtors.map((debtor, index) => (
-                  <tr
-                    key={index}
-                    className="border-b border-border-default/40 last:border-0 hover:bg-beauty-50/50 transition-colors"
-                  >
-                    {/* Cliente con avatar de iniciales */}
-                    <td className="px-6 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold shrink-0 ${avatarColors[index % avatarColors.length]}`}
-                        >
-                          {getInitials(debtor.name)}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-text-primary leading-tight">
-                            {debtor.name}
-                          </p>
-                          <p className="text-[11px] text-text-tertiary">
-                            {debtor.phone}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3.5 text-xs text-text-secondary">
-                      {debtor.lastOrder}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
-                          debtor.status === "Vencido"
-                            ? "bg-danger-bg text-danger-text"
-                            : "bg-warning-bg text-warning-text"
-                        }`}
-                      >
-                        {debtor.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-3.5 text-right">
-                      <span
-                        className={`text-sm font-semibold ${
-                          debtor.status === "Vencido"
-                            ? "text-danger-text"
-                            : "text-text-primary"
-                        }`}
-                      >
-                        S/. {debtor.debt.toFixed(2)}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pie de tabla: total */}
-          <div className="flex items-center justify-between px-6 py-3.5 bg-bg-surface border-t border-border-default">
-            <p className="text-xs text-text-secondary">
-              {pendingDebtors.length} clientes con deuda activa
-            </p>
-            <p className="text-sm font-semibold text-text-primary">
-              Total:{" "}
-              <span className="text-danger-text">
-                S/. {totalDebt.toFixed(2)}
-              </span>
-            </p>
-          </div>
-        </div>
-
-        {/* Panel lateral */}
-        <div className="space-y-4">
-          {/* Campaña activa */}
-          <div className="bg-bg-card border border-border-default rounded-2xl p-5">
-            <div className="flex items-center gap-2 mb-1">
-              <FiCalendar className="w-4 h-4 text-beauty-600" />
-              <h3 className="font-semibold text-text-primary text-sm">
-                Campaña activa
-              </h3>
-            </div>
-            <p className="text-xs text-text-secondary mb-4">
-              Natura & Avon — Campaña 07
-            </p>
-
-            {/* Barra de progreso */}
-            <div className="mb-4">
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="text-[10px] text-text-tertiary uppercase tracking-wider font-medium">
-                  Progreso
-                </span>
-                <span className="text-xs font-semibold text-beauty-600">
-                  75%
-                </span>
-              </div>
-              <div className="h-1.5 bg-border-soft rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-beauty-400 rounded-full transition-all duration-300"
-                  style={{ width: "75%" }}
-                />
-              </div>
-            </div>
-
-            {/* Datos de campaña */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-bg-page rounded-xl p-3 border border-border-soft">
-                <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-medium mb-1">
-                  Recepción
-                </p>
-                <p className="text-sm font-semibold text-text-primary">
-                  18 Jun, 2026
-                </p>
-              </div>
-              <div className="bg-bg-page rounded-xl p-3 border border-border-soft">
-                <div className="flex items-center gap-1 mb-1">
-                  <FiClock className="w-3 h-3 text-text-tertiary" />
-                  <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-medium">
-                    Restantes
-                  </p>
-                </div>
-                <p className="text-sm font-semibold text-text-primary">
-                  15 días
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Búsqueda rápida */}
-          <div className="bg-bg-card border border-border-default rounded-2xl p-5">
-            <h3 className="font-semibold text-text-primary text-sm mb-3">
-              Búsqueda rápida
-            </h3>
-            <div className="relative">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
-              <input
-                type="text"
-                placeholder="Nombre del cliente..."
-                className="w-full text-sm pl-9 pr-4 py-2.5 bg-bg-page border border-border-default rounded-xl focus:outline-none focus:border-beauty-400 focus:ring-1 focus:ring-beauty-400 text-text-primary placeholder:text-text-tertiary transition-all duration-300"
-              />
-            </div>
-            <p className="text-[11px] text-text-tertiary mt-2.5">
-              Busca un cliente para registrar deudas o abonos.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Dashboard
+      metrics={metrics}
+      pendingDebtors={pendingDebtors}
+      debtorsCount={debtorsCount}
+      totalOutstanding={totalOutstanding}
+      activeCampaigns={serializedActiveCampaigns}
+      activities={sortedActivities}
+      clientsList={clientsList}
+      permissions={permissions}
+    />
   );
 }
