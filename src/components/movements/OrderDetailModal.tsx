@@ -4,6 +4,8 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { CampaignOrderWithRelations } from "@/types/models";
 
+import { useSystemConfig } from "@/context/SystemConfigContext";
+
 interface OrderDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -51,6 +53,7 @@ export default function OrderDetailModal({
   order,
   isPublic = false,
 }: OrderDetailModalProps) {
+  const systemConfig = useSystemConfig();
   if (!order) return null;
 
   const formatDate = (dateInput: Date | string) => {
@@ -119,9 +122,16 @@ export default function OrderDetailModal({
       >
         <div className="max-w-md mx-auto font-sans text-sm text-text-primary space-y-4 p-2 md:p-4 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs">
           {/* Header */}
-          <div className="text-center pb-3 border-b border-dashed border-beauty-500/20">
-            <h3 className="text-xl font-black text-beauty-600 dark:text-beauty-400 uppercase tracking-widest">
-              LAUREN ARICA
+          <div className="text-center pb-3 border-b border-dashed border-beauty-500/20 flex flex-col items-center">
+            {systemConfig?.systemLogoUrl ? (
+              <img
+                src={systemConfig.systemLogoUrl}
+                alt={systemConfig.systemName || "Logo"}
+                className="w-12 h-12 object-contain mb-2 rounded-xl bg-bg-surface p-0.5 border border-border-soft"
+              />
+            ) : null}
+            <h3 className="text-xl font-black text-beauty-600 dark:text-beauty-400 tracking-widest">
+              {systemConfig?.systemName || "Inventario"}
             </h3>
             <p className="text-[10px] text-text-primary font-bold uppercase tracking-widest mt-4 text-start">
               {(order.campaign as any).company?.name ||
@@ -131,7 +141,9 @@ export default function OrderDetailModal({
             </p>
             <div className="text-left mt-2 text-xs text-text-secondary space-y-1">
               <div>
-                <span className="font-bold text-text-primary">F. Registro:</span>{" "}
+                <span className="font-bold text-text-primary">
+                  F. Registro:
+                </span>{" "}
                 {formatDate(order.createdAt)}
               </div>
             </div>
@@ -270,18 +282,27 @@ export default function OrderDetailModal({
       <div className="p-4 md:p-6 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs font-sans text-zinc-900 dark:text-zinc-100 space-y-6">
         {/* Cabecera */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-dashed border-zinc-200 dark:border-zinc-800 pb-5 select-none">
-          <div>
-            <h3 className="text-xl font-black text-zinc-950 dark:text-white tracking-tight">
-              LAUREN ARICA
-            </h3>
-            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">
-              {(order.campaign as any).company?.name ||
-                order.items[0]?.brand.name ||
-                ""}{" "}
-              - Campaña {order.campaign.number}
-            </p>
+          <div className="flex items-center gap-3">
+            {systemConfig?.systemLogoUrl ? (
+              <img
+                src={systemConfig.systemLogoUrl}
+                alt={systemConfig.systemName || "Logo"}
+                className="w-12 h-12 object-contain rounded-xl bg-bg-surface p-0.5 border border-border-soft shrink-0"
+              />
+            ) : null}
+            <div>
+              <h3 className="text-xl font-black text-beauty-600 dark:text-beauty-400 tracking-widest">
+                {systemConfig?.systemName || "Inventario"}
+              </h3>
+              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">
+                {(order.campaign as any).company?.name ||
+                  order.items[0]?.brand.name ||
+                  ""}{" "}
+                - Campaña {order.campaign.number}
+              </p>
+            </div>
           </div>
-          <div className="border-2 border-beauty-400 rounded-xl p-3 text-center min-w-45 bg-beauty-400/5 self-stretch sm:self-auto">
+          <div className="border-2 border-beauty-400 rounded-xl p-3 text-center min-w-45 self-stretch sm:self-auto">
             <span className="text-[10px] font-extrabold text-beauty-600 dark:text-beauty-400 uppercase tracking-widest">
               Campaña Catálogo
             </span>
@@ -304,10 +325,14 @@ export default function OrderDetailModal({
             </div>
             <div className="flex items-start">
               <span className="w-24 text-zinc-400 font-bold uppercase tracking-wider shrink-0 select-none">
-                Dirección:
+                Estado Pedido:
               </span>
-              <span className="text-zinc-600 dark:text-zinc-300">
-                {order.client.address || "No especificada"}
+              <span
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                  statusColors[order.status]
+                }`}
+              >
+                {statusTranslations[order.status] || order.status}
               </span>
             </div>
           </div>
@@ -318,17 +343,6 @@ export default function OrderDetailModal({
               </span>
               <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                 {formatDate(order.createdAt)}
-              </span>
-            </div>
-            <div className="flex items-start">
-              <span className="w-24 text-zinc-400 font-bold uppercase tracking-wider shrink-0 select-none">
-                Estado Pedido:
-              </span>
-              <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColors[order.status]
-                  }`}
-              >
-                {statusTranslations[order.status] || order.status}
               </span>
             </div>
           </div>
@@ -377,7 +391,7 @@ export default function OrderDetailModal({
                         <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                           {displayName}
                         </span>
-                        <span className="text-[10px] text-zinc-400 mt-0.5">
+                        <span className="text-[10px] text-text-tertiary mt-0.5">
                           Marca: {item.brand.name}
                         </span>
                       </div>
@@ -387,8 +401,9 @@ export default function OrderDetailModal({
                     </td>
                     <td className="py-3 px-3 text-center">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${itemStatusColors[item.arrivalStatus]
-                          }`}
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                          itemStatusColors[item.arrivalStatus]
+                        }`}
                       >
                         {itemStatusTranslations[item.arrivalStatus] ||
                           item.arrivalStatus}
@@ -453,8 +468,8 @@ export default function OrderDetailModal({
                   {order.status === "CANCELLED"
                     ? "0.00"
                     : (
-                      order.total || calculatedSubtotal - order.discount
-                    ).toFixed(2)}
+                        order.total || calculatedSubtotal - order.discount
+                      ).toFixed(2)}
                 </span>
               </div>
             </div>

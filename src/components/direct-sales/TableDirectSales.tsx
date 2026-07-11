@@ -1,6 +1,13 @@
 "use client";
 
-import { FiTrash2, FiCalendar, FiUser, FiInfo, FiEye, FiPrinter } from "react-icons/fi";
+import {
+  FiTrash2,
+  FiCalendar,
+  FiUser,
+  FiInfo,
+  FiEye,
+  FiPrinter,
+} from "react-icons/fi";
 import { printDirectSale } from "@/utils/print-direct-sale";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import {
@@ -12,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { SerializedDirectSaleWithRelations } from "@/types/direct-sale";
+import { useSystemConfig } from "@/context/SystemConfigContext";
 
 interface TableDirectSalesProps {
   sales: SerializedDirectSaleWithRelations[];
@@ -44,6 +52,8 @@ export default function TableDirectSales({
     }
   };
 
+  const systemConfig = useSystemConfig();
+
   return (
     <ErrorBoundary variant="embedded" title="Tabla de Ventas Directas">
       <Table>
@@ -73,7 +83,7 @@ export default function TableDirectSales({
             sales.map((sale, index) => {
               const subtotal = sale.items.reduce(
                 (sum, item) => sum + item.quantity * item.unitPrice,
-                0
+                0,
               );
 
               return (
@@ -106,7 +116,10 @@ export default function TableDirectSales({
                         </span>
                       </div>
                       {sale.notes && (
-                        <span className="text-[11px] text-text-tertiary mt-0.5 truncate max-w-[200px]" title={sale.notes}>
+                        <span
+                          className="text-[11px] text-text-tertiary mt-0.5 truncate max-w-50"
+                          title={sale.notes}
+                        >
                           {sale.notes}
                         </span>
                       )}
@@ -120,7 +133,9 @@ export default function TableDirectSales({
 
                   {/* Descuento */}
                   <TableCell className="text-right font-mono text-xs text-text-secondary">
-                    {sale.discount > 0 ? `-S/ ${sale.discount.toFixed(2)}` : "S/ 0.00"}
+                    {sale.discount > 0
+                      ? `-S/ ${sale.discount.toFixed(2)}`
+                      : "S/ 0.00"}
                   </TableCell>
 
                   {/* Total Cobrado */}
@@ -141,7 +156,7 @@ export default function TableDirectSales({
                       </button>
                       <button
                         type="button"
-                        onClick={() => printDirectSale(sale)}
+                        onClick={() => printDirectSale(sale, systemConfig?.systemName ?? "Inventario")}
                         className="p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
                         title="Imprimir boleta de venta"
                       >

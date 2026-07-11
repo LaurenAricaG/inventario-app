@@ -15,6 +15,7 @@ import {
 import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import { useSystemConfig } from "@/context/SystemConfigContext";
 
 // Número de WhatsApp configurado para Lauren Arica (puede cambiarse por su número real)
 const WHATSAPP_PHONE = "51987654321";
@@ -218,6 +219,10 @@ const MOCK_PRODUCTS: ProductMock[] = [
 ];
 
 export default function CatalogoPublico() {
+  const systemConfig = useSystemConfig();
+  const whatsappNumber = systemConfig?.whatsappNumber || WHATSAPP_PHONE;
+  const systemName = systemConfig?.systemName || "Inventario";
+
   // Estados para filtros
   const [search, setSearch] = useState("");
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -336,7 +341,7 @@ export default function CatalogoPublico() {
   // Generador de enlace de WhatsApp
   const generateWhatsAppLink = (product: ProductMock) => {
     const brandTag = product.brand === "Natura" ? "🍊 Natura" : "Avon";
-    const text = `¡Hola Lauren! Vi tu catálogo web y me interesa consultar la disponibilidad del siguiente producto:
+    const text = `¡Hola ${systemName.split(" ")[0]}! Vi tu catálogo web y me interesa consultar la disponibilidad del siguiente producto:
 
 *Producto:* ${product.name}
 *Código:* ${product.code}
@@ -346,20 +351,29 @@ export default function CatalogoPublico() {
 
 ¿Me podrías confirmar si lo tienes disponible? ¡Gracias!`;
 
-    return `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
   };
+
 
   return (
     <div className="min-h-screen bg-bg-page text-text-primary flex flex-col font-sans transition-colors duration-300">
       {/* 1. Header / Navbar Público */}
       <header className="sticky top-0 z-40 w-full h-16 bg-bg-page/85 backdrop-blur-md border-b border-border-default transition-all duration-300 flex items-center justify-between px-4 sm:px-8">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-full bg-beauty-600 flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-beauty-400/50">
-            L
+          <div className="w-9 h-9 rounded-full bg-beauty-600 flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-beauty-400/50 overflow-hidden">
+            {systemConfig?.systemLogoUrl ? (
+              <img
+                src={systemConfig.systemLogoUrl}
+                alt={systemName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              systemName.charAt(0).toUpperCase()
+            )}
           </div>
           <div className="flex flex-col leading-tight">
             <span className="text-sm font-semibold tracking-wide text-text-primary">
-              Lauren Arica
+              {systemName}
             </span>
             <span className="text-[10px] text-beauty-600 font-semibold tracking-widest uppercase">
               Catálogo
@@ -378,7 +392,7 @@ export default function CatalogoPublico() {
           </Link>
           <ThemeToggle />
           <a
-            href={`https://wa.me/${WHATSAPP_PHONE}`}
+            href={`https://wa.me/${whatsappNumber}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm hover:shadow transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
@@ -387,6 +401,7 @@ export default function CatalogoPublico() {
             <span className="hidden sm:inline">Escríbeme</span>
           </a>
         </div>
+
       </header>
 
       {/* 2. Hero Section */}
@@ -435,8 +450,8 @@ export default function CatalogoPublico() {
             selectedGenders.length > 0 ||
             maxPrice < 200 ||
             onlyInStock) && (
-            <span className="w-2 h-2 rounded-full bg-beauty-600 animate-pulse" />
-          )}
+              <span className="w-2 h-2 rounded-full bg-beauty-600 animate-pulse" />
+            )}
         </button>
       </div>
 
@@ -513,11 +528,10 @@ export default function CatalogoPublico() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-all cursor-pointer ${
-                    selectedCategory === cat
+                  className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-all cursor-pointer ${selectedCategory === cat
                       ? "bg-beauty-100 text-beauty-900 font-bold dark:bg-beauty-950 dark:text-beauty-100"
                       : "text-text-secondary hover:bg-bg-surface hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -594,11 +608,10 @@ export default function CatalogoPublico() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs rounded-full border transition-all cursor-pointer ${
-                  selectedCategory === cat
+                className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs rounded-full border transition-all cursor-pointer ${selectedCategory === cat
                     ? "bg-beauty-600 border-beauty-600 text-white font-semibold"
                     : "bg-bg-card border-border-default text-text-secondary hover:text-text-primary"
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -678,11 +691,10 @@ export default function CatalogoPublico() {
 
                     {/* Insignia de Marca */}
                     <span
-                      className={`absolute bottom-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border shadow-sm ${
-                        product.brand === "Natura"
+                      className={`absolute bottom-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border shadow-sm ${product.brand === "Natura"
                           ? "bg-orange-50 border-orange-200 text-orange-700 dark:bg-orange-950/80 dark:border-orange-800 dark:text-orange-300"
                           : "bg-purple-50 border-purple-200 text-purple-700 dark:bg-purple-950/80 dark:border-purple-800 dark:text-purple-300"
-                      }`}
+                        }`}
                     >
                       {product.brand}
                     </span>
@@ -724,11 +736,10 @@ export default function CatalogoPublico() {
 
                         {/* Indicador de disponibilidad */}
                         <span
-                          className={`inline-flex items-center gap-1 text-[9px] font-bold mt-1.5 px-2 py-0.5 rounded-md w-fit uppercase ${
-                            inStock
+                          className={`inline-flex items-center gap-1 text-[9px] font-bold mt-1.5 px-2 py-0.5 rounded-md w-fit uppercase ${inStock
                               ? "bg-success-bg text-success-text"
                               : "bg-warning-bg text-warning-text"
-                          }`}
+                            }`}
                         >
                           {inStock && <FiCheck className="w-2.5 h-2.5" />}
                           {inStock
@@ -815,11 +826,10 @@ export default function CatalogoPublico() {
                       <button
                         key={brand}
                         onClick={() => handleBrandChange(brand)}
-                        className={`flex-1 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
-                          active
+                        className={`flex-1 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${active
                             ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
                             : "bg-bg-surface border-border-default text-text-secondary"
-                        }`}
+                          }`}
                       >
                         {brand}
                       </button>
@@ -838,11 +848,10 @@ export default function CatalogoPublico() {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
-                      className={`text-center text-xs py-2 rounded-xl transition-all cursor-pointer ${
-                        selectedCategory === cat
+                      className={`text-center text-xs py-2 rounded-xl transition-all cursor-pointer ${selectedCategory === cat
                           ? "bg-beauty-100 text-beauty-900 font-bold dark:bg-beauty-950 dark:text-beauty-100 border border-beauty-200/50"
                           : "bg-bg-surface text-text-secondary hover:text-text-primary border border-transparent"
-                      }`}
+                        }`}
                     >
                       {cat}
                     </button>
@@ -862,11 +871,10 @@ export default function CatalogoPublico() {
                       <button
                         key={gender}
                         onClick={() => handleGenderChange(gender)}
-                        className={`text-center text-xs py-2 rounded-xl border transition-all cursor-pointer ${
-                          active
+                        className={`text-center text-xs py-2 rounded-xl border transition-all cursor-pointer ${active
                             ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
                             : "bg-bg-surface border-border-default text-text-secondary"
-                        }`}
+                          }`}
                       >
                         {gender}
                       </button>

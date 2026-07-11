@@ -8,7 +8,7 @@ import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
 import { createGenderAction, updateGenderAction } from "@/lib/gender";
 import { genderSchema } from "@/lib/gender/schema";
-import { SerializedGenderSegment } from "@/types";
+import { SerializedGenderSegment } from "@/types/gender";
 
 interface FormGendersProps {
   isOpen: boolean;

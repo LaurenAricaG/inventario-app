@@ -19,6 +19,30 @@ async function deleteOldLogoFile(logoPath: string) {
   }
 }
 
+export async function getPublicSystemConfig() {
+  try {
+    let config = await prisma.systemConfig.findFirst();
+
+    if (!config) {
+      config = await prisma.systemConfig.create({
+        data: {
+          lock: true,
+          systemName: "Lauren Arica",
+          whatsappNumber: "51987654321",
+          showPricePublic: true,
+          showStockPublic: true,
+          showCatalogsPublic: true,
+        },
+      });
+    }
+
+    return config;
+  } catch (error) {
+    console.error("Error al obtener configuración pública:", error);
+    return null;
+  }
+}
+
 export async function getSystemConfigAction() {
   try {
     const session = await auth();

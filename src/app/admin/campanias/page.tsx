@@ -31,6 +31,10 @@ export default async function CampaniasPage(props: CampaniasPageProps) {
   const page = Number(searchParams.page) || 1;
   const search =
     typeof searchParams.search === "string" ? searchParams.search : "";
+  const onlyActive =
+    typeof searchParams.onlyActive === "string"
+      ? searchParams.onlyActive !== "false"
+      : true; // Por defecto muestra solo campañas activas
 
   const limit = 10;
   const skip = (page - 1) * limit;
@@ -135,6 +139,7 @@ export default async function CampaniasPage(props: CampaniasPageProps) {
     // tab === "catalogos"
     const whereClause = {
       deletedAt: null,
+      ...(onlyActive ? { campaign: { isActive: true } } : {}),
       ...(search
         ? {
             OR: [
@@ -160,6 +165,7 @@ export default async function CampaniasPage(props: CampaniasPageProps) {
             select: {
               id: true,
               number: true,
+              isActive: true,
               company: {
                 select: {
                   id: true,
@@ -203,6 +209,7 @@ export default async function CampaniasPage(props: CampaniasPageProps) {
       currentPage={page}
       itemsPerPage={limit}
       search={search}
+      onlyActive={onlyActive}
       permissions={permissions}
       
       // Catálogos PDF específicos

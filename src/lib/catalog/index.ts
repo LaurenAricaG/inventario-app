@@ -4,39 +4,38 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "@/lib/audit";
 import { catalogPdfSchema } from "./schema";
-import fs from "fs";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
 
-async function savePdfFile(base64Str: string): Promise<string> {
-  const match = base64Str.match(/^data:application\/pdf;base64,(.+)$/);
-  if (!match) {
-    throw new Error("Formato de archivo PDF inválido.");
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+/**
+ * Extrae el public_id de Cloudinary a partir de la URL segura.
+ * Ejemplo: https://res.cloudinary.com/demo/image/upload/v123/inventario/catalogs/abc.pdf
+ * → inventario/catalogs/abc
+ */
+function extractCloudinaryPublicId(url: string): string | null {
+  try {
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[a-z0-9]+)?$/i);
+    return match ? match[1] : null;
+  } catch {
+    return null;
   }
-  const data = match[1];
-  const buffer = Buffer.from(data, "base64");
-
-  const uploadDir = path.join(process.cwd(), "public", "uploads", "catalogs");
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-
-  const fileName = `pdf_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.pdf`;
-  const filePath = path.join(uploadDir, fileName);
-  await fs.promises.writeFile(filePath, buffer);
-
-  return `/uploads/catalogs/${fileName}`;
 }
 
-async function deletePdfFile(pdfUrl: string): Promise<void> {
-  if (pdfUrl.startsWith("/uploads/catalogs/")) {
-    const filePath = path.join(process.cwd(), "public", pdfUrl);
-    try {
-      if (fs.existsSync(filePath)) {
-        await fs.promises.unlink(filePath);
-      }
-    } catch (error) {
-      console.error("Error al eliminar el archivo PDF:", error);
-    }
+async function deleteCloudinaryFile(pdfUrl: string): Promise<void> {
+  if (!pdfUrl.includes("res.cloudinary.com")) return;
+
+  const publicId = extractCloudinaryPublicId(pdfUrl);
+  if (!publicId) return;
+
+  try {
+    await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+  } catch (error) {
+    console.error("Error al eliminar archivo de Cloudinary:", error);
   }
 }
 
@@ -79,7 +78,7 @@ export async function createCatalogPdfAction(
     const validCampaignId = validation.data.campaignId;
     const validBrandId = validation.data.brandId;
     const validTitle = validation.data.title;
-    let finalPdfUrl = validation.data.pdfUrl;
+    const finalPdfUrl = validation.data.pdfUrl;
 
     // Verificar si ya existe en esa campaña y marca
     const existing = await prisma.catalogPdf.findFirst({
@@ -91,17 +90,14 @@ export async function createCatalogPdfAction(
 
     if (existing) {
       if (existing.deletedAt) {
-        // Restaurar anterior
-        let newFileUrl = finalPdfUrl;
-        if (finalPdfUrl.startsWith("data:application/pdf;base64,")) {
-          newFileUrl = await savePdfFile(finalPdfUrl);
-        }
+        // Eliminar el archivo viejo de Cloudinary antes de restaurar con el nuevo
+        await deleteCloudinaryFile(existing.pdfUrl);
 
         const restored = await prisma.catalogPdf.update({
           where: { id: existing.id },
           data: {
             title: validTitle,
-            pdfUrl: newFileUrl,
+            pdfUrl: finalPdfUrl,
             deletedAt: null,
             deletedById: null,
             updatedById: Number(session.user.id),
@@ -127,11 +123,6 @@ export async function createCatalogPdfAction(
         success: false,
         message: "Ya existe un catálogo registrado para esta campaña y marca.",
       };
-    }
-
-    // Guardar archivo si viene en base64
-    if (finalPdfUrl.startsWith("data:application/pdf;base64,")) {
-      finalPdfUrl = await savePdfFile(finalPdfUrl);
     }
 
     const catalog = await prisma.catalogPdf.create({
@@ -232,7 +223,7 @@ export async function updateCatalogPdfAction(
     const validCampaignId = validation.data.campaignId;
     const validBrandId = validation.data.brandId;
     const validTitle = validation.data.title;
-    let finalPdfUrl = validation.data.pdfUrl;
+    const finalPdfUrl = validation.data.pdfUrl;
 
     // Verificar que el catálogo existe
     const current = await prisma.catalogPdf.findUnique({
@@ -263,14 +254,9 @@ export async function updateCatalogPdfAction(
       };
     }
 
-    // Si cambió el PDF y el nuevo es base64
-    let oldPdfToDelete: string | null = null;
-    if (finalPdfUrl.startsWith("data:application/pdf;base64,")) {
-      if (current.pdfUrl.startsWith("/uploads/catalogs/")) {
-        oldPdfToDelete = current.pdfUrl;
-      }
-      finalPdfUrl = await savePdfFile(finalPdfUrl);
-    }
+    // Detectar si el PDF cambió: si la nueva URL es distinta a la actual,
+    // eliminar el archivo viejo de Cloudinary
+    const pdfChanged = finalPdfUrl !== current.pdfUrl;
 
     const updated = await prisma.catalogPdf.update({
       where: { id },
@@ -283,9 +269,9 @@ export async function updateCatalogPdfAction(
       },
     });
 
-    // Eliminar archivo viejo si se reemplazó con éxito
-    if (oldPdfToDelete) {
-      await deletePdfFile(oldPdfToDelete);
+    // Eliminar el PDF viejo de Cloudinary después de actualizar la BD con éxito
+    if (pdfChanged) {
+      await deleteCloudinaryFile(current.pdfUrl);
     }
 
     // Obtener detalles adicionales para la bitácora
@@ -372,6 +358,9 @@ export async function deleteCatalogPdfAction(id: number) {
         deletedById: Number(session.user.id),
       },
     });
+
+    // Eliminar el PDF de Cloudinary al borrar el registro
+    await deleteCloudinaryFile(current.pdfUrl);
 
     // Obtener detalles adicionales para la bitácora
     const relationInfo = await prisma.catalogPdf.findUnique({

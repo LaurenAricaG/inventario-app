@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import fs from "fs";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,14 +29,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    let folderName = "catalogs";
-    let extension = ".pdf";
-    let prefix = "pdf";
-
-    const imageTypes = ["company-logo", "brand-logo", "product-image"];
+    const imageTypes = ["system-logo", "company-logo", "brand-logo", "product-image"];
+    let folder = "inventario/catalogs";
+    let resourceType: "image" | "raw" = "image"; // PDFs se suben como 'image' para que el navegador los muestre inline
 
     if (type && imageTypes.includes(type)) {
       const allowedTypes = [
@@ -42,20 +42,11 @@ export async function POST(req: NextRequest) {
         "image/gif",
         "image/svg+xml",
       ];
-      const allowedExtensions = [
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".webp",
-        ".gif",
-        ".svg",
-      ];
+      const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"];
       const fileType = file.type;
       const fileNameLower = file.name.toLowerCase();
 
-      const hasValidExt = allowedExtensions.some((ext) =>
-        fileNameLower.endsWith(ext),
-      );
+      const hasValidExt = allowedExtensions.some((ext) => fileNameLower.endsWith(ext));
       const hasValidType = allowedTypes.includes(fileType);
 
       if (!hasValidType && !hasValidExt) {
@@ -68,19 +59,17 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      if (type === "company-logo") {
-        folderName = "companies";
-        prefix = "logo";
-      } else if (type === "brand-logo") {
-        folderName = "brands";
-        prefix = "logo";
-      } else if (type === "product-image") {
-        folderName = "products";
-        prefix = "prod";
-      }
+      resourceType = "image";
 
-      const matchExt = fileNameLower.match(/\.[a-z0-9]+$/);
-      extension = matchExt ? matchExt[0] : ".png";
+      if (type === "system-logo") {
+        folder = "inventario/config";
+      } else if (type === "company-logo") {
+        folder = "inventario/companies";
+      } else if (type === "brand-logo") {
+        folder = "inventario/brands";
+      } else if (type === "product-image") {
+        folder = "inventario/products";
+      }
     } else {
       if (
         file.type !== "application/pdf" &&
@@ -96,22 +85,34 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", folderName);
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    // Convertir el archivo a Buffer
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
 
-    const fileName = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}${extension}`;
-    const filePath = path.join(uploadDir, fileName);
-    await fs.promises.writeFile(filePath, buffer);
-
-    const fileUrl = `/uploads/${folderName}/${fileName}`;
-    return NextResponse.json({ url: fileUrl });
-  } catch (error: any) {
-    console.error("Error en API de subida de archivos:", error);
-    return NextResponse.json(
-      { error: error.message || "Error al subir el archivo." },
-      { status: 500 },
+    // Subir a Cloudinary usando upload_stream
+    const uploadResult = await new Promise<{ secure_url: string }>(
+      (resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder,
+            resource_type: resourceType,
+          },
+          (error, result) => {
+            if (error || !result) {
+              reject(error ?? new Error("Error desconocido al subir a Cloudinary."));
+            } else {
+              resolve(result as { secure_url: string });
+            }
+          },
+        );
+        stream.end(buffer);
+      },
     );
+
+    return NextResponse.json({ url: uploadResult.secure_url });
+  } catch (error: unknown) {
+    console.error("Error en API de subida de archivos:", error);
+    const message = error instanceof Error ? error.message : "Error al subir el archivo.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

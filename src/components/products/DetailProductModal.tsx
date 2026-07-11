@@ -67,10 +67,8 @@ export default function DetailProductModal({
       }
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
-
         {/* Left Column: Product Information */}
         <div className="flex flex-col justify-between h-full gap-5">
-
           {/* Header Block: Title & Badges */}
           <div className="space-y-3.5">
             {/* Brand, Category, Gender & Visibility Badges */}
@@ -122,7 +120,6 @@ export default function DetailProductModal({
 
           {/* Sleek Summary Panel (Stock & Prices combined to avoid bulkiness) */}
           <div className="bg-bg-surface/20 dark:bg-bg-surface/10 border border-border-soft dark:border-border-default/60 rounded-2xl p-4 divide-x divide-border-soft dark:divide-border-default/60 flex items-center justify-between shadow-2xs select-none">
-
             {/* Stock status */}
             <div className="flex-1 flex flex-col items-center justify-center text-center px-1">
               <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1 flex items-center gap-1">
@@ -165,7 +162,9 @@ export default function DetailProductModal({
               </span>
               {canReadCost ? (
                 <span className="text-sm font-extrabold text-text-primary font-mono">
-                  {product.costPrice !== null ? `S/. ${product.costPrice.toFixed(2)}` : "-"}
+                  {product.costPrice !== null
+                    ? `S/. ${product.costPrice.toFixed(2)}`
+                    : "-"}
                 </span>
               ) : (
                 <span className="text-[9px] font-semibold text-text-tertiary italic">
@@ -179,22 +178,23 @@ export default function DetailProductModal({
           </div>
 
           {/* Description Box (Fills remaining space to align columns) */}
-          <div className="space-y-2 flex flex-col flex-1 min-h-[140px]">
+          <div className="space-y-2 flex flex-col flex-1 min-h-35">
             <div className="flex items-center gap-1.5 text-text-secondary select-none">
-              <FiInfo className="w-4 h-4 text-beauty-500 dark:text-beauty-400 stroke-[2]" />
+              <FiInfo className="w-4 h-4 text-beauty-500 dark:text-beauty-400 stroke-2" />
               <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider">
                 Descripción del Producto
               </span>
             </div>
-            <div className="text-sm text-text-secondary bg-bg-surface/10 dark:bg-bg-surface/5 border border-border-soft dark:border-border-default/60 border-l-4 border-l-beauty-500 dark:border-l-beauty-400 p-4 rounded-2xl flex-1 overflow-y-auto whitespace-pre-wrap leading-relaxed select-text min-h-[85px]">
+            <div className="text-sm text-text-secondary bg-bg-surface/10 dark:bg-bg-surface/5 border border-border-soft dark:border-border-default/60 border-l-4 border-l-beauty-500 dark:border-l-beauty-400 p-4 rounded-2xl flex-1 overflow-y-auto whitespace-pre-wrap leading-relaxed select-text min-h-21.25">
               {product.description ? (
                 product.description
               ) : (
-                <span className="text-text-tertiary italic font-normal">Este producto no cuenta con una descripción registrada.</span>
+                <span className="text-text-tertiary italic font-normal">
+                  Este producto no cuenta con una descripción registrada.
+                </span>
               )}
             </div>
           </div>
-
         </div>
 
         {/* Right Column: Images Gallery */}
@@ -205,7 +205,7 @@ export default function DetailProductModal({
             </span>
 
             {/* Main Selected Image (Fills vertical space) */}
-            <div className="w-full flex-1 bg-bg-surface/30 border border-border-default/60 rounded-3xl flex items-center justify-center overflow-hidden shadow-xs select-none p-4 relative group min-h-[250px] md:min-h-[300px]">
+            <div className="w-full flex-1 bg-bg-surface/30 border border-border-default/60 rounded-3xl flex items-center justify-center overflow-hidden shadow-xs select-none p-4 relative group min-h-62.5 md:min-h-75">
               {/* Elegant glass blur background effect behind transparent images */}
               <div className="absolute inset-0 bg-radial from-white/10 to-transparent pointer-events-none opacity-50" />
 
@@ -222,7 +222,9 @@ export default function DetailProductModal({
                     alt="Sin imágenes"
                     className="w-16 h-16 opacity-45 dark:invert"
                   />
-                  <span className="text-xs font-semibold text-text-tertiary">Sin imágenes cargadas</span>
+                  <span className="text-xs font-semibold text-text-tertiary">
+                    Sin imágenes cargadas
+                  </span>
                 </div>
               )}
             </div>
@@ -242,7 +244,7 @@ export default function DetailProductModal({
                       "w-full aspect-square rounded-2xl overflow-hidden border bg-bg-card flex items-center justify-center p-1.5 cursor-pointer transition-all duration-300 focus-visible:outline-none",
                       isSelected
                         ? "border-2 border-beauty-500 ring-4 ring-beauty-500/15 scale-[1.05] shadow-xs opacity-100"
-                        : "border-border-default/80 hover:border-border-strong opacity-50 hover:opacity-100 hover:scale-[1.03]"
+                        : "border-border-default/80 hover:border-border-strong opacity-50 hover:opacity-100 hover:scale-[1.03]",
                     )}
                     aria-label={`Ver imagen ${idx + 1}`}
                   >
@@ -271,7 +273,6 @@ export default function DetailProductModal({
             })}
           </div>
         </div>
-
       </div>
     </Modal>
   );

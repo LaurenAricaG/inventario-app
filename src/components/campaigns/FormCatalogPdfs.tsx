@@ -93,6 +93,14 @@ export default function FormCatalogPdfs({
       })
     : [];
 
+  // True cuando la empresa tiene marcas pero todas ya tienen PDF registrado
+  const allBrandsHaveCatalog =
+    !catalog &&
+    companyIdInput &&
+    currentCampaign &&
+    companyBrands.length > 0 &&
+    filteredBrands.length === 0;
+
   // Sincronizar inputs al abrir el modal o cambiar el catálogo seleccionado
   useEffect(() => {
     if (isOpen) {
@@ -372,7 +380,7 @@ export default function FormCatalogPdfs({
                 setErrors((prev) => ({ ...prev, title: undefined }));
               }
             }}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !!allBrandsHaveCatalog}
           />
         </FormField>
 
@@ -385,7 +393,7 @@ export default function FormCatalogPdfs({
               setLocalFile(file || null);
               setErrors((prev) => ({ ...prev, pdfUrl: undefined }));
             }}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !!allBrandsHaveCatalog || (!catalog && !brandIdInput)}
             error={errors.pdfUrl}
           />
         </FormField>

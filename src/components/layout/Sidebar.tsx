@@ -24,6 +24,8 @@ import {
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { TbBrandAirtable } from "react-icons/tb";
 import { AiOutlineProduct } from "react-icons/ai";
+import type { SystemConfig } from "@/types/models";
+import { useSystemConfig } from "@/context/SystemConfigContext";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -62,6 +64,8 @@ export default function Sidebar({
   }, [collapsed]);
 
   const isVisuallyCollapsed = collapsed && !isMobile;
+
+  const systemConfig = useSystemConfig();
 
   const navItems = [
     { label: "Inicio", href: "/admin", icon: FiHome },
@@ -123,7 +127,13 @@ export default function Sidebar({
       ]
       : []),
     ...(userPermissions.includes("sales:read")
-      ? [{ label: "Ventas Directas", href: "/admin/ventas", icon: FiDollarSign }]
+      ? [
+        {
+          label: "Ventas Directas",
+          href: "/admin/ventas",
+          icon: FiDollarSign,
+        },
+      ]
       : []),
     ...(userPermissions.includes("inventory:read")
       ? [
@@ -144,7 +154,13 @@ export default function Sidebar({
       ]
       : []),
     ...(userPermissions.includes("transactions:read")
-      ? [{ label: "Movimientos", href: "/admin/movimientos", icon: FiCreditCard }]
+      ? [
+        {
+          label: "Movimientos",
+          href: "/admin/movimientos",
+          icon: FiCreditCard,
+        },
+      ]
       : []),
     ...(userPermissions.includes("payments:read")
       ? [{ label: "Pagos", href: "/admin/pagos", icon: FiDollarSign }]
@@ -156,9 +172,18 @@ export default function Sidebar({
       ? [{ label: "Bitácora", href: "/admin/bitacora", icon: FiActivity }]
       : []),
     ...(userPermissions.includes("config:read")
-      ? [{ label: "Configuración", href: "/admin/configuracion", icon: FiSettings }]
+      ? [
+        {
+          label: "Configuración",
+          href: "/admin/configuracion",
+          icon: FiSettings,
+        },
+      ]
       : []),
   ];
+
+  const systemName = systemConfig?.systemName || "Inventario";
+  const words = systemName.split(" ");
 
   return (
     <aside
@@ -174,8 +199,16 @@ export default function Sidebar({
       {/* Cabecera / Logo (Fijo, no se encoge) */}
       <div className="h-16 flex items-center justify-start px-4 border-b border-border-default transition-colors duration-300 ease-in-out shrink-0 overflow-hidden">
         <div className="flex items-center gap-2 pl-2">
-          <div className="w-8 h-8 rounded-xl bg-beauty-400 flex items-center justify-center text-white font-bold shadow-md shadow-beauty-400/20 shrink-0">
-            I
+          <div className="w-8 h-8 rounded-xl bg-beauty-400 flex items-center justify-center text-white font-bold shadow-md shadow-beauty-400/20 shrink-0 overflow-hidden">
+            {systemConfig?.systemLogoUrl ? (
+              <img
+                src={systemConfig.systemLogoUrl}
+                alt={systemConfig.systemName || "Logo"}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              systemName.charAt(0).toUpperCase()
+            )}
           </div>
           <span
             className={cn(
@@ -185,8 +218,18 @@ export default function Sidebar({
                 : "max-w-48 opacity-100",
             )}
           >
-            Inventario<span className="text-beauty-400 font-medium">App</span>
+            {words.length > 1 ? (
+              <>
+                {words.slice(0, -1).join(" ")}{" "}
+                <span className="text-beauty-600 dark:text-beauty-400 font-bold">
+                  {words.at(-1)}
+                </span>
+              </>
+            ) : (
+              <span className="text-beauty-600 dark:text-beauty-400 font-bold">{systemName}</span>
+            )}
           </span>
+
         </div>
       </div>
 
@@ -199,7 +242,9 @@ export default function Sidebar({
       >
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/admin" && pathname.startsWith(item.href));
 
           return (
             <Link

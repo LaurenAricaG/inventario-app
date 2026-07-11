@@ -1,10 +1,15 @@
 import { SerializedDirectSaleWithRelations } from "@/types/direct-sale";
 
-export function printDirectSale(sale: SerializedDirectSaleWithRelations) {
+export function printDirectSale(
+  sale: SerializedDirectSaleWithRelations,
+  systemName: string,
+) {
   if (typeof window === "undefined") return;
 
   // 1. Crear o reutilizar un iframe invisible dentro del documento
-  let iframe = document.getElementById("print-invoice-iframe") as HTMLIFrameElement;
+  let iframe = document.getElementById(
+    "print-invoice-iframe",
+  ) as HTMLIFrameElement;
   if (!iframe) {
     iframe = document.createElement("iframe");
     iframe.id = "print-invoice-iframe";
@@ -37,7 +42,7 @@ export function printDirectSale(sale: SerializedDirectSaleWithRelations) {
 
   const calculatedSubtotal = sale.items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
-    0
+    0,
   );
 
   const itemsHtml = sale.items
@@ -55,7 +60,7 @@ export function printDirectSale(sale: SerializedDirectSaleWithRelations) {
         item.quantity * item.unitPrice
       ).toFixed(2)}</td>
     </tr>
-  `
+  `,
     )
     .join("");
 
@@ -76,7 +81,7 @@ export function printDirectSale(sale: SerializedDirectSaleWithRelations) {
           body { font-family: system-ui, -apple-system, sans-serif; padding: 20px; color: #18181b; background-color: #ffffff; }
           .invoice-box { max-width: 650px; margin: auto; border: 1px solid #e4e4e7; padding: 30px; border-radius: 12px; }
           .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #e4e4e7; padding-bottom: 20px; margin-bottom: 20px; }
-          .logo { font-size: 22px; font-weight: 900; color: #09090b; letter-spacing: -0.5px; }
+          .logo { font-size: 22px; font-weight: 900; color: #993556; letter-spacing: -0.5px; }
           .logo-sub { font-size: 8px; color: #71717a; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; font-weight: 700; }
           .boleta-box { border: 2px solid #db2777; border-radius: 10px; padding: 12px; text-align: center; background: #fdf2f8; min-width: 180px; }
           .boleta-title { font-size: 10px; font-weight: 800; color: #db2777; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; }
@@ -101,8 +106,8 @@ export function printDirectSale(sale: SerializedDirectSaleWithRelations) {
         <div class="invoice-box">
           <div class="header">
             <div>
-              <div class="logo">LAUREN ARICA</div>
-              <div class="logo-sub">Control de Inventario y Ventas</div>
+              <div class="logo">${systemName}</div>
+              <div class="logo-sub">Control de Ventas</div>
             </div>
             <div class="boleta-box">
               <div class="boleta-title">Boleta de Venta Directa</div>

@@ -7,6 +7,14 @@ import { MovementItem } from "./MovementHistoryTable";
 import DetailSaleModal from "@/components/direct-sales/DetailSaleModal";
 import OrderDetailModal from "./OrderDetailModal";
 import Pagination from "@/components/ui/Pagination";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/Table";
 
 interface ClientPublicPortalProps {
   client: {
@@ -156,43 +164,39 @@ export default function ClientPublicPortal({
             Historial de Movimientos
           </h3>
         </div>
-        <table className="w-full text-left text-sm border-collapse">
-          <thead>
-            <tr className="bg-bg-surface/50 border-b border-border-soft text-text-tertiary font-bold uppercase text-[10px] tracking-wider select-none">
-              <th className="py-4 px-5">Fecha</th>
-              <th className="py-4 px-5">Tipo Movimiento</th>
-              <th className="hidden md:table-cell py-4 px-5">Detalle</th>
-              <th className="py-4 px-5 text-right">Monto</th>
-              <th className="py-4 px-5 text-center w-24">Acciones</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border-soft">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-left">Fecha</TableHead>
+              <TableHead className="text-left">Tipo Movimiento</TableHead>
+              <TableHead className="hidden md:table-cell text-left">Detalle</TableHead>
+              <TableHead className="text-right">Monto</TableHead>
+              <TableHead className="text-center w-24">Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {movements.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="py-8 text-center text-text-tertiary italic">
+              <TableRow>
+                <TableCell colSpan={5} className="py-8 text-center text-text-tertiary italic">
                   No hay movimientos registrados en tu cuenta
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ) : (
               movements.map((m) => {
                 const hasDetails = m.type === "VENTA_DIRECTA" || m.type === "PEDIDO_CATALOGO";
                 const isPayment = m.type === "PAGO";
                 const isNegative = isPayment;
                 const isZero = Math.abs(m.amount) < 0.01;
-                console.log(m)
 
                 return (
-                  <tr
-                    key={m.id}
-                    className="hover:bg-bg-surface/30 dark:hover:bg-zinc-900/10 transition-colors duration-150"
-                  >
-                    <td className="py-4 px-5 whitespace-nowrap text-text-secondary select-none font-medium">
+                  <TableRow key={m.id}>
+                    <TableCell className="whitespace-nowrap text-text-secondary select-none font-medium">
                       <div className="flex items-center gap-2">
                         <FiCalendar className="w-4 h-4 text-text-tertiary shrink-0" />
                         <span>{formatDate(m.date)}</span>
                       </div>
-                    </td>
-                    <td className="py-4 px-5 whitespace-nowrap select-none">
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap select-none">
                       <span
                         className={cn(
                           "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border",
@@ -201,24 +205,17 @@ export default function ClientPublicPortal({
                       >
                         {typeTranslations[m.type] || m.type}
                       </span>
-                    </td>
-                    <td className="hidden md:table-cell py-4 px-5 text-text-primary font-medium">
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell text-text-primary font-medium">
                       {m.type === "PEDIDO_CATALOGO" ? (
-                        <>
-                          {m.raw.campaign.company.name} - Campaña {m.raw.campaign.number}
-                        </>
-
+                        <>{m.raw.campaign.company.name} - Campaña {m.raw.campaign.number}</>
                       ) : (
-                        <>
-                          {m.description}
-                        </>
+                        <>{m.description}</>
                       )}
-
-
-                    </td>
-                    <td
+                    </TableCell>
+                    <TableCell
                       className={cn(
-                        "py-4 px-5 text-right font-mono font-bold whitespace-nowrap",
+                        "text-right font-mono font-bold whitespace-nowrap",
                         isZero
                           ? "text-text-tertiary"
                           : isNegative
@@ -229,8 +226,8 @@ export default function ClientPublicPortal({
                       {isZero
                         ? "S/ 0.00"
                         : `${isNegative ? "- " : "+ "}S/ ${m.amount.toFixed(2)}`}
-                    </td>
-                    <td className="py-4 px-5 text-center whitespace-nowrap">
+                    </TableCell>
+                    <TableCell className="text-center whitespace-nowrap">
                       {hasDetails ? (
                         <button
                           onClick={() => {
@@ -245,13 +242,13 @@ export default function ClientPublicPortal({
                       ) : (
                         <span className="text-text-tertiary font-mono text-xs select-none">-</span>
                       )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

@@ -20,7 +20,6 @@ import { cn } from "@/utils/cn.utils";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
 import Input from "@/components/ui/Input";
-import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import { createDirectSaleAction } from "@/lib/direct-sale";
 import { directSaleSchema } from "@/lib/direct-sale/schema";

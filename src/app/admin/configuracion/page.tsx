@@ -4,7 +4,7 @@ import { getSystemConfigAction } from "@/lib/config";
 import SystemConfig from "@/components/config";
 
 export const metadata = {
-  title: "Configuración del Sistema | Lauren Arica",
+  title: "Configuración del Sistema",
   description: "Administración general de la empresa y portal público.",
 };
 
@@ -42,5 +42,7 @@ export default async function ConfiguracionPage() {
     showCatalogsPublic: res.data.showCatalogsPublic,
   };
 
-  return <SystemConfig initialConfig={serializedConfig} permissions={permissions} />;
+  return (
+    <SystemConfig initialConfig={serializedConfig} permissions={permissions} />
+  );
 }

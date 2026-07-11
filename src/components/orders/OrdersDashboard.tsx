@@ -30,6 +30,7 @@ import { CampaignOrderStatus } from "@/generated/prisma";
 import { printCampaignReport } from "@/utils/print-campaign-report";
 import { printCampaignSlips } from "@/utils/print-campaign-slips";
 import { printCampaignProductsReport } from "@/utils/print-campaign-products-report";
+import { useSystemConfig } from "@/context/SystemConfigContext";
 
 interface SerializedCampaign {
   id: number;
@@ -110,9 +111,11 @@ export default function OrdersDashboard({
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
 
   // Estados para modal de Fecha de Pago de Campaña
-  const [isCampaignPaymentDateModalOpen, setIsCampaignPaymentDateModalOpen] = useState(false);
+  const [isCampaignPaymentDateModalOpen, setIsCampaignPaymentDateModalOpen] =
+    useState(false);
   const [campaignPaymentDateVal, setCampaignPaymentDateVal] = useState("");
-  const [isSubmittingCampaignPaymentDate, setIsSubmittingCampaignPaymentDate] = useState(false);
+  const [isSubmittingCampaignPaymentDate, setIsSubmittingCampaignPaymentDate] =
+    useState(false);
 
   const formatLocalDate = (isoString: string | null | undefined) => {
     if (!isoString) return "";
@@ -170,7 +173,10 @@ export default function OrdersDashboard({
 
     setIsSubmittingCampaignPaymentDate(true);
     try {
-      const res = await updateCampaignPaymentDateAction(selectedCampaignId, campaignPaymentDateVal || null);
+      const res = await updateCampaignPaymentDateAction(
+        selectedCampaignId,
+        campaignPaymentDateVal || null,
+      );
       if (res.success) {
         toast.success(res.message);
         setIsCampaignPaymentDateModalOpen(false);
@@ -179,7 +185,9 @@ export default function OrdersDashboard({
         toast.error(res.message);
       }
     } catch (error: any) {
-      toast.error(error.message || "Error al actualizar la fecha de pago de la campaña.");
+      toast.error(
+        error.message || "Error al actualizar la fecha de pago de la campaña.",
+      );
     } finally {
       setIsSubmittingCampaignPaymentDate(false);
     }
@@ -196,9 +204,7 @@ export default function OrdersDashboard({
 
   const isVerificationFinished =
     initialOrders.length > 0 &&
-    initialOrders.every(
-      (o) => o.status !== CampaignOrderStatus.PENDING
-    );
+    initialOrders.every((o) => o.status !== CampaignOrderStatus.PENDING);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -277,6 +283,8 @@ export default function OrdersDashboard({
       });
     }
   };
+
+  const systemConfig = useSystemConfig();
 
   return (
     <div className="space-y-6">
@@ -399,11 +407,16 @@ export default function OrdersDashboard({
                 </Button>
               </Link>
 
-              {isVerificationFinished && (
-                currentCampaign?.paymentDate ? (
+              {isVerificationFinished &&
+                (currentCampaign?.paymentDate ? (
                   <div className="flex items-center gap-1.5 px-4 py-2 border border-border-default bg-bg-surface/50 rounded-2xl text-xs font-semibold text-text-secondary select-none">
                     <FiCalendar className="w-4 h-4 text-beauty-500 shrink-0" />
-                    <span>F. Pago General: <span className="font-bold text-text-primary">{formatLocalDate(currentCampaign.paymentDate)}</span></span>
+                    <span>
+                      F. Pago:{" "}
+                      <span className="font-bold text-text-primary">
+                        {formatLocalDate(currentCampaign.paymentDate)}
+                      </span>
+                    </span>
                   </div>
                 ) : (
                   <Button
@@ -415,8 +428,7 @@ export default function OrdersDashboard({
                     <FiCalendar className="w-4 h-4 shrink-0 text-beauty-500" />
                     F. Pago
                   </Button>
-                )
-              )}
+                ))}
             </>
           )}
         </div>
@@ -487,7 +499,11 @@ export default function OrdersDashboard({
                     (c) => c.id === selectedCampaignId,
                   );
                   if (cmp) {
-                    printCampaignReport(cmp, initialOrders);
+                    printCampaignReport(
+                      cmp,
+                      initialOrders,
+                      systemConfig?.systemName ?? "Inventario",
+                    );
                   }
                 }}
                 className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface w-full md:w-auto shrink-0 justify-center"
@@ -503,7 +519,11 @@ export default function OrdersDashboard({
                     (c) => c.id === selectedCampaignId,
                   );
                   if (cmp) {
-                    printCampaignProductsReport(cmp, initialOrders);
+                    printCampaignProductsReport(
+                      cmp,
+                      initialOrders,
+                      systemConfig?.systemName ?? "Inventario",
+                    );
                   }
                 }}
                 className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface w-full md:w-auto shrink-0 justify-center"
@@ -519,7 +539,11 @@ export default function OrdersDashboard({
                     (c) => c.id === selectedCampaignId,
                   );
                   if (cmp) {
-                    printCampaignSlips(cmp, initialOrders);
+                    printCampaignSlips(
+                      cmp,
+                      initialOrders,
+                      systemConfig?.systemName ?? "Inventario",
+                    );
                   }
                 }}
                 className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface w-full md:w-auto shrink-0 justify-center"
@@ -626,11 +650,35 @@ export default function OrdersDashboard({
                             <FiEye className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => { currentCampaign && (order.status === "PACKED" || order.status === "DELIVERED") && (printCampaignSlips(currentCampaign, [order])) }}
+                            onClick={() => {
+                              currentCampaign &&
+                                (order.status === "PACKED" ||
+                                  order.status === "DELIVERED") &&
+                                printCampaignSlips(
+                                  currentCampaign,
+                                  [order],
+                                  systemConfig?.systemName ?? "Inventario",
+                                );
+                            }}
                             className={`p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20 
-                              ${!(currentCampaign && (order.status === "PACKED" || order.status === "DELIVERED")) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                              ${
+                                !(
+                                  currentCampaign &&
+                                  (order.status === "PACKED" ||
+                                    order.status === "DELIVERED")
+                                )
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "cursor-pointer"
                               }`}
-                            title={!(currentCampaign && (order.status === "PACKED" || order.status === "DELIVERED")) ? "Impresión deshabilitada para este estado" : "Imprimir Ficha Individual"}
+                            title={
+                              !(
+                                currentCampaign &&
+                                (order.status === "PACKED" ||
+                                  order.status === "DELIVERED")
+                              )
+                                ? "Impresión deshabilitada para este estado"
+                                : "Imprimir Ficha Individual"
+                            }
                           >
                             <FiScissors className="w-4 h-4 text-beauty-500" />
                           </button>
@@ -685,9 +733,15 @@ export default function OrdersDashboard({
             </div>
           }
         >
-          <Form id="campaign-payment-date-form" onSubmit={handleSaveCampaignPaymentDate} className="space-y-4 text-sm text-text-secondary select-none">
+          <Form
+            id="campaign-payment-date-form"
+            onSubmit={handleSaveCampaignPaymentDate}
+            className="space-y-4 text-sm text-text-secondary select-none"
+          >
             <p className="text-xs">
-              Establece la fecha límite general de pago para esta campaña. Los pedidos entregados heredarán esta fecha automáticamente si no se define una específica para el cliente.
+              Establece la fecha límite general de pago para esta campaña. Los
+              pedidos entregados heredarán esta fecha automáticamente si no se
+              define una específica para el cliente.
             </p>
             <FormField label="Fecha de Pago de Campaña">
               <Input

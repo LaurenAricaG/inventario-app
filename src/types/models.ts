@@ -17,6 +17,7 @@ import {
   Role,
   ProductImage,
   Permission,
+  SystemConfig,
 } from "@/generated/prisma";
 
 // ============================================================
@@ -68,4 +69,24 @@ export type ClientWithRelations = Client & {
 export type UserWithRole = User & {
   role: Role;
 };
-export type { Product, Brand, Category, GenderSegment, CampaignOrder, Client, Campaign, CampaignOrderItem, DirectSale, DirectSaleItem, Payment, ExternalDebt, Company, CatalogPdf, User, Role, ProductImage, Permission };
+export type {
+  Product,
+  Brand,
+  Category,
+  GenderSegment,
+  CampaignOrder,
+  Client,
+  Campaign,
+  CampaignOrderItem,
+  DirectSale,
+  DirectSaleItem,
+  Payment,
+  ExternalDebt,
+  Company,
+  CatalogPdf,
+  User,
+  Role,
+  ProductImage,
+  Permission,
+  SystemConfig,
+};

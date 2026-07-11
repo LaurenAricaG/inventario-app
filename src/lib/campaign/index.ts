@@ -4,6 +4,64 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "@/lib/audit";
 import { campaignSchema } from "./schema";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+/**
+ * Extrae el public_id de una URL de Cloudinary.
+ * Ejemplo: https://res.cloudinary.com/demo/image/upload/v123/inventario/catalogs/abc.pdf
+ * → inventario/catalogs/abc
+ */
+function extractCloudinaryPublicId(url: string): string | null {
+  try {
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[a-z0-9]+)?$/i);
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Elimina todos los PDFs de Cloudinary asociados a las campañas indicadas
+ * y hace soft-delete de sus registros en la BD.
+ * Se usa al desactivar campañas para liberar espacio y permitir subir
+ * nuevos PDFs si la campaña vuelve a activarse.
+ */
+async function deleteCloudinaryPdfsForCampaigns(campaignIds: number[]): Promise<void> {
+  if (campaignIds.length === 0) return;
+
+  const catalogs = await prisma.catalogPdf.findMany({
+    where: {
+      campaignId: { in: campaignIds },
+      deletedAt: null,
+    },
+    select: { id: true, pdfUrl: true },
+  });
+
+  if (catalogs.length === 0) return;
+
+  // 1. Eliminar archivos de Cloudinary en paralelo
+  await Promise.allSettled(
+    catalogs
+      .filter(({ pdfUrl }) => pdfUrl.includes("res.cloudinary.com"))
+      .map(({ pdfUrl }) => {
+        const publicId = extractCloudinaryPublicId(pdfUrl);
+        if (!publicId) return Promise.resolve();
+        return cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+      }),
+  );
+
+  // 2. Soft-delete de los registros para que se puedan volver a crear
+  await prisma.catalogPdf.updateMany({
+    where: { id: { in: catalogs.map((c) => c.id) } },
+    data: { deletedAt: new Date() },
+  });
+}
 
 export async function createCampaignAction(
   companyId: number,
@@ -73,17 +131,28 @@ export async function createCampaignAction(
         });
 
         // Si se restauró como activa, desactivamos las otras de la misma empresa
+        // y eliminamos sus PDFs de Cloudinary
         if (validIsActive) {
+          const toDeactivate = await prisma.campaign.findMany({
+            where: {
+              companyId: validCompanyId,
+              id: { not: restored.id },
+              deletedAt: null,
+              isActive: true,
+            },
+            select: { id: true },
+          });
+
           await prisma.campaign.updateMany({
             where: {
               companyId: validCompanyId,
               id: { not: restored.id },
               deletedAt: null,
             },
-            data: {
-              isActive: false,
-            },
+            data: { isActive: false },
           });
+
+          await deleteCloudinaryPdfsForCampaigns(toDeactivate.map((c) => c.id));
         }
 
         await logActivity({
@@ -109,16 +178,26 @@ export async function createCampaignAction(
     }
 
     // Si la nueva campaña es activa, desactivamos las otras de la misma empresa
+    // y eliminamos sus PDFs de Cloudinary
     if (validIsActive) {
+      const toDeactivate = await prisma.campaign.findMany({
+        where: {
+          companyId: validCompanyId,
+          deletedAt: null,
+          isActive: true,
+        },
+        select: { id: true },
+      });
+
       await prisma.campaign.updateMany({
         where: {
           companyId: validCompanyId,
           deletedAt: null,
         },
-        data: {
-          isActive: false,
-        },
+        data: { isActive: false },
       });
+
+      await deleteCloudinaryPdfsForCampaigns(toDeactivate.map((c) => c.id));
     }
 
     const campaign = await prisma.campaign.create({
@@ -244,17 +323,28 @@ export async function updateCampaignAction(
     }
 
     // Si se activa, desactivamos las otras de la misma empresa
+    // y eliminamos sus PDFs de Cloudinary
     if (validIsActive) {
+      const toDeactivate = await prisma.campaign.findMany({
+        where: {
+          companyId: validCompanyId,
+          id: { not: id },
+          deletedAt: null,
+          isActive: true,
+        },
+        select: { id: true },
+      });
+
       await prisma.campaign.updateMany({
         where: {
           companyId: validCompanyId,
           id: { not: id },
           deletedAt: null,
         },
-        data: {
-          isActive: false,
-        },
+        data: { isActive: false },
       });
+
+      await deleteCloudinaryPdfsForCampaigns(toDeactivate.map((c) => c.id));
     }
 
     const updated = await prisma.campaign.update({

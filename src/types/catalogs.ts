@@ -10,6 +10,7 @@ export type SerializedCatalogPdf = Omit<
   campaign?: {
     id: number;
     number: string;
+    isActive?: boolean;
     company: {
       id: number;
       name: string;

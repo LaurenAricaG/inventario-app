@@ -40,6 +40,7 @@ const formatLocalDate = (dateVal: any) => {
 export function printCampaignSlips(
   campaign: PrintCampaign,
   orders: PrintOrder[],
+  systemName: string,
 ) {
   if (typeof window === "undefined") return;
 
@@ -94,8 +95,8 @@ export function printCampaignSlips(
 
           return `
           <tr>
-            <td style="padding: 4px; border-bottom: 1px dashed #f4f4f5; font-weight: 500; color: #18181b;">${name}</td>
-            <td style="padding: 4px; border-bottom: 1px dashed #f4f4f5; text-align: center; font-weight: 500; color: #18181b;">${item.quantity}</td>
+            <td style="padding: 4px; border-bottom: 1px dashed #f4f4f5; font-weight: 500; color: #18181b; font-family: monospace">${name}</td>
+            <td style="padding: 4px; border-bottom: 1px dashed #f4f4f5; text-align: center; font-weight: 500; color: #18181b; font-family: monospace">${item.quantity}</td>
             <td style="padding: 4px; border-bottom: 1px dashed #f4f4f5; text-align: right; font-family: monospace; color: #52525b;">${price?.toFixed(2) || "0.00"}</td>
             <td style="padding: 4px; border-bottom: 1px dashed #f4f4f5; text-align: right; font-family: monospace; font-weight: bold; color: #18181b;">
               ${(item.quantity * (price || 0)).toFixed(2)}
@@ -110,7 +111,7 @@ export function printCampaignSlips(
         <div class="scissors-icon">✂ Recortar</div>
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
           <div>
-            <span class="logo">LAUREN ARICA</span>
+            <span class="logo">${systemName}</span>
             <div class="meta">Campaña: ${campaign.company.name} - ${campaign.number}</div>
           </div>
         </div>
@@ -120,10 +121,10 @@ export function printCampaignSlips(
         <table class="items-table">
           <thead>
             <tr>
-              <th style="text-align: left;">Producto</th>
-              <th style="text-align: center; width: 30px;">Cant.</th>
-              <th style="text-align: right; width: 45px;">P. Unit</th>
-              <th style="text-align: right; width: 50px;">Total</th>
+              <th style="text-align: left; ">Producto</th>
+              <th style="text-align: center; width: 30px; ">Cant.</th>
+              <th style="text-align: right; width: 45px; ">P. Unit</th>
+              <th style="text-align: right; width: 50px; ">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -165,7 +166,7 @@ export function printCampaignSlips(
             : ""
         }
         
-        <div class="thanks-msg">¡Gracias por tu preferencia! ❤</div>
+        <div class="thanks-msg">¡Gracias por tu preferencia!</div>
       </div>
     `;
     })
@@ -219,7 +220,7 @@ export function printCampaignSlips(
           .logo {
             font-size: 12px;
             font-weight: 850;
-            color: #be185d;
+            color: #993556;
             margin: 0;
             letter-spacing: -0.3px;
           }
@@ -232,7 +233,7 @@ export function printCampaignSlips(
             font-size: 13px;
             font-weight: 800;
             color: #18181b;
-            margin: 6px 0 10px 0;
+            margin: 6px 0 6px 0;
             padding-bottom: 4px;
             border-bottom: 1.5px solid #f4f4f5;
           }
@@ -242,12 +243,12 @@ export function printCampaignSlips(
             margin-bottom: 8px;
           }
           .items-table th {
-            font-size: 8px;
+            font-size: 10px;
             color: #71717a;
             text-transform: uppercase;
             border-bottom: 1.5px solid #f4f4f5;
             padding: 4px;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: 0.5px;
           }
           .totals-section {

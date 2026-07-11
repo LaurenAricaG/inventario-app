@@ -36,12 +36,6 @@ export default function TableProducts({
   onDelete,
   onView,
 }: TableProductsProps) {
-  // Encuentra la imagen principal del producto, o la primera disponible
-  const getProductImage = (product: ProductWithRelations) => {
-    if (!product.images || product.images.length === 0) return null;
-    const mainImg = product.images.find((img) => img.isMain);
-    return mainImg ? mainImg.url : product.images[0].url;
-  };
 
   return (
     <ErrorBoundary variant="embedded" title="Tabla de Productos">
@@ -49,7 +43,6 @@ export default function TableProducts({
         <TableHeader>
           <TableRow>
             <TableHead className="text-center w-16">N°</TableHead>
-            <TableHead className="text-left w-20">Imagen</TableHead>
             <TableHead className="text-left w-28">Código</TableHead>
             <TableHead className="text-left">Producto</TableHead>
             <TableHead className="text-left">Marca / Categoría</TableHead>
@@ -72,32 +65,12 @@ export default function TableProducts({
             </TableRow>
           ) : (
             products.map((product, index) => {
-              const mainImageUrl = getProductImage(product);
 
               return (
                 <TableRow key={product.id}>
                   {/* Número */}
                   <TableCell className="font-mono text-xs text-text-tertiary text-center">
                     {(currentPage - 1) * itemsPerPage + index + 1}
-                  </TableCell>
-
-                  {/* Imagen */}
-                  <TableCell className="text-left py-2.5">
-                    <div className="w-10 h-10 rounded-xl bg-bg-surface border border-border-default/60 flex items-center justify-center overflow-hidden shadow-xs shrink-0 select-none p-1">
-                      {mainImageUrl ? (
-                        <img
-                          src={mainImageUrl}
-                          alt={product.name}
-                          className="max-h-full max-w-full object-contain"
-                        />
-                      ) : (
-                        <img
-                          src="/no-image.svg"
-                          alt="Sin imagen"
-                          className="max-h-full max-w-full object-contain opacity-45 dark:invert"
-                        />
-                      )}
-                    </div>
                   </TableCell>
 
                   {/* Código */}
@@ -107,16 +80,9 @@ export default function TableProducts({
 
                   {/* Info Principal del Producto */}
                   <TableCell className="text-left">
-                    <div className="space-y-0.5">
-                      <p className="font-semibold text-text-primary text-sm leading-snug">
-                        {product.name}
-                      </p>
-                      {product.description && (
-                        <p className="text-[11px] text-text-secondary line-clamp-1 max-w-xs md:max-w-md">
-                          {product.description}
-                        </p>
-                      )}
-                    </div>
+                    <p className="font-semibold text-text-primary text-sm leading-snug">
+                      {product.name}
+                    </p>
                   </TableCell>
 
                   {/* Atributos (Marca, Categoría, Género) */}

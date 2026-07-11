@@ -27,17 +27,28 @@ const groupStatusTranslations: Record<string, string> = {
 };
 
 const groupStatusBadgeStyles: Record<string, string> = {
-  PENDING: "background-color: #fefbeb; color: #b45309; border: 1px solid #fde68a;",
-  RECEIVED: "background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0;",
-  MISSING: "background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca;",
-  SUBSTITUTED: "background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd;",
-  INCOMPLETE: "background-color: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8;",
+  PENDING:
+    "background-color: #fefbeb; color: #b45309; border: 1px solid #fde68a;",
+  RECEIVED:
+    "background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0;",
+  MISSING:
+    "background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca;",
+  SUBSTITUTED:
+    "background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd;",
+  INCOMPLETE:
+    "background-color: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8;",
 };
 
-export function printCampaignProductsReport(campaign: PrintCampaign, orders: PrintOrder[]) {
+export function printCampaignProductsReport(
+  campaign: PrintCampaign,
+  orders: PrintOrder[],
+  systemName: string,
+) {
   if (typeof window === "undefined") return;
 
-  let iframe = document.getElementById("print-campaign-products-iframe") as HTMLIFrameElement;
+  let iframe = document.getElementById(
+    "print-campaign-products-iframe",
+  ) as HTMLIFrameElement;
   if (!iframe) {
     iframe = document.createElement("iframe");
     iframe.id = "print-campaign-products-iframe";
@@ -53,17 +64,20 @@ export function printCampaignProductsReport(campaign: PrintCampaign, orders: Pri
   if (!printDocument) return;
 
   // Consolidar productos
-  const groupedProductsMap = new Map<string, {
-    productName: string;
-    productCode: string | null;
-    brandName: string;
-    catalogPrice: number;
-    totalQuantity: number;
-    items: {
-      arrivalStatus: string;
-      orderStatus: string;
-    }[];
-  }>();
+  const groupedProductsMap = new Map<
+    string,
+    {
+      productName: string;
+      productCode: string | null;
+      brandName: string;
+      catalogPrice: number;
+      totalQuantity: number;
+      items: {
+        arrivalStatus: string;
+        orderStatus: string;
+      }[];
+    }
+  >();
 
   orders.forEach((order) => {
     order.items.forEach((item) => {
@@ -88,7 +102,7 @@ export function printCampaignProductsReport(campaign: PrintCampaign, orders: Pri
   });
 
   const groupedProducts = Array.from(groupedProductsMap.values()).sort((a, b) =>
-    a.productName.localeCompare(b.productName)
+    a.productName.localeCompare(b.productName),
   );
 
   const getGroupStatus = (groupItems: { arrivalStatus: string }[]) => {
@@ -104,15 +118,18 @@ export function printCampaignProductsReport(campaign: PrintCampaign, orders: Pri
   let totalUnits = 0;
   let totalConsolidatedValue = 0;
 
-  const productRows = groupedProducts.map((p) => {
-    const status = getGroupStatus(p.items);
-    const statusText = groupStatusTranslations[status] || status;
-    const badgeStyle = groupStatusBadgeStyles[status] || "background-color: #f4f4f5; color: #52525b; border: 1px solid #e4e4e7;";
+  const productRows = groupedProducts
+    .map((p) => {
+      const status = getGroupStatus(p.items);
+      const statusText = groupStatusTranslations[status] || status;
+      const badgeStyle =
+        groupStatusBadgeStyles[status] ||
+        "background-color: #f4f4f5; color: #52525b; border: 1px solid #e4e4e7;";
 
-    totalUnits += p.totalQuantity;
-    totalConsolidatedValue += p.totalQuantity * p.catalogPrice;
+      totalUnits += p.totalQuantity;
+      totalConsolidatedValue += p.totalQuantity * p.catalogPrice;
 
-    return `
+      return `
       <tr>
         <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; font-family: monospace; font-size: 11px; color: #18181b;">${p.productCode || "-"}</td>
         <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; color: #52525b; font-size: 11px;">${p.brandName}</td>
@@ -129,7 +146,8 @@ export function printCampaignProductsReport(campaign: PrintCampaign, orders: Pri
         </td>
       </tr>
     `;
-  }).join("");
+    })
+    .join("");
 
   printDocument.open();
   printDocument.write(`
@@ -165,17 +183,16 @@ export function printCampaignProductsReport(campaign: PrintCampaign, orders: Pri
             margin: 0; 
             font-size: 24px; 
             font-weight: 800; 
-            color: #be185d;
+            color: #993556;
             letter-spacing: -0.5px;
           }
           h2 { 
-            margin: 0; 
-            font-size: 11px; 
-            color: #9d174d; 
-            margin-top: 6px; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            font-weight: 700;
+           font-size: 8px;
+           color: #71717a;
+           text-transform: uppercase;
+           letter-spacing: 2px;
+           margin-top: 4px;
+           font-weight: 700; 
           }
           .header-meta {
             text-align: right; 
@@ -215,7 +232,7 @@ export function printCampaignProductsReport(campaign: PrintCampaign, orders: Pri
         <div class="summary-container">
           <div class="summary-header">
             <div>
-              <h1>LAUREN ARICA</h1>
+              <h1>${systemName}</h1>
               <h2>Reporte de Productos Consolidado</h2>
             </div>
             <div class="header-meta">
@@ -230,7 +247,7 @@ export function printCampaignProductsReport(campaign: PrintCampaign, orders: Pri
           <div style="background: #ffffff; border: 1px solid #e4e4e7; border-radius: 14px; overflow: hidden;">
             <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
               <thead>
-                <tr style="text-align: left; color: #71717a; border-bottom: 2px solid #be185d; background: #fdf2f8; font-size: 10px;">
+                <tr style="text-align: left; color: #71717a; border-bottom: 1px solid #be185d; background: #fdf2f8; font-size: 10px;">
                   <th style="padding: 10px 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Código</th>
                   <th style="padding: 10px 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Marca</th>
                   <th style="padding: 10px 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Producto</th>

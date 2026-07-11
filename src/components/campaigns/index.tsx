@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { FiPlus, FiCalendar, FiFileText } from "react-icons/fi";
+import { FiPlus, FiCalendar, FiFileText, FiCheckCircle, FiCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -28,6 +28,7 @@ interface CampaignsProps {
   currentPage: number;
   itemsPerPage: number;
   search: string;
+  onlyActive: boolean;
   permissions: string[];
 
   // Catálogos PDF
@@ -59,6 +60,7 @@ export default function Campaigns({
   currentPage,
   itemsPerPage,
   search,
+  onlyActive,
   permissions,
 
   // Catálogos PDF
@@ -72,6 +74,7 @@ export default function Campaigns({
   const isCampaignsTab = tab === "campanias";
 
   // Permisos
+  const canReadCampaigns = permissions.includes("campaigns:read");
   const canCreateCampaign = permissions.includes("campaigns:create");
   const canUpdateCampaign = permissions.includes("campaigns:update");
   const canDeleteCampaign = permissions.includes("campaigns:delete");
@@ -161,8 +164,15 @@ export default function Campaigns({
   };
 
   const handleTabChange = (newTab: string) => {
-    // Al cambiar de pestaña, limpiamos búsquedas y paginación para iniciar limpiamente
     router.push(`?tab=${newTab}`);
+  };
+
+  const handleToggleOnlyActive = () => {
+    const params = new URLSearchParams();
+    params.set("tab", tab);
+    params.set("onlyActive", onlyActive ? "false" : "true");
+    if (search) params.set("search", search);
+    router.push(`?${params.toString()}`);
   };
 
   return (
@@ -182,32 +192,32 @@ export default function Campaigns({
         {/* Botón de creación condicional según la pestaña activa */}
         {isCampaignsTab
           ? overallCount > 0 &&
-            canCreateCampaign && (
-              <Button
-                variant="primary"
-                onClick={() => handleOpenForm(null)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-              >
-                <FiPlus className="w-4 h-4" />
-                Nueva campaña
-              </Button>
-            )
+          canCreateCampaign && (
+            <Button
+              variant="primary"
+              onClick={() => handleOpenForm(null)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Nueva campaña
+            </Button>
+          )
           : overallCount > 0 &&
-            canUploadCatalog && (
-              <Button
-                variant="primary"
-                onClick={() => handleOpenCatalogForm(null)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-              >
-                <FiPlus className="w-4 h-4" />
-                Subir catálogo PDF
-              </Button>
-            )}
+          canUploadCatalog && (
+            <Button
+              variant="primary"
+              onClick={() => handleOpenCatalogForm(null)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Subir catálogo
+            </Button>
+          )}
       </div>
 
       {/* Selector de Pestañas (Tabs) Premium Segmentadas */}
       <div className="flex items-center p-1 rounded-xl bg-bg-surface border border-border-default/50 self-start select-none w-full sm:w-auto gap-1">
-        {permissions.includes("campaigns:read") && (
+        {canReadCampaigns && (
           <button
             type="button"
             onClick={() => handleTabChange("campanias")}
@@ -227,7 +237,7 @@ export default function Campaigns({
             <span>Campañas</span>
           </button>
         )}
-        {permissions.includes("catalogs:read") && (
+        {canReadCatalog && (
           <button
             type="button"
             onClick={() => handleTabChange("catalogos")}
@@ -272,25 +282,25 @@ export default function Campaigns({
           </p>
           {isCampaignsTab
             ? canCreateCampaign && (
-                <Button
-                  variant="primary"
-                  onClick={() => handleOpenForm(null)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
-                >
-                  <FiPlus className="w-4 h-4" />
-                  Nueva campaña
-                </Button>
-              )
+              <Button
+                variant="primary"
+                onClick={() => handleOpenForm(null)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
+              >
+                <FiPlus className="w-4 h-4" />
+                Nueva campaña
+              </Button>
+            )
             : canUploadCatalog && (
-                <Button
-                  variant="primary"
-                  onClick={() => handleOpenCatalogForm(null)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
-                >
-                  <FiPlus className="w-4 h-4" />
-                  Subir catálogo PDF
-                </Button>
-              )}
+              <Button
+                variant="primary"
+                onClick={() => handleOpenCatalogForm(null)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
+              >
+                <FiPlus className="w-4 h-4" />
+                Subir catálogo
+              </Button>
+            )}
         </div>
       ) : (
         /* Tabla de Registros */
@@ -306,6 +316,25 @@ export default function Campaigns({
                 }
               />
             </div>
+            {/* Toggle solo campaña activa (solo en pestaña de catálogos) */}
+            {!isCampaignsTab && (
+              <button
+                type="button"
+                onClick={handleToggleOnlyActive}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-3 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer select-none shrink-0",
+                  onlyActive
+                    ? "bg-beauty-400/10 border-beauty-400/30 text-beauty-600 dark:text-beauty-400"
+                    : "bg-bg-surface border-border-default text-text-secondary hover:text-text-primary",
+                )}
+                title={onlyActive ? "Mostrando solo campaña activa." : "Mostrando todos los catálogos."}
+              >
+                {onlyActive
+                  ? <FiCheckCircle className="w-3.5 h-3.5" />
+                  : <FiCircle className="w-3.5 h-3.5" />}
+                Campaña activa
+              </button>
+            )}
             <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
               Total: {overallCount} {isCampaignsTab ? "campañas" : "catálogos"}{" "}
               registrados

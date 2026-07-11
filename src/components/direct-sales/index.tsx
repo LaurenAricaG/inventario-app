@@ -83,18 +83,18 @@ export default function DirectSales({
       {/* Module Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2">
+          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
             Ventas Directas
           </h2>
           <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Listado e historial de salidas de inventario por ventas directas.
+            Listado de ventas directas.
           </p>
         </div>
 
         {canCreate && (
           <Link
             href="/admin/ventas/nueva"
-            className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-beauty-400 hover:bg-beauty-600 text-white shadow-sm shadow-beauty-400/10 focus-visible:ring-beauty-400 gap-2"
+            className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-beauty-400 hover:bg-beauty-600 text-white shadow-sm shadow-beauty-400/10 focus-visible:ring-beauty-400 gap-2 self-start sm:self-auto"
           >
             <FiPlus className="w-4 h-4" />
             Nueva Venta

@@ -45,4 +45,6 @@ todos los botones de accion como editar eliminar hacerlo como componente para qu
 dentro de los modulos que tienen cards ver que en todo momento no se rompa la UI
 
 - Agregar un breadcrumb en la ruta de admin
-- 
+-
+
+ver que los modales de mostra el detalle de un pedido, el detalle de una venta, el titulo de los pdf tenga el nombre de la tabla congi-name porque por ahora estan estaticos

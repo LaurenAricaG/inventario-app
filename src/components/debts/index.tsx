@@ -81,14 +81,16 @@ export default function Debts({
             Control de Deudas Adicionales
           </h2>
           <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Registro de cargos externos y saldos pendientes iniciales de clientes
+            Registro de cargos externos y saldos pendientes iniciales de
+            clientes
           </p>
         </div>
 
         {canCreateDebt && (
           <Button
+            variant="primary"
             onClick={() => setIsOpenCreateModal(true)}
-            className="flex items-center justify-center gap-2 self-start sm:self-auto px-5 py-2.5 rounded-xl bg-beauty-400 hover:bg-beauty-500 text-white font-bold transition-all shadow-md shadow-beauty-400/10 hover:scale-[1.02] active:scale-[0.98] border border-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
           >
             <FiPlus className="w-4 h-4" />
             <span>Registrar Deuda</span>
@@ -112,7 +114,9 @@ export default function Debts({
         {initialDebts.length === 0 ? (
           <div className="p-12 text-center select-none bg-bg-card">
             <FiAlertTriangle className="w-10 h-10 text-text-tertiary mx-auto mb-3" />
-            <h3 className="text-sm font-bold text-text-primary">No se encontraron deudas</h3>
+            <h3 className="text-sm font-bold text-text-primary">
+              No se encontraron deudas
+            </h3>
             <p className="text-xs text-text-secondary mt-1 max-w-sm mx-auto">
               Intenta cambiar los términos de búsqueda o filtros aplicados.
             </p>

@@ -107,7 +107,7 @@ export default function SystemConfig({
       if (logoUrlInput === "pending-local-file" && localFile) {
         const formData = new FormData();
         formData.append("file", localFile);
-        formData.append("type", "company-logo");
+        formData.append("type", "system-logo");
 
         const uploadResponse = await fetch("/api/upload", {
           method: "POST",
