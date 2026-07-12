@@ -2,6 +2,7 @@
 
 import { FiEye, FiTrash2, FiCalendar, FiArrowDownLeft, FiArrowUpRight, FiPlus } from "react-icons/fi";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -199,46 +200,38 @@ export default function MovementHistoryTable({
                     <div className="flex items-center justify-center gap-2">
                       {/* Ver detalles para Ventas o Pedidos */}
                       {movement.type === "VENTA_DIRECTA" && (
-                        <button
-                          type="button"
+                        <ButtonIcon
                           onClick={() => onViewDirectSale(movement.raw)}
-                          className="p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
+                          variant="beauty"
+                          icon={FiEye}
                           title="Ver boleta de venta"
-                        >
-                          <FiEye className="w-3.5 h-3.5" />
-                        </button>
+                        />
                       )}
                       {movement.type === "PEDIDO_CATALOGO" && (
-                        <button
-                          type="button"
+                        <ButtonIcon
                           onClick={() => onViewCampaignOrder(movement.raw)}
-                          className="p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
+                          variant="beauty"
+                          icon={FiEye}
                           title="Ver detalles del pedido"
-                        >
-                          <FiEye className="w-3.5 h-3.5" />
-                        </button>
+                        />
                       )}
 
                       {/* Eliminar pagos o deudas externas */}
                       {movement.type === "PAGO" && canDeletePayment && (
-                        <button
-                          type="button"
+                        <ButtonIcon
                           onClick={() => onDeletePayment(movement.originalId)}
-                          className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-text/20"
+                          variant="danger"
+                          icon={FiTrash2}
                           title="Anular Pago"
-                        >
-                          <FiTrash2 className="w-3.5 h-3.5" />
-                        </button>
+                        />
                       )}
                       {movement.type === "DEUDA_EXTERNA" && canDeleteDebt && (
-                        <button
-                          type="button"
+                        <ButtonIcon
                           onClick={() => onDeleteExternalDebt(movement.originalId)}
-                          className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-text"
+                          variant="danger"
+                          icon={FiTrash2}
                           title="Anular Deuda Externa"
-                        >
-                          <FiTrash2 className="w-3.5 h-3.5" />
-                        </button>
+                        />
                       )}
                     </div>
                   </TableCell>

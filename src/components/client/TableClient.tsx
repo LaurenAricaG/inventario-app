@@ -1,10 +1,10 @@
 "use client";
 
 import { FiEdit2, FiTrash2, FiPhone, FiMapPin, FiExternalLink } from "react-icons/fi";
-import Link from "next/link";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import CopyButton from "@/components/ui/CopyButton";
 import RegenerateTokenButton from "@/components/ui/RegenerateTokenButton";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -133,14 +133,13 @@ export default function TableClient({
                           clientName={client.name}
                         />
                       )}
-                      <Link
+                      <ButtonIcon
                         href={`/c/${client.shareToken}`}
                         target="_blank"
-                        className="p-2 rounded-xl border border-border-default/60 bg-bg-card hover:bg-beauty-400/10 text-text-secondary hover:text-beauty-500 hover:border-beauty-400/20 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400/20"
+                        variant="beauty"
+                        icon={FiExternalLink}
                         title="Ver estado de cuenta de cliente"
-                      >
-                        <FiExternalLink className="w-3.5 h-3.5" />
-                      </Link>
+                      />
                     </div>
                   </TableCell>
 
@@ -148,22 +147,20 @@ export default function TableClient({
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       {canUpdate && (
-                        <button
+                        <ButtonIcon
                           onClick={() => onEdit(client)}
-                          className="p-2 rounded-xl bg-warning-bg/40 border border-warning-text/15 text-warning-text hover:bg-warning-bg/80 hover:border-warning-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warning-text/20"
+                          variant="warning"
+                          icon={FiEdit2}
                           title="Editar Cliente"
-                        >
-                          <FiEdit2 className="w-3.5 h-3.5" />
-                        </button>
+                        />
                       )}
                       {canDelete && (
-                        <button
+                        <ButtonIcon
                           onClick={() => onDelete(client)}
-                          className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-text/20"
+                          variant="danger"
+                          icon={FiTrash2}
                           title="Eliminar Cliente"
-                        >
-                          <FiTrash2 className="w-3.5 h-3.5" />
-                        </button>
+                        />
                       )}
                     </div>
                   </TableCell>

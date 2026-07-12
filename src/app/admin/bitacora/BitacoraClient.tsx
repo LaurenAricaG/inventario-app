@@ -17,7 +17,7 @@ import Pagination from "@/components/ui/Pagination";
 import SearchInput from "@/components/ui/SearchInput";
 import Select from "@/components/ui/Select";
 import Modal from "@/components/ui/Modal";
-import Button from "@/components/ui/Button";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 
 interface SerializedUser {
@@ -290,13 +290,12 @@ export default function BitacoraClient({
                         {/* Acción (CREATE / UPDATE / DELETE) con badges de color */}
                         <TableCell className="text-center">
                           <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border select-none ${
-                              log.action === "CREATE"
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border select-none ${log.action === "CREATE"
                                 ? "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/30"
                                 : log.action === "UPDATE"
                                   ? "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900/30"
                                   : "bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-900/30"
-                            }`}
+                              }`}
                           >
                             {log.action}
                           </span>
@@ -317,13 +316,12 @@ export default function BitacoraClient({
                         {/* Acciones (Ver detalles JSON) */}
                         <TableCell className="text-center">
                           <div className="flex justify-center">
-                            <button
+                            <ButtonIcon
                               onClick={() => handleOpenDetails(log)}
-                              className="p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
+                              variant="beauty"
+                              icon={FiEye}
                               title="Ver Detalles del Registro"
-                            >
-                              <FiEye className="w-4 h-4" />
-                            </button>
+                            />
                           </div>
                         </TableCell>
                       </TableRow>
@@ -384,13 +382,12 @@ export default function BitacoraClient({
                 <div className="text-text-tertiary">Acción:</div>
                 <div className="text-left">
                   <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${
-                      selectedLog.action === "CREATE"
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${selectedLog.action === "CREATE"
                         ? "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/30"
                         : selectedLog.action === "UPDATE"
                           ? "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900/30"
                           : "bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-900/30"
-                    }`}
+                      }`}
                   >
                     {selectedLog.action}
                   </span>
@@ -448,7 +445,7 @@ export default function BitacoraClient({
                   )}
               </div>
               {selectedLog.details &&
-              Object.keys(selectedLog.details).length > 0 ? (
+                Object.keys(selectedLog.details).length > 0 ? (
                 (() => {
                   const antesVal =
                     selectedLog.details.antes || selectedLog.details.before;

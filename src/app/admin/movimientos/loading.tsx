@@ -42,50 +42,49 @@ export default function MovimientosLoading() {
           <Skeleton className="h-4 w-32 md:ml-auto" />
         </div>
 
-        {/* Skeleton de la tabla de movimientos (6 columnas) */}
+        {/* Skeleton de la tabla de movimientos (8 columnas alineadas a TableMovements) */}
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-left w-[200px]">Cliente</TableHead>
-              <TableHead className="text-right">Compras Catálogo</TableHead>
-              <TableHead className="text-right">Ventas Directas</TableHead>
-              <TableHead className="text-right">Deudas Adicionales</TableHead>
-              <TableHead className="text-right">Abonos / Pagos</TableHead>
-              <TableHead className="text-right w-[150px]">Saldo Pendiente</TableHead>
-              <TableHead className="text-center w-[80px]">Detalle</TableHead>
+              <TableHead className="text-center w-16">N°</TableHead>
+              <TableHead>Cliente</TableHead>
+              <TableHead className="text-right">Compras Totales</TableHead>
+              <TableHead className="text-right">Deudas Ext.</TableHead>
+              <TableHead className="text-right">Total Pagado</TableHead>
+              <TableHead className="text-right">Saldo Pendiente</TableHead>
+              <TableHead className="text-center w-32">Estado</TableHead>
+              <TableHead className="text-center w-20">Ficha</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {skeletonRows.map((_, index) => (
               <TableRow key={index}>
+                {/* N° Correlativo */}
+                <TableCell className="font-mono text-xs text-center">
+                  <Skeleton className="h-4 w-6 mx-auto" />
+                </TableCell>
+
                 {/* Cliente */}
-                <TableCell className="text-left">
+                <TableCell>
                   <Skeleton className="h-4 w-36 font-bold" />
                   <Skeleton className="h-3 w-20 mt-1" />
                 </TableCell>
 
-                {/* Compras Catálogo */}
+                {/* Compras Totales */}
                 <TableCell className="text-right">
                   <div className="flex justify-end">
                     <Skeleton className="h-4 w-16" />
                   </div>
                 </TableCell>
 
-                {/* Ventas Directas */}
+                {/* Deudas Ext. */}
                 <TableCell className="text-right">
                   <div className="flex justify-end">
                     <Skeleton className="h-4 w-16" />
                   </div>
                 </TableCell>
 
-                {/* Deudas Adicionales */}
-                <TableCell className="text-right">
-                  <div className="flex justify-end">
-                    <Skeleton className="h-4 w-16" />
-                  </div>
-                </TableCell>
-
-                {/* Abonos / Pagos */}
+                {/* Total Pagado */}
                 <TableCell className="text-right">
                   <div className="flex justify-end">
                     <Skeleton className="h-4 w-16" />
@@ -99,7 +98,14 @@ export default function MovimientosLoading() {
                   </div>
                 </TableCell>
 
-                {/* Detalle */}
+                {/* Estado */}
+                <TableCell className="text-center">
+                  <div className="flex justify-center">
+                    <Skeleton className="h-5 w-24 rounded-full" />
+                  </div>
+                </TableCell>
+
+                {/* Ficha */}
                 <TableCell className="text-center">
                   <div className="flex justify-center">
                     <Skeleton className="w-8 h-8 rounded-xl" />

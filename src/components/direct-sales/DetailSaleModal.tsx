@@ -201,7 +201,7 @@ export default function DetailSaleModal({
                 {systemConfig?.systemName || "Inventario"}
               </h3>
               <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">
-                Producto de inventario
+                CONTROL DE VENTAS
               </p>
             </div>
           </div>

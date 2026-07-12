@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { FiEye } from "react-icons/fi";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -28,23 +28,6 @@ interface TableMovementsProps {
   itemsPerPage: number;
 }
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-}
-
-const avatarColors = [
-  "bg-beauty-100 text-beauty-800 dark:bg-beauty-900/60 dark:text-beauty-200",
-  "bg-info-bg text-info-text dark:bg-info-bg/20 dark:text-info-text",
-  "bg-success-bg text-success-text dark:bg-success-bg/20 dark:text-success-text",
-  "bg-warning-bg text-warning-text dark:bg-warning-bg/20 dark:text-warning-text",
-  "bg-danger-bg text-danger-text dark:bg-danger-bg/20 dark:text-danger-text",
-];
-
 export default function TableMovements({
   clients,
   currentPage,
@@ -67,8 +50,6 @@ export default function TableMovements({
         </TableHeader>
         <TableBody>
           {clients.map((client, index) => {
-            const initials = getInitials(client.name);
-            const colorClass = avatarColors[index % avatarColors.length];
             const hasDebt = client.balance > 0.01;
 
             return (
@@ -80,22 +61,15 @@ export default function TableMovements({
 
                 {/* Cliente Avatar y Nombre */}
                 <TableCell>
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 shadow-xs ${colorClass}`}
-                    >
-                      {initials}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-text-primary truncate leading-snug">
-                        {client.name}
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-text-primary truncate leading-snug">
+                      {client.name}
+                    </p>
+                    {client.phone && (
+                      <p className="text-[11px] text-text-tertiary font-mono mt-0.5">
+                        {client.phone}
                       </p>
-                      {client.phone && (
-                        <p className="text-[11px] text-text-tertiary font-mono mt-0.5">
-                          {client.phone}
-                        </p>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </TableCell>
 
@@ -147,13 +121,12 @@ export default function TableMovements({
                 {/* Enlace Ficha Detalle */}
                 <TableCell className="text-center">
                   <div className="flex justify-center">
-                    <Link
+                    <ButtonIcon
                       href={`/admin/movimientos/${client.id}`}
-                      className="p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
+                      variant="beauty"
+                      icon={FiEye}
                       title="Ver movimientos y saldos"
-                    >
-                      <FiEye className="w-4 h-4" />
-                    </Link>
+                    />
                   </div>
                 </TableCell>
               </TableRow>

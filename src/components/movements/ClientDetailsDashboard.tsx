@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/utils/cn.utils";
 import {
@@ -13,6 +12,7 @@ import {
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import Button from "@/components/ui/Button";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import DetailSaleModal from "@/components/direct-sales/DetailSaleModal";
 import OrderDetailModal from "./OrderDetailModal";
@@ -117,13 +117,12 @@ export default function ClientDetailsDashboard({
     <div className="space-y-6">
       {/* Botón de retorno y título */}
       <div className="flex items-center gap-3">
-        <Link
+        <ButtonIcon
           href="/admin/movimientos"
-          className="p-2 rounded-xl border border-border-default/60 bg-bg-card hover:bg-beauty-400/10 text-text-secondary hover:text-beauty-500 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
+          variant="secondary"
+          icon={FiArrowLeft}
           title="Regresar a saldos de clientes"
-        >
-          <FiArrowLeft className="w-4 h-4" />
-        </Link>
+        />
         <div>
           <h2 className="text-xl font-bold tracking-tight text-text-primary">
             Ficha de Cuenta del Cliente
@@ -168,7 +167,7 @@ export default function ClientDetailsDashboard({
               Compartir Estado:
             </span>
             <div className="flex items-center gap-2">
-              <a
+              <ButtonIcon
                 href={`https://api.whatsapp.com/send?${cleanPhone
                   ? `phone=${cleanPhone.startsWith("51") ? cleanPhone : "51" + cleanPhone}&`
                   : ""
@@ -176,20 +175,18 @@ export default function ClientDetailsDashboard({
                     `Hola ${client.name}, te comparto el enlace para que puedas ver el estado de tu cuenta de pedidos y pagos: ${origin}/c/${client.shareToken}`,
                   )}`}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-xl border border-border-default/60 bg-bg-card hover:bg-success-bg/20 text-success-text hover:text-success-text hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-success-text"
+                variant="success"
+                icon={FaWhatsapp}
+                iconClassName="text-green-600 dark:text-green-500"
                 title="Compartir por WhatsApp"
-              >
-                <FaWhatsapp className="w-4 h-4 text-green-600 dark:text-green-500" />
-              </a>
-              <Link
+              />
+              <ButtonIcon
                 href={`/c/${client.shareToken}`}
                 target="_blank"
-                className="p-2 rounded-xl border border-border-default/60 bg-bg-card hover:bg-beauty-400/10 text-text-secondary hover:text-beauty-500 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
+                variant="beauty"
+                icon={FiExternalLink}
                 title="Abrir enlace de estado de cuenta"
-              >
-                <FiExternalLink className="w-3.5 h-3.5" />
-              </Link>
+              />
             </div>
           </div>
         </div>

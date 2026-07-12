@@ -2,6 +2,7 @@
 
 import { FiEdit2, FiTrash2, FiFileText, FiExternalLink } from "react-icons/fi";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -11,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { SerializedCatalogPdf } from "@/types/catalogs";
+import Link from "next/link";
 
 interface TableCatalogPdfsProps {
   catalogs: SerializedCatalogPdf[];
@@ -99,7 +101,8 @@ export default function TableCatalogPdfs({
                   </TableCell>
                   <TableCell className="text-center">
                     {catalog.pdfUrl ? (
-                      <a
+
+                      <Link
                         href={catalog.pdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -107,8 +110,7 @@ export default function TableCatalogPdfs({
                       >
                         <FiFileText className="w-3.5 h-3.5" />
                         <span>PDF</span>
-                        <FiExternalLink className="w-3 h-3" />
-                      </a>
+                      </Link>
                     ) : (
                       <span className="text-xs text-text-tertiary">Sin archivo</span>
                     )}
@@ -117,24 +119,20 @@ export default function TableCatalogPdfs({
                     <TableCell className="text-center">
                       <div className="flex items-center justify-center gap-2">
                         {canUpdate && (
-                          <button
-                            type="button"
+                          <ButtonIcon
                             onClick={() => onEdit(catalog)}
-                            className="p-2 rounded-xl bg-warning-bg/40 border border-warning-text/15 text-warning-text hover:bg-warning-bg/80 hover:border-warning-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warning-text/20"
+                            variant="warning"
+                            icon={FiEdit2}
                             title="Editar catálogo"
-                          >
-                            <FiEdit2 className="w-3.5 h-3.5" />
-                          </button>
+                          />
                         )}
                         {canDelete && (
-                          <button
-                            type="button"
+                          <ButtonIcon
                             onClick={() => onDelete(catalog)}
-                            className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-text/20"
+                            variant="danger"
+                            icon={FiTrash2}
                             title="Eliminar catálogo"
-                          >
-                            <FiTrash2 className="w-3.5 h-3.5" />
-                          </button>
+                          />
                         )}
                       </div>
                     </TableCell>

@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import Link from "next/navigation"; // Wait, we can keep the standard Link for client name, or Next Link which is already imported. Ah, actually standard next Link is imported from next/link (which was at line 3: import Link from "next/link";)
 import { FiCalendar, FiTrash2 } from "react-icons/fi";
 import { PaymentMethod } from "@/generated/prisma";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -12,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { cn } from "@/utils/cn.utils";
+import LinkComponent from "next/link";
 
 interface SerializedPayment {
   id: number;
@@ -80,16 +82,10 @@ export default function TablePayments({
           {payments.map((payment) => (
             <TableRow key={payment.id} className="hover:bg-bg-surface/30">
               {/* Cliente */}
-              <TableCell className="text-left font-bold text-text-primary">
-                <Link
-                  href={`/admin/movimientos/${payment.clientId}`}
-                  className="hover:text-beauty-500 hover:underline transition-all"
-                  title="Ver cuenta de movimientos del cliente"
-                >
-                  {payment.client.name}
-                </Link>
-                <span className="text-[10px] text-text-tertiary font-semibold block mt-0.5">
-                  ID Cliente: {payment.clientId}
+              <TableCell className="text-left font-semibold text-text-primary">
+                {payment.client.name}
+                <span className="text-[10px] text-text-tertiary font-medium block mt-0.5">
+                  ID: {payment.clientId}
                 </span>
               </TableCell>
 
@@ -133,14 +129,12 @@ export default function TablePayments({
               {canDelete && (
                 <TableCell className="text-center">
                   <div className="flex justify-center">
-                    <button
-                      type="button"
+                    <ButtonIcon
                       onClick={() => onDelete(payment.id)}
-                      className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-text"
+                      variant="danger"
+                      icon={FiTrash2}
                       title="Anular Pago"
-                    >
-                      <FiTrash2 className="w-3.5 h-3.5" />
-                    </button>
+                    />
                   </div>
                 </TableCell>
               )}

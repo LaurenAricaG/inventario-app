@@ -139,16 +139,15 @@ export function printCampaignSlips(
               <span style="font-family: monospace;">S/ ${subtotal.toFixed(2)}</span>
             </div>
 
-            ${
-              order.discount > 0
-                ? `
+            ${order.discount > 0
+          ? `
               <div class="total-row" style="color: #ef4444;">
                 <span>Descuento:</span>
                 <span style="font-family: monospace;">-S/ ${order.discount.toFixed(2)}</span>
               </div>
             `
-                : ""
-            }
+          : ""
+        }
             <div class="total-row" style="font-weight: 800; color: #be185d; font-size: 11px; margin-top: 2px; border-top: 1px solid #fbcfe8; padding-top: 2px;">
               <span>Total Neto:</span>
               <span style="font-family: monospace;">S/ ${total.toFixed(2)}</span>
@@ -156,14 +155,22 @@ export function printCampaignSlips(
           </div>
         </div>
         
-        ${
-          order.paymentDate
-            ? `
+        ${order.notes
+          ? `
+          <div class="slip-notes" style="margin-top: 8px; font-size: 8px; color: #4b5563; border-left: 2px solid #be185d; padding-left: 6px; font-style: italic; margin-bottom: 4px; text-align: left;">
+            <strong>Nota:</strong> ${order.notes}
+          </div>
+        `
+          : ""
+        }
+        
+        ${order.paymentDate
+          ? `
           <div class="payment-date-info">
             Fecha límite de pago: <strong>${formatLocalDate(order.paymentDate)}</strong>
           </div>
         `
-            : ""
+          : ""
         }
         
         <div class="thanks-msg">¡Gracias por tu preferencia!</div>

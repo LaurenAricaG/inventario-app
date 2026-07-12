@@ -4,12 +4,12 @@ import {
   FiTrash2,
   FiCalendar,
   FiUser,
-  FiInfo,
   FiEye,
-  FiPrinter,
+  FiFileText,
 } from "react-icons/fi";
-import { printDirectSale } from "@/utils/print-direct-sale";
+import { generatePdfDirectSale } from "@/utils/generate-pdf-direct-sale";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -146,31 +146,30 @@ export default function TableDirectSales({
                   {/* Acciones */}
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-2">
-                      <button
-                        type="button"
+                      <ButtonIcon
                         onClick={() => onView(sale)}
-                        className="p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
+                        variant="beauty"
+                        icon={FiEye}
                         title="Ver detalle de la venta"
-                      >
-                        <FiEye className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => printDirectSale(sale, systemConfig?.systemName ?? "Inventario")}
-                        className="p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
-                        title="Imprimir boleta de venta"
-                      >
-                        <FiPrinter className="w-3.5 h-3.5" />
-                      </button>
+                      />
+                      <ButtonIcon
+                        onClick={() =>
+                          generatePdfDirectSale(
+                            sale,
+                            systemConfig?.systemName ?? "Inventario",
+                          )
+                        }
+                        variant="beauty"
+                        icon={FiFileText}
+                        title="Descargar boleta de venta (PDF)"
+                      />
                       {canDelete && (
-                        <button
-                          type="button"
+                        <ButtonIcon
                           onClick={() => onDelete(sale)}
-                          className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-text/20"
+                          variant="danger"
+                          icon={FiTrash2}
                           title="Anular Venta Directa (Devolverá stock)"
-                        >
-                          <FiTrash2 className="w-3.5 h-3.5" />
-                        </button>
+                        />
                       )}
                     </div>
                   </TableCell>

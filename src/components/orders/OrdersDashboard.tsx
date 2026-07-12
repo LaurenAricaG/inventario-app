@@ -18,6 +18,7 @@ import {
   FiLoader,
 } from "react-icons/fi";
 import Button from "@/components/ui/Button";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import Select from "@/components/ui/Select";
 import SearchInput from "@/components/ui/SearchInput";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
@@ -642,14 +643,13 @@ export default function OrdersDashboard({
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center justify-center gap-2">
-                          <button
+                          <ButtonIcon
                             onClick={() => setSelectedOrder(order)}
-                            className="p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
+                            variant="beauty"
+                            icon={FiEye}
                             title="Ver Detalle de la Ficha"
-                          >
-                            <FiEye className="w-4 h-4" />
-                          </button>
-                          <button
+                          />
+                          <ButtonIcon
                             onClick={() => {
                               currentCampaign &&
                                 (order.status === "PACKED" ||
@@ -660,16 +660,16 @@ export default function OrdersDashboard({
                                   systemConfig?.systemName ?? "Inventario",
                                 );
                             }}
-                            className={`p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20 
-                              ${
-                                !(
-                                  currentCampaign &&
-                                  (order.status === "PACKED" ||
-                                    order.status === "DELIVERED")
-                                )
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : "cursor-pointer"
-                              }`}
+                            disabled={
+                              !(
+                                currentCampaign &&
+                                (order.status === "PACKED" ||
+                                  order.status === "DELIVERED")
+                              )
+                            }
+                            variant="beauty"
+                            icon={FiScissors}
+                            iconClassName="text-beauty-500"
                             title={
                               !(
                                 currentCampaign &&
@@ -679,9 +679,7 @@ export default function OrdersDashboard({
                                 ? "Impresión deshabilitada para este estado"
                                 : "Imprimir Ficha Individual"
                             }
-                          >
-                            <FiScissors className="w-4 h-4 text-beauty-500" />
-                          </button>
+                          />
                         </div>
                       </td>
                     </tr>

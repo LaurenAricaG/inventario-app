@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import LinkComponent from "next/link";
 import { FiCalendar, FiTrash2 } from "react-icons/fi";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -62,16 +63,10 @@ export default function TableDebts({
           {debts.map((debt) => (
             <TableRow key={debt.id} className="hover:bg-bg-surface/30">
               {/* Cliente */}
-              <TableCell className="text-left font-bold text-text-primary">
-                <Link
-                  href={`/admin/movimientos/${debt.clientId}`}
-                  className="hover:text-beauty-500 hover:underline transition-all"
-                  title="Ver cuenta de movimientos del cliente"
-                >
-                  {debt.client.name}
-                </Link>
-                <span className="text-[10px] text-text-tertiary font-semibold block mt-0.5">
-                  ID Cliente: {debt.clientId}
+              <TableCell className="text-left font-semibold text-text-primary">
+                {debt.client.name}
+                <span className="text-[10px] text-text-tertiary font-medium block mt-0.5">
+                  ID: {debt.clientId}
                 </span>
               </TableCell>
 
@@ -108,14 +103,12 @@ export default function TableDebts({
               {canDelete && (
                 <TableCell className="text-center">
                   <div className="flex justify-center">
-                    <button
-                      type="button"
+                    <ButtonIcon
                       onClick={() => onDelete(debt.id)}
-                      className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-text"
+                      variant="danger"
+                      icon={FiTrash2}
                       title="Anular Deuda"
-                    >
-                      <FiTrash2 className="w-3.5 h-3.5" />
-                    </button>
+                    />
                   </div>
                 </TableCell>
               )}

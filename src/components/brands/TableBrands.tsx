@@ -2,6 +2,7 @@
 
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -114,22 +115,20 @@ export default function TableBrands({
               <TableCell className="text-center">
                 <div className="flex items-center justify-center gap-2">
                   {canUpdate && (
-                    <button
+                    <ButtonIcon
                       onClick={() => onEdit(marca)}
-                      className="p-2 rounded-xl bg-warning-bg/40 border border-warning-text/15 text-warning-text hover:bg-warning-bg/80 hover:border-warning-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warning-text/20"
+                      variant="warning"
+                      icon={FiEdit2}
                       title="Editar Marca"
-                    >
-                      <FiEdit2 className="w-3.5 h-3.5" />
-                    </button>
+                    />
                   )}
                   {canDelete && (
-                    <button
+                    <ButtonIcon
                       onClick={() => onDelete(marca)}
-                      className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-text/20"
+                      variant="danger"
+                      icon={FiTrash2}
                       title="Eliminar Marca"
-                    >
-                      <FiTrash2 className="w-3.5 h-3.5" />
-                    </button>
+                    />
                   )}
                 </div>
               </TableCell>

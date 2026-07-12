@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import { FiUser, FiMenu } from "react-icons/fi";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 
 interface HeaderProps {
   collapsed: boolean;
@@ -29,13 +30,14 @@ export default function Header({
     <header className="sticky top-0 right-0 w-full h-16 bg-bg-page/80 backdrop-blur-md border-b border-border-default z-30 flex items-center justify-between px-4 md:px-6 transition-all duration-300 ease-in-out">
       {/* Saludo con Botón de Hamburguesa */}
       <div className="flex items-center gap-3">
-        <button
+        <ButtonIcon
           onClick={onToggle}
-          className="p-2 rounded-xl text-text-secondary hover:bg-beauty-50 hover:text-beauty-800 transition-colors duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
+          variant="beauty"
+          icon={FiMenu}
+          iconClassName={"w-4 h-4"}
+          title={collapsed ? "Expandir menú" : "Colapsar menú"}
           aria-label={collapsed ? "Expandir menú" : "Colapsar menú"}
-        >
-          <FiMenu className="w-5 h-5" />
-        </button>
+        />
         <h1 className="text-base font-semibold text-text-primary leading-none tracking-wide">
           {greeting}
         </h1>

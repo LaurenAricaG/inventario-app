@@ -3,6 +3,7 @@
 import { FiEdit2, FiUserX, FiUserCheck, FiMail, FiCalendar, FiShield } from "react-icons/fi";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import CopyButton from "@/components/ui/CopyButton";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -169,31 +170,28 @@ export default function TableUser({
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       {canUpdate && !isSuspended && (
-                        <button
+                        <ButtonIcon
                           onClick={() => onEdit(user)}
-                          className="p-2 rounded-xl bg-warning-bg/40 border border-warning-text/15 text-warning-text hover:bg-warning-bg/80 hover:border-warning-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warning-text/20"
+                          variant="warning"
+                          icon={FiEdit2}
                           title="Editar Usuario"
-                        >
-                          <FiEdit2 className="w-3.5 h-3.5" />
-                        </button>
+                        />
                       )}
                       {canDelete && (
                         isSuspended ? (
-                          <button
+                          <ButtonIcon
                             onClick={() => onReactivate && onReactivate(user)}
-                            className="p-2 rounded-xl bg-success-bg/40 border border-success-text/15 text-success-text hover:bg-success-bg/80 hover:border-success-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success-text/20"
+                            variant="success"
+                            icon={FiUserCheck}
                             title="Reactivar Usuario"
-                          >
-                            <FiUserCheck className="w-3.5 h-3.5" />
-                          </button>
+                          />
                         ) : (
-                          <button
+                          <ButtonIcon
                             onClick={() => onDelete(user)}
-                            className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-text/20"
+                            variant="danger"
+                            icon={FiUserX}
                             title="Suspender Usuario"
-                          >
-                            <FiUserX className="w-3.5 h-3.5" />
-                          </button>
+                          />
                         )
                       )}
                     </div>

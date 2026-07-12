@@ -57,8 +57,8 @@ export function printDirectSale(
       <td style="padding: 10px 8px; border-bottom: 1px dashed #e4e4e7; text-align: center; font-family: monospace;">${item.quantity}</td>
       <td style="padding: 10px 8px; border-bottom: 1px dashed #e4e4e7; text-align: right; font-family: monospace;">S/ ${item.unitPrice.toFixed(2)}</td>
       <td style="padding: 10px 8px; border-bottom: 1px dashed #e4e4e7; text-align: right; font-family: monospace; font-weight: bold;">S/ ${(
-        item.quantity * item.unitPrice
-      ).toFixed(2)}</td>
+          item.quantity * item.unitPrice
+        ).toFixed(2)}</td>
     </tr>
   `,
     )
@@ -95,7 +95,7 @@ export function printDirectSale(
           .footer-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 15px; align-items: start; margin-top: 10px; }
           .totals-box { border: 1px solid #e4e4e7; border-radius: 10px; padding: 12px; background: #fafafa; }
           .note-box { font-size: 11px; color: #71717a; border-left: 3px solid #db2777; padding-left: 10px; margin-top: 8px; }
-          .thank-you { text-align: center; font-size: 9px; color: #a1a1aa; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; font-weight: 600; border-top: 1px dashed #e4e4e7; padding-top: 15px; }
+          .thank-you { text-align: center; font-size: 9px; color: #db2777; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; font-weight: 600; border: 1px dashed #db2777; padding: 10px 15px; border-radius: 6px; }
           @media print {
             body { padding: 0; background-color: transparent; }
             .invoice-box { border: none; box-shadow: none; padding: 0; }
@@ -110,7 +110,7 @@ export function printDirectSale(
               <div class="logo-sub">Control de Ventas</div>
             </div>
             <div class="boleta-box">
-              <div class="boleta-title">Boleta de Venta Directa</div>
+              <div class="boleta-title">Venta Directa</div>
               <div class="boleta-number">N° DS-${sale.id.toString().padStart(6, "0")}</div>
             </div>
           </div>
@@ -122,18 +122,14 @@ export function printDirectSale(
                 <span class="details-value">${sale.client.name}</span>
               </div>
               <div class="details-row">
-                <span class="details-label">Dirección:</span>
-                <span class="details-value">${sale.client.address || "No especificada"}</span>
+                <span class="details-label">Teléfono:</span>
+                <span class="details-value">${sale.client.phone || "No especificado"}</span>
               </div>
             </div>
             <div>
               <div class="details-row">
                 <span class="details-label">F. Emisión:</span>
                 <span class="details-value">${formatLocalDate(sale.createdAt)}</span>
-              </div>
-              <div class="details-row">
-                <span class="details-label">Teléfono:</span>
-                <span class="details-value">${sale.client.phone || "No especificado"}</span>
               </div>
             </div>
           </div>
@@ -155,14 +151,13 @@ export function printDirectSale(
 
           <div class="footer-grid">
             <div>
-              ${
-                sale.notes
-                  ? `<div class="note-box">
+              ${sale.notes
+      ? `<div class="note-box">
                       <strong style="color: #09090b; font-size: 10px; text-transform: uppercase;">Observaciones:</strong><br/>
                       <span style="font-style: italic; display: inline-block; margin-top: 4px;">${sale.notes}</span>
                     </div>`
-                  : ""
-              }
+      : ""
+    }
             </div>
             <div class="totals-box">
               <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #71717a; font-family: monospace;">

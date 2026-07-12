@@ -7,6 +7,7 @@ import { MovementItem } from "./MovementHistoryTable";
 import DetailSaleModal from "@/components/direct-sales/DetailSaleModal";
 import OrderDetailModal from "./OrderDetailModal";
 import Pagination from "@/components/ui/Pagination";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -229,16 +230,15 @@ export default function ClientPublicPortal({
                     </TableCell>
                     <TableCell className="text-center whitespace-nowrap">
                       {hasDetails ? (
-                        <button
+                        <ButtonIcon
                           onClick={() => {
                             if (m.type === "VENTA_DIRECTA") setSelectedSale(m.raw);
                             else setSelectedOrder(m.raw);
                           }}
-                          className="p-2 rounded-xl border border-border-default/60 bg-bg-card hover:bg-beauty-400/10 text-text-secondary hover:text-beauty-500 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
+                          variant="beauty"
+                          icon={FiEye}
                           title="Ver detalles"
-                        >
-                          <FiEye className="w-4 h-4" />
-                        </button>
+                        />
                       ) : (
                         <span className="text-text-tertiary font-mono text-xs select-none">-</span>
                       )}

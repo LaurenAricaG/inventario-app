@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { toast } from "sonner";
-import { cn } from "@/utils/cn.utils";
 import { regenerateClientShareToken } from "@/app/admin/actions";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import ButtonIcon from "../ButtonIcon";
 
 interface RegenerateTokenButtonProps {
   clientId: number;
@@ -56,18 +56,15 @@ export default function RegenerateTokenButton({
 
   return (
     <>
-      <button
+      <ButtonIcon
         onClick={handleOpenModal}
         disabled={loading}
-        className={cn(
-          "p-2 rounded-xl bg-info-bg/45 border border-info-text/15 text-info-text hover:bg-info-bg/85 hover:border-info-text/30 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info-text/20",
-          className
-        )}
+        loading={loading}
+        variant="info"
+        icon={FiRefreshCw}
         title="Regenerar enlace de estado de cuenta"
-        aria-label="Regenerar enlace de estado de cuenta"
-      >
-        <FiRefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
-      </button>
+        className={className}
+      />
 
       <Modal
         isOpen={isModalOpen}

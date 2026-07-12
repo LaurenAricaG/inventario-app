@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
   TableBody,
@@ -189,14 +190,12 @@ export default function TableInventory({
 
                 {/* Acciones */}
                 <TableCell className="text-center">
-                  <button
-                    type="button"
+                  <ButtonIcon
                     onClick={() => setActiveDetail(movement)}
-                    className="p-2 rounded-xl bg-bg-surface border border-border-default/60 text-text-secondary hover:bg-beauty-500/10 hover:border-beauty-500/30 hover:text-beauty-600 dark:hover:text-beauty-400 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
+                    variant="beauty"
+                    icon={FiEye}
                     title="Ver detalle del movimiento"
-                  >
-                    <FiEye className="w-3.5 h-3.5" />
-                  </button>
+                  />
                 </TableCell>
               </TableRow>
             );

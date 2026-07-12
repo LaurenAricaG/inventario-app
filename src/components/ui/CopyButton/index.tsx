@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FiCopy, FiCheck } from "react-icons/fi";
 import { toast } from "sonner";
-import { cn } from "@/utils/cn.utils";
+import ButtonIcon from "../ButtonIcon";
 
 interface CopyButtonProps {
   text: string;
@@ -37,20 +37,13 @@ export default function CopyButton({
   };
 
   return (
-    <button
+    <ButtonIcon
       onClick={handleCopy}
-      className={cn(
-        "p-1.5 rounded-lg border border-border-default/40 bg-bg-card hover:bg-bg-surface text-text-secondary hover:text-text-primary transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400",
-        className,
-      )}
+      variant="secondary"
+      icon={copied ? FiCheck : FiCopy}
+      iconClassName={copied ? "text-success-text" : undefined}
       title={tooltip}
-      aria-label={tooltip}
-    >
-      {copied ? (
-        <FiCheck className="w-3.5 h-3.5 text-success-text" />
-      ) : (
-        <FiCopy className="w-3.5 h-3.5" />
-      )}
-    </button>
+      className={className}
+    />
   );
 }
