@@ -6,6 +6,7 @@ import { SerializedDirectSaleWithRelations } from "@/types/direct-sale";
 import { printDirectSale } from "@/utils/print-direct-sale";
 
 import { useSystemConfig } from "@/context/SystemConfigContext";
+import { formatDateTime } from "@/utils/date.utils";
 
 interface DetailSaleModalProps {
   isOpen: boolean;
@@ -22,21 +23,6 @@ export default function DetailSaleModal({
 }: DetailSaleModalProps) {
   const systemConfig = useSystemConfig();
   if (!sale) return null;
-
-  const formatLocalDate = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch {
-      return isoString;
-    }
-  };
 
   const calculatedSubtotal = sale.items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
@@ -79,7 +65,7 @@ export default function DetailSaleModal({
             </p>
             <div className="text-left mt-4 text-xs text-text-secondary">
               <span className="font-bold text-text-primary">F. Registro:</span>{" "}
-              {formatLocalDate(sale.createdAt)}
+              {formatDateTime(sale.createdAt)}
             </div>
           </div>
 
@@ -243,7 +229,7 @@ export default function DetailSaleModal({
                 F. Emisión:
               </span>
               <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                {formatLocalDate(sale.createdAt)}
+                {formatDateTime(sale.createdAt)}
               </span>
             </div>
           </div>

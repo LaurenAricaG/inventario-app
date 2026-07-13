@@ -10,14 +10,15 @@ import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import Modal from "@/components/ui/Modal";
 import { createPaymentAction } from "@/lib/payment";
-import { FiSearch, FiChevronDown, FiUser } from "react-icons/fi";
+import { FiSearch, FiChevronDown, FiUser, FiDollarSign } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
 
 interface FormPaymentsProps {
   isOpen: boolean;
   onClose: () => void;
   clientId?: number;
-  clients?: { id: number; name: string }[];
+  clientBalance?: number;
+  clients?: { id: number; name: string; balance: number }[];
   onSuccess: () => void;
 }
 
@@ -33,6 +34,7 @@ export default function FormPayments({
   isOpen,
   onClose,
   clientId,
+  clientBalance,
   clients,
   onSuccess,
 }: FormPaymentsProps) {
@@ -58,6 +60,14 @@ export default function FormPayments({
   // Compute selected client object
   const selectedClient =
     clients?.find((c) => c.id === Number(selectedClientId)) || null;
+
+  const balanceToValidate = clients
+    ? (selectedClient?.balance ?? 0)
+    : (clientBalance ?? 0);
+
+  const isFieldsDisabled =
+    isSubmitting ||
+    ((!!selectedClientId || !!clientId) && balanceToValidate <= 0.01);
 
   // Filter clients based on client search query inside the dropdown
   const filteredClients = clients
@@ -109,6 +119,13 @@ export default function FormPayments({
       return;
     }
 
+    if (numericAmount > balanceToValidate) {
+      setErrors({
+        amount: `El monto no puede ser mayor al saldo pendiente (S/ ${balanceToValidate.toFixed(2)}).`,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const res = await createPaymentAction({
@@ -156,6 +173,7 @@ export default function FormPayments({
             variant="primary"
             form="payment-form"
             loading={isSubmitting}
+            disabled={isFieldsDisabled}
           >
             Registrar Pago
           </Button>
@@ -264,8 +282,37 @@ export default function FormPayments({
           </FormField>
         )}
 
+        {/* Banner de Saldo Informativo */}
+        {(selectedClient || clientId) && (
+          <div
+            className={cn(
+              "mt-2 text-xs font-bold rounded-2xl p-4 border select-none transition-all duration-300",
+              balanceToValidate > 0.01
+                ? "bg-danger-bg/20 border-danger-text/20 text-danger-text"
+                : "bg-success-bg/20 border-success-text/20 text-success-text"
+            )}
+          >
+            {balanceToValidate > 0.01 ? (
+              <div className="flex items-center gap-2">
+                <FiDollarSign className="w-4 h-4 shrink-0 text-danger-text" />
+                <span>
+                  Saldo pendiente del cliente:{" "}
+                  <span className="font-mono text-sm font-black ml-1 text-danger-text">
+                    S/ {balanceToValidate.toFixed(2)}
+                  </span>
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="text-base text-success-text">✔</span>
+                <span className="text-success-text">Este cliente no tiene deudas pendientes.</span>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Monto */}
-        <FormField label="Monto Recibido (S/)" error={errors.amount}>
+        <FormField label="Monto Recibido (S/)">
           <Input
             type="number"
             step="0.01"
@@ -277,7 +324,7 @@ export default function FormPayments({
                 setErrors((prev) => ({ ...prev, amount: undefined }));
             }}
             error={errors.amount}
-            disabled={isSubmitting}
+            disabled={isFieldsDisabled}
             autoFocus={!clients}
           />
         </FormField>
@@ -287,7 +334,7 @@ export default function FormPayments({
           <Select
             value={method}
             onChange={(e) => setMethod(e.target.value as PaymentMethod)}
-            disabled={isSubmitting}
+            disabled={isFieldsDisabled}
           >
             {paymentMethodOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -303,7 +350,7 @@ export default function FormPayments({
             placeholder="Ej. Pago a cuenta del pedido de Natura, Yape recibido por la tarde, etc."
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            disabled={isSubmitting}
+            disabled={isFieldsDisabled}
             rows={3}
           />
         </FormField>

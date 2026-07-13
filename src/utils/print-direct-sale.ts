@@ -1,4 +1,5 @@
 import { SerializedDirectSaleWithRelations } from "@/types/direct-sale";
+import { formatDateTime } from "@/utils/date.utils";
 
 export function printDirectSale(
   sale: SerializedDirectSaleWithRelations,
@@ -24,21 +25,6 @@ export function printDirectSale(
 
   const printDocument = iframe.contentWindow?.document;
   if (!printDocument) return;
-
-  const formatLocalDate = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch {
-      return isoString;
-    }
-  };
 
   const calculatedSubtotal = sale.items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
@@ -129,7 +115,7 @@ export function printDirectSale(
             <div>
               <div class="details-row">
                 <span class="details-label">F. Emisión:</span>
-                <span class="details-value">${formatLocalDate(sale.createdAt)}</span>
+                <span class="details-value">${formatDateTime(sale.createdAt)}</span>
               </div>
             </div>
           </div>

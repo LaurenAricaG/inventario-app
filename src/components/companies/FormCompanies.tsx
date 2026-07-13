@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
@@ -22,6 +22,8 @@ export default function FormCompanies({
   onClose,
   company,
 }: FormCompaniesProps) {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   const [nameInput, setNameInput] = useState("");
   const [logoUrlInput, setLogoUrlInput] = useState("");
   const [localFile, setLocalFile] = useState<File | null>(null);
@@ -115,6 +117,7 @@ export default function FormCompanies({
       onClose={onClose}
       title={company ? "Editar Empresa" : "Crear Empresa"}
       size="md"
+      initialFocusRef={nameInputRef}
       footer={
         <div className="flex items-center gap-3">
           <Button
@@ -139,6 +142,7 @@ export default function FormCompanies({
       <Form id="company-form" onSubmit={handleSubmit}>
         <FormField label="Nombre de la Empresa">
           <Input
+            ref={nameInputRef}
             type="text"
             placeholder="Ej. Esika, Avon, Unique..."
             value={nameInput}

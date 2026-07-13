@@ -1,4 +1,5 @@
 import { toast } from "sonner";
+import { formatDateUTC } from "@/utils/date.utils";
 
 interface PrintCampaign {
   number: string;
@@ -26,16 +27,6 @@ interface PrintOrder {
   notes?: string | null;
   paymentDate?: Date | string | null;
 }
-
-const formatLocalDate = (dateVal: any) => {
-  if (!dateVal) return "";
-  const d = new Date(dateVal);
-  if (isNaN(d.getTime())) return "";
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  const month = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const year = d.getUTCFullYear();
-  return `${day}/${month}/${year}`;
-};
 
 export function printCampaignSlips(
   campaign: PrintCampaign,
@@ -167,7 +158,7 @@ export function printCampaignSlips(
         ${order.paymentDate
           ? `
           <div class="payment-date-info">
-            Fecha límite de pago: <strong>${formatLocalDate(order.paymentDate)}</strong>
+            Fecha límite de pago: <strong>${formatDateUTC(order.paymentDate)}</strong>
           </div>
         `
           : ""

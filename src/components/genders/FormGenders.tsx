@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
@@ -21,6 +21,8 @@ export default function FormGenders({
   onClose,
   gender,
 }: FormGendersProps) {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   const [nameInput, setNameInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
@@ -77,6 +79,7 @@ export default function FormGenders({
       onClose={onClose}
       title={gender ? "Editar Género" : "Crear Género"}
       size="md"
+      initialFocusRef={nameInputRef}
       footer={
         <div className="flex items-center gap-3">
           <Button
@@ -101,6 +104,7 @@ export default function FormGenders({
       <Form id="gender-form" onSubmit={handleSubmit}>
         <FormField label="Nombre del Género / Segmento">
           <Input
+            ref={nameInputRef}
             type="text"
             placeholder="Ej. Damas, Caballeros, Infantil, Unisex..."
             value={nameInput}

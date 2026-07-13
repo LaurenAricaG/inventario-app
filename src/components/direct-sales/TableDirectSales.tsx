@@ -8,6 +8,7 @@ import {
   FiFileText,
 } from "react-icons/fi";
 import { generatePdfDirectSale } from "@/utils/generate-pdf-direct-sale";
+import { formatDateLocal } from "@/utils/date.utils";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
@@ -38,19 +39,6 @@ export default function TableDirectSales({
   onDelete,
   onView,
 }: TableDirectSalesProps) {
-  // Format Date to Local format (only Date, no Time)
-  const formatLocalDate = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    } catch {
-      return isoString;
-    }
-  };
 
   const systemConfig = useSystemConfig();
 
@@ -102,7 +90,7 @@ export default function TableDirectSales({
                   <TableCell className="hidden md:table-cell">
                     <div className="flex items-center gap-1.5 text-text-secondary text-xs sm:text-sm">
                       <FiCalendar className="w-3.5 h-3.5 text-text-tertiary" />
-                      <span>{formatLocalDate(sale.createdAt)}</span>
+                      <span suppressHydrationWarning>{formatDateLocal(sale.createdAt)}</span>
                     </div>
                   </TableCell>
 

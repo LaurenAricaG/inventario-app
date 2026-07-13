@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatDateTime } from "@/utils/date.utils";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
@@ -74,23 +75,8 @@ export default function TableInventory({
   currentPage,
   itemsPerPage,
 }: TableInventoryProps) {
-  const [activeDetail, setActiveDetail] = useState<SerializedStockMovement | null>(null);
-
-  const formatDate = (dateStr: string) => {
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleString("es-PE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      });
-    } catch (e) {
-      return dateStr;
-    }
-  };
+  const [activeDetail, setActiveDetail] =
+    useState<SerializedStockMovement | null>(null);
 
   return (
     <ErrorBoundary variant="embedded" title="Tabla de Kardex">
@@ -122,7 +108,9 @@ export default function TableInventory({
                 {/* Código */}
                 <TableCell className="text-left font-mono text-xs text-text-secondary">
                   {movement.product.code || (
-                    <span className="text-text-tertiary italic">Sin código</span>
+                    <span className="text-text-tertiary italic">
+                      Sin código
+                    </span>
                   )}
                 </TableCell>
 
@@ -140,7 +128,7 @@ export default function TableInventory({
                       "px-2.5 py-0.5 rounded-full text-xs font-bold font-mono tracking-wide",
                       isInput
                         ? "bg-success-bg text-success-text"
-                        : "bg-danger-bg text-danger-text"
+                        : "bg-danger-bg text-danger-text",
                     )}
                   >
                     {isInput ? "+" : "-"}
@@ -154,7 +142,7 @@ export default function TableInventory({
                     <span
                       className={cn(
                         "inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider",
-                        getReasonBadgeClass(movement.reason)
+                        getReasonBadgeClass(movement.reason),
                       )}
                     >
                       {translateReason(movement.reason, movement.type)}
@@ -167,9 +155,14 @@ export default function TableInventory({
 
                 {/* Notas */}
                 <TableCell className="text-left text-xs text-text-secondary">
-                  <div className="block truncate max-w-[120px] sm:max-w-[200px]" title={movement.notes || ""}>
+                  <div
+                    className="block truncate max-w-30 sm:max-w-50"
+                    title={movement.notes || ""}
+                  >
                     {movement.notes || (
-                      <span className="text-text-tertiary italic">Sin notas</span>
+                      <span className="text-text-tertiary italic">
+                        Sin notas
+                      </span>
                     )}
                   </div>
                 </TableCell>
@@ -177,13 +170,16 @@ export default function TableInventory({
                 {/* Fecha y Hora */}
                 <TableCell className="text-left font-mono text-xs text-text-secondary">
                   <span suppressHydrationWarning>
-                    {formatDate(movement.createdAt)}
+                    {formatDateTime(movement.createdAt)}
                   </span>
                 </TableCell>
 
                 {/* Registrado por */}
                 <TableCell className="text-left text-xs text-text-secondary">
-                  <div className="truncate max-w-[120px]" title={movement.createdBy.name}>
+                  <div
+                    className="truncate max-w-30"
+                    title={movement.createdBy.name}
+                  >
                     {movement.createdBy.name}
                   </div>
                 </TableCell>
@@ -247,7 +243,7 @@ export default function TableInventory({
                     "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold font-mono tracking-wide",
                     activeDetail.type === "INPUT"
                       ? "bg-success-bg text-success-text"
-                      : "bg-danger-bg text-danger-text"
+                      : "bg-danger-bg text-danger-text",
                   )}
                 >
                   {activeDetail.type === "INPUT" ? "+" : "-"}
@@ -263,13 +259,15 @@ export default function TableInventory({
                   <span
                     className={cn(
                       "inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider",
-                      getReasonBadgeClass(activeDetail.reason)
+                      getReasonBadgeClass(activeDetail.reason),
                     )}
                   >
                     {translateReason(activeDetail.reason, activeDetail.type)}
                   </span>
                   <span className="text-[9px] text-text-tertiary font-semibold tracking-wide uppercase">
-                    {activeDetail.type === "INPUT" ? "Ingreso de stock" : "Salida de stock"}
+                    {activeDetail.type === "INPUT"
+                      ? "Ingreso de stock"
+                      : "Salida de stock"}
                   </span>
                 </div>
               </div>
@@ -283,7 +281,9 @@ export default function TableInventory({
               </div>
               <p className="text-xs text-text-primary whitespace-pre-wrap leading-relaxed">
                 {activeDetail.notes || (
-                  <span className="text-text-tertiary italic">Sin notas ni observaciones registradas.</span>
+                  <span className="text-text-tertiary italic">
+                    Sin notas ni observaciones registradas.
+                  </span>
                 )}
               </p>
             </div>
@@ -293,9 +293,14 @@ export default function TableInventory({
               <div className="flex items-center gap-3 text-xs text-text-secondary">
                 <FiCalendar className="w-4 h-4 text-text-tertiary shrink-0" />
                 <div>
-                  <span className="text-[10px] text-text-tertiary block uppercase font-medium">Fecha y Hora de Registro</span>
-                  <span suppressHydrationWarning className="font-medium text-text-primary">
-                    {formatDate(activeDetail.createdAt)}
+                  <span className="text-[10px] text-text-tertiary block uppercase font-medium">
+                    Fecha y Hora de Registro
+                  </span>
+                  <span
+                    suppressHydrationWarning
+                    className="font-medium text-text-primary"
+                  >
+                    {formatDateTime(activeDetail.createdAt)}
                   </span>
                 </div>
               </div>
@@ -303,7 +308,9 @@ export default function TableInventory({
               <div className="flex items-center gap-3 text-xs text-text-secondary border-t border-border-default/30 pt-2.5">
                 <FiUser className="w-4 h-4 text-text-tertiary shrink-0" />
                 <div>
-                  <span className="text-[10px] text-text-tertiary block uppercase font-medium">Registrado por</span>
+                  <span className="text-[10px] text-text-tertiary block uppercase font-medium">
+                    Registrado por
+                  </span>
                   <span className="font-medium text-text-primary">
                     {activeDetail.createdBy.name}
                   </span>

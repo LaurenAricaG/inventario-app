@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
@@ -15,7 +15,12 @@ interface FormRoleProps {
   isOpen: boolean;
   onClose: () => void;
   role: SerializedRoleWithPermissions | null;
-  permissionsList: { id: number; code: string; name: string; description: string | null }[];
+  permissionsList: {
+    id: number;
+    code: string;
+    name: string;
+    description: string | null;
+  }[];
 }
 
 const categoryTitles: Record<string, string> = {
@@ -44,10 +49,18 @@ export default function FormRole({
   role,
   permissionsList,
 }: FormRoleProps) {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   const [nameInput, setNameInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
-  const [selectedPermissionIds, setSelectedPermissionIds] = useState<number[]>([]);
-  const [errors, setErrors] = useState<{ name?: string; description?: string; permissionIds?: string }>({});
+  const [selectedPermissionIds, setSelectedPermissionIds] = useState<number[]>(
+    [],
+  );
+  const [errors, setErrors] = useState<{
+    name?: string;
+    description?: string;
+    permissionIds?: string;
+  }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Sync state on edit
@@ -65,19 +78,23 @@ export default function FormRole({
   }, [role, isOpen]);
 
   // Group permissions by prefix code
-  const groupedPermissions = permissionsList.reduce((acc, p) => {
-    const prefix = p.code.split(":")[0] || "otros";
-    if (!acc[prefix]) acc[prefix] = [];
-    acc[prefix].push(p);
-    return acc;
-  }, {} as Record<string, typeof permissionsList>);
+  const groupedPermissions = permissionsList.reduce(
+    (acc, p) => {
+      const prefix = p.code.split(":")[0] || "otros";
+      if (!acc[prefix]) acc[prefix] = [];
+      acc[prefix].push(p);
+      return acc;
+    },
+    {} as Record<string, typeof permissionsList>,
+  );
 
   const handlePermissionToggle = (id: number) => {
     setSelectedPermissionIds((prev) => {
       const next = prev.includes(id)
         ? prev.filter((pId) => pId !== id)
         : [...prev, id];
-      if (errors.permissionIds) setErrors((errs) => ({ ...errs, permissionIds: undefined }));
+      if (errors.permissionIds)
+        setErrors((errs) => ({ ...errs, permissionIds: undefined }));
       return next;
     });
   };
@@ -85,11 +102,15 @@ export default function FormRole({
   const handleToggleCategory = (prefix: string) => {
     const categoryPerms = groupedPermissions[prefix] || [];
     const categoryIds = categoryPerms.map((p) => p.id);
-    const allSelected = categoryIds.every((id) => selectedPermissionIds.includes(id));
+    const allSelected = categoryIds.every((id) =>
+      selectedPermissionIds.includes(id),
+    );
 
     if (allSelected) {
       // Remove all
-      setSelectedPermissionIds((prev) => prev.filter((id) => !categoryIds.includes(id)));
+      setSelectedPermissionIds((prev) =>
+        prev.filter((id) => !categoryIds.includes(id)),
+      );
     } else {
       // Add missing
       setSelectedPermissionIds((prev) => {
@@ -97,7 +118,8 @@ export default function FormRole({
         return [...prev, ...toAdd];
       });
     }
-    if (errors.permissionIds) setErrors((errs) => ({ ...errs, permissionIds: undefined }));
+    if (errors.permissionIds)
+      setErrors((errs) => ({ ...errs, permissionIds: undefined }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -149,6 +171,7 @@ export default function FormRole({
       title={role ? "Editar Rol y Permisos" : "Registrar Nuevo Rol"}
       size="xl"
       className="max-w-4xl md:max-w-5xl w-full"
+      initialFocusRef={nameInputRef}
       footer={
         <div className="flex items-center gap-3">
           <Button
@@ -170,22 +193,32 @@ export default function FormRole({
         </div>
       }
     >
-      <Form id="role-form" onSubmit={handleSubmit} noValidate className="space-y-6">
+      <Form
+        id="role-form"
+        onSubmit={handleSubmit}
+        noValidate
+        className="space-y-6"
+      >
         {/* Form Details Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-bg-surface/20 p-4 border border-border-default/50 rounded-2xl">
           {/* Nombre del rol */}
           <FormField label="Nombre del Rol">
             <Input
+              ref={nameInputRef}
               type="text"
               placeholder="Ej. Almacenero, Vendedor..."
               value={nameInput}
               onChange={(e) => {
                 setNameInput(e.target.value);
-                if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+                if (errors.name)
+                  setErrors((prev) => ({ ...prev, name: undefined }));
               }}
               error={errors.name}
-              disabled={isSubmitting || (!!role && ["ADMIN", "SELLER"].includes(role.name.toUpperCase()))}
-              autoFocus={true}
+              disabled={
+                isSubmitting ||
+                (!!role &&
+                  ["ADMIN", "SELLER"].includes(role.name.toUpperCase()))
+              }
             />
           </FormField>
 
@@ -197,7 +230,8 @@ export default function FormRole({
               value={descriptionInput}
               onChange={(e) => {
                 setDescriptionInput(e.target.value);
-                if (errors.description) setErrors((prev) => ({ ...prev, description: undefined }));
+                if (errors.description)
+                  setErrors((prev) => ({ ...prev, description: undefined }));
               }}
               error={errors.description}
               disabled={isSubmitting}
@@ -217,7 +251,8 @@ export default function FormRole({
               </p>
             </div>
             <span className="text-xs font-mono font-bold text-beauty-500 bg-beauty-400/10 px-2.5 py-1 rounded-lg">
-              Seleccionados: {selectedPermissionIds.length} / {permissionsList.length}
+              Seleccionados: {selectedPermissionIds.length} /{" "}
+              {permissionsList.length}
             </span>
           </div>
 
@@ -231,9 +266,13 @@ export default function FormRole({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[55vh] ">
             {Object.keys(groupedPermissions).map((prefix) => {
               const perms = groupedPermissions[prefix] || [];
-              const categoryTitle = categoryTitles[prefix] || prefix.charAt(0).toUpperCase() + prefix.slice(1);
+              const categoryTitle =
+                categoryTitles[prefix] ||
+                prefix.charAt(0).toUpperCase() + prefix.slice(1);
               const groupIds = perms.map((p) => p.id);
-              const allSelected = groupIds.every((id) => selectedPermissionIds.includes(id));
+              const allSelected = groupIds.every((id) =>
+                selectedPermissionIds.includes(id),
+              );
 
               return (
                 <div

@@ -308,7 +308,13 @@ export default function ClientDetailsDashboard({
             {canCreatePayment && (
               <Button
                 variant="outline"
-                onClick={() => setIsOpenPaymentModal(true)}
+                onClick={() => {
+                  if (summary.balance <= 0) {
+                    toast.warning("El saldo pendiente es 0");
+                    return;
+                  }
+                  setIsOpenPaymentModal(true);
+                }}
                 className="flex items-center gap-2 border-border-default/60 hover:bg-beauty-400/10 hover:text-beauty-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 text-xs font-bold py-2 px-4 rounded-xl cursor-pointer"
               >
                 <FiDollarSign className="w-3.5 h-3.5" />
@@ -370,6 +376,7 @@ export default function ClientDetailsDashboard({
         isOpen={isOpenPaymentModal}
         onClose={() => setIsOpenPaymentModal(false)}
         clientId={client.id}
+        clientBalance={summary.balance}
         onSuccess={() => {
           setIsOpenPaymentModal(false);
           router.refresh();

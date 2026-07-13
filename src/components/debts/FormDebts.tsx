@@ -268,7 +268,7 @@ export default function FormDebts({
         )}
 
         {/* Monto */}
-        <FormField label="Monto de la Deuda (S/)" error={errors.amount}>
+        <FormField label="Monto de la Deuda (S/)">
           <Input
             type="number"
             step="0.01"
@@ -286,7 +286,7 @@ export default function FormDebts({
         </FormField>
 
         {/* Motivo */}
-        <FormField label="Motivo de la Deuda" error={errors.reason}>
+        <FormField label="Motivo de la Deuda">
           <Input
             type="text"
             placeholder="Ej. Saldo inicial, Producto de otra consultora, etc."

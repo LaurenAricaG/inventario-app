@@ -27,7 +27,7 @@ interface SerializedPayment {
 
 interface PaymentsProps {
   initialPayments: SerializedPayment[];
-  clients: { id: number; name: string }[];
+  clients: { id: number; name: string; balance: number }[];
   totalItems: number;
   totalPages: number;
   currentPage: number;

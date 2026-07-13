@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
@@ -9,7 +9,9 @@ import Modal from "@/components/ui/Modal";
 import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import Checkbox from "@/components/ui/Checkbox";
-import MultiImageUpload, { UploadedImage } from "@/components/ui/MultiImageUpload";
+import MultiImageUpload, {
+  UploadedImage,
+} from "@/components/ui/MultiImageUpload";
 import { createProductAction, updateProductAction } from "@/lib/product";
 import { productSchema } from "@/lib/product/schema";
 import { ProductWithRelations } from "@/types/models";
@@ -31,6 +33,8 @@ export default function FormProducts({
   categories,
   genders,
 }: FormProductsProps) {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   const [nameInput, setNameInput] = useState("");
   const [codeInput, setCodeInput] = useState("");
   const [brandIdInput, setBrandIdInput] = useState("");
@@ -53,17 +57,29 @@ export default function FormProducts({
       setCodeInput(product && product.code ? product.code : "");
       setBrandIdInput(product ? String(product.brandId) : "");
       setCategoryIdInput(product ? String(product.categoryId) : "");
-      setGenderSegmentIdInput(product && product.genderSegmentId ? String(product.genderSegmentId) : "");
-      setDescriptionInput(product && product.description ? product.description : "");
+      setGenderSegmentIdInput(
+        product && product.genderSegmentId
+          ? String(product.genderSegmentId)
+          : "",
+      );
+      setDescriptionInput(
+        product && product.description ? product.description : "",
+      );
       setPriceInput(product ? String(product.price) : "");
-      setCostPriceInput(product && product.costPrice !== null ? String(product.costPrice) : "");
+      setCostPriceInput(
+        product && product.costPrice !== null ? String(product.costPrice) : "",
+      );
       setStockInput(product ? String(product.stock) : "0");
       setIsAvailableInput(product ? product.isAvailable : true);
-      setImagesInput(product && product.images ? product.images.map(img => ({
-        url: img.url,
-        isMain: img.isMain,
-        position: img.position,
-      })) : []);
+      setImagesInput(
+        product && product.images
+          ? product.images.map((img) => ({
+              url: img.url,
+              isMain: img.isMain,
+              position: img.position,
+            }))
+          : [],
+      );
       setErrors({});
     }
   }, [isOpen, product]);
@@ -72,18 +88,22 @@ export default function FormProducts({
     e.preventDefault();
 
     // Validación preliminar de todos los campos excepto imágenes para no subir archivos si el formulario es inválido
-    const formFieldsValidation = productSchema.omit({ images: true }).safeParse({
-      name: nameInput,
-      brandId: brandIdInput ? parseInt(brandIdInput, 10) : undefined,
-      categoryId: categoryIdInput ? parseInt(categoryIdInput, 10) : undefined,
-      genderSegmentId: genderSegmentIdInput ? parseInt(genderSegmentIdInput, 10) : null,
-      code: codeInput || null,
-      description: descriptionInput || null,
-      price: priceInput ? parseFloat(priceInput) : undefined,
-      costPrice: costPriceInput ? parseFloat(costPriceInput) : null,
-      stock: parseFloat(stockInput),
-      isAvailable: isAvailableInput,
-    });
+    const formFieldsValidation = productSchema
+      .omit({ images: true })
+      .safeParse({
+        name: nameInput,
+        brandId: brandIdInput ? parseInt(brandIdInput, 10) : undefined,
+        categoryId: categoryIdInput ? parseInt(categoryIdInput, 10) : undefined,
+        genderSegmentId: genderSegmentIdInput
+          ? parseInt(genderSegmentIdInput, 10)
+          : null,
+        code: codeInput || null,
+        description: descriptionInput || null,
+        price: priceInput ? parseFloat(priceInput) : undefined,
+        costPrice: costPriceInput ? parseFloat(costPriceInput) : null,
+        stock: parseFloat(stockInput),
+        isAvailable: isAvailableInput,
+      });
 
     if (!formFieldsValidation.success) {
       const fieldErrors: Record<string, string> = {};
@@ -99,7 +119,11 @@ export default function FormProducts({
     setIsSubmitting(true);
 
     try {
-      const uploadedImages: { url: string; isMain: boolean; position: number }[] = [];
+      const uploadedImages: {
+        url: string;
+        isMain: boolean;
+        position: number;
+      }[] = [];
 
       // Subir imágenes que sean archivos locales pendientes
       for (const img of imagesInput) {
@@ -115,7 +139,9 @@ export default function FormProducts({
 
           if (!uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
-            throw new Error(uploadData.error || "Error al subir la imagen del producto.");
+            throw new Error(
+              uploadData.error || "Error al subir la imagen del producto.",
+            );
           }
 
           const uploadData = await uploadResponse.json();
@@ -167,7 +193,9 @@ export default function FormProducts({
         }
       }
     } catch (error: any) {
-      toast.error(error.message || "Ocurrió un error inesperado al procesar el producto.");
+      toast.error(
+        error.message || "Ocurrió un error inesperado al procesar el producto.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -180,6 +208,7 @@ export default function FormProducts({
       title={product ? "Editar Producto" : "Crear Producto"}
       size="xl"
       className="max-w-4xl"
+      initialFocusRef={nameInputRef}
       footer={
         <div className="flex items-center gap-3">
           <Button
@@ -201,17 +230,23 @@ export default function FormProducts({
         </div>
       }
     >
-      <Form id="product-form" onSubmit={handleSubmit} className="space-y-4" noValidate>
-
+      <Form
+        id="product-form"
+        onSubmit={handleSubmit}
+        className="space-y-4"
+        noValidate
+      >
         {/* Nombre del producto */}
         <FormField label="Nombre del Producto">
           <Input
+            ref={nameInputRef}
             type="text"
             placeholder="Ej. Colonia Kaiak Masculina, Labial Matte Natura, etc."
             value={nameInput}
             onChange={(e) => {
               setNameInput(e.target.value);
-              if (e.target.value.trim()) setErrors((prev) => ({ ...prev, name: "" }));
+              if (e.target.value.trim())
+                setErrors((prev) => ({ ...prev, name: "" }));
             }}
             error={errors.name}
             disabled={isSubmitting}
@@ -227,7 +262,8 @@ export default function FormProducts({
               value={codeInput}
               onChange={(e) => {
                 setCodeInput(e.target.value);
-                if (e.target.value.trim()) setErrors((prev) => ({ ...prev, code: "" }));
+                if (e.target.value.trim())
+                  setErrors((prev) => ({ ...prev, code: "" }));
               }}
               error={errors.code}
               disabled={isSubmitting}
@@ -243,7 +279,8 @@ export default function FormProducts({
               value={stockInput}
               onChange={(e) => {
                 setStockInput(e.target.value);
-                if (e.target.value.trim()) setErrors((prev) => ({ ...prev, stock: "" }));
+                if (e.target.value.trim())
+                  setErrors((prev) => ({ ...prev, stock: "" }));
               }}
               error={errors.stock}
               disabled={isSubmitting || product !== null}
@@ -258,7 +295,8 @@ export default function FormProducts({
               value={brandIdInput}
               onChange={(e) => {
                 setBrandIdInput(e.target.value);
-                if (e.target.value) setErrors((prev) => ({ ...prev, brandId: "" }));
+                if (e.target.value)
+                  setErrors((prev) => ({ ...prev, brandId: "" }));
               }}
               placeholder="Seleccionar..."
               disabled={isSubmitting}
@@ -278,7 +316,8 @@ export default function FormProducts({
               value={categoryIdInput}
               onChange={(e) => {
                 setCategoryIdInput(e.target.value);
-                if (e.target.value) setErrors((prev) => ({ ...prev, categoryId: "" }));
+                if (e.target.value)
+                  setErrors((prev) => ({ ...prev, categoryId: "" }));
               }}
               placeholder="Seleccionar..."
               disabled={isSubmitting}
@@ -321,7 +360,8 @@ export default function FormProducts({
               value={priceInput}
               onChange={(e) => {
                 setPriceInput(e.target.value);
-                if (e.target.value.trim()) setErrors((prev) => ({ ...prev, price: "" }));
+                if (e.target.value.trim())
+                  setErrors((prev) => ({ ...prev, price: "" }));
               }}
               error={errors.price}
               disabled={isSubmitting}
@@ -338,7 +378,8 @@ export default function FormProducts({
               value={costPriceInput}
               onChange={(e) => {
                 setCostPriceInput(e.target.value);
-                if (e.target.value.trim()) setErrors((prev) => ({ ...prev, costPrice: "" }));
+                if (e.target.value.trim())
+                  setErrors((prev) => ({ ...prev, costPrice: "" }));
               }}
               error={errors.costPrice}
               disabled={isSubmitting}
@@ -379,7 +420,6 @@ export default function FormProducts({
             subLabel="Si se desmarca, los clientes no verán este producto en el catálogo público."
           />
         </div>
-
       </Form>
     </Modal>
   );

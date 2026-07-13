@@ -5,6 +5,7 @@ import Button from "@/components/ui/Button";
 import { CampaignOrderWithRelations } from "@/types/models";
 
 import { useSystemConfig } from "@/context/SystemConfigContext";
+import { formatDateTime, formatDateUTC } from "@/utils/date.utils";
 
 interface OrderDetailModalProps {
   isOpen: boolean;
@@ -55,33 +56,6 @@ export default function OrderDetailModal({
 }: OrderDetailModalProps) {
   const systemConfig = useSystemConfig();
   if (!order) return null;
-
-  const formatDate = (dateInput: Date | string) => {
-    try {
-      const date = new Date(dateInput);
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch {
-      return String(dateInput);
-    }
-  };
-
-  const formatOnlyDate = (dateInput: Date | string) => {
-    try {
-      const date = new Date(dateInput);
-      const day = String(date.getUTCDate()).padStart(2, "0");
-      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-      const year = date.getUTCFullYear();
-      return `${day}/${month}/${year}`;
-    } catch {
-      return String(dateInput);
-    }
-  };
 
   const calculatedSubtotal = order.items.reduce((sum, item) => {
     if (item.arrivalStatus === "MISSING") return sum;
@@ -144,7 +118,7 @@ export default function OrderDetailModal({
                 <span className="font-bold text-text-primary">
                   F. Registro:
                 </span>{" "}
-                {formatDate(order.createdAt)}
+                {formatDateTime(order.createdAt)}
               </div>
             </div>
           </div>
@@ -238,7 +212,7 @@ export default function OrderDetailModal({
           {order.status === "DELIVERED" && order.notes && (
             <div className="mt-4 p-3 border border-dashed border-beauty-500/30 bg-beauty-500/5 rounded-2xl text-[11px] text-text-secondary">
               <span className="font-bold uppercase tracking-wider block text-[9px] mb-1">
-                Nota de Pago:
+                Nota:
               </span>
               {order.notes}
             </div>
@@ -247,7 +221,7 @@ export default function OrderDetailModal({
           {/* Fecha límite de pago - Fuera de totales y llamativo */}
           {order.paymentDate && (
             <div className="mt-4 p-3 bg-beauty-500/10 border border-dashed border-beauty-500/30 text-beauty-600 dark:text-beauty-400 rounded-xl text-center font-extrabold text-[12px] select-none">
-              Fecha límite de pago hasta {formatOnlyDate(order.paymentDate)}
+              Fecha límite de pago hasta {formatDateUTC(order.paymentDate)}
             </div>
           )}
 
@@ -342,7 +316,7 @@ export default function OrderDetailModal({
                 F. Registro:
               </span>
               <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                {formatDate(order.createdAt)}
+                {formatDateTime(order.createdAt)}
               </span>
             </div>
           </div>
@@ -433,7 +407,7 @@ export default function OrderDetailModal({
             {order.notes ? (
               <div className="p-3.5 border-l-4 border-beauty-400 bg-zinc-50 dark:bg-zinc-900 rounded-r-xl text-xs space-y-1">
                 <span className="font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider text-[10px] select-none">
-                  Observaciones:
+                  Nota:
                 </span>
                 <p className="text-zinc-600 dark:text-zinc-300 italic">
                   {order.notes}
@@ -475,7 +449,7 @@ export default function OrderDetailModal({
             </div>
             {order.paymentDate && (
               <div className="p-3 bg-beauty-500/10 border border-dashed border-beauty-500/30 text-beauty-600 dark:text-beauty-400 rounded-xl text-center font-extrabold text-[12.5px] select-none">
-                Fecha límite de pago hasta {formatOnlyDate(order.paymentDate)}
+                Fecha límite de pago hasta {formatDateUTC(order.paymentDate)}
               </div>
             )}
           </div>
@@ -486,8 +460,8 @@ export default function OrderDetailModal({
           {order.status === "DELIVERED" ? (
             <span className="text-success-text">
               ✔ Este pedido fue entregado el{" "}
-              {order.deliveredAt ? formatDate(order.deliveredAt) : "N/A"} y se
-              encuentra sumado al saldo del cliente.
+              {order.deliveredAt ? formatDateTime(order.deliveredAt) : "N/A"} y
+              se encuentra sumado al saldo del cliente.
             </span>
           ) : order.status === "CANCELLED" ? (
             <span className="text-danger-text">

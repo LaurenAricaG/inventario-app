@@ -179,12 +179,24 @@ export default async function DashboardPage() {
     .sort((a, b) => b.debt - a.debt)
     .slice(0, 5);
 
-  // Fetch full clients list for FormPayments searchable dropdown
-  const clientsList = await prisma.client.findMany({
-    where: { deletedAt: null },
-    select: { id: true, name: true },
-    orderBy: { name: "asc" },
-  });
+  // Compute full clients list with balances for FormPayments searchable dropdown
+  const clientsList = clients.map((client) => {
+    const deliveredOrders = client.campaignOrders.filter((o) => o.status === "DELIVERED");
+    
+    const totalSales =
+      client.directSales.reduce((sum, s) => sum + s.total, 0) +
+      deliveredOrders.reduce((sum, o) => sum + getOrderTotal(o), 0);
+      
+    const totalDebts = client.externalDebts.reduce((sum, d) => sum + d.amount, 0);
+    const totalPayments = client.payments.reduce((sum, p) => sum + p.amount, 0);
+    const balance = totalSales + totalDebts - totalPayments;
+
+    return {
+      id: client.id,
+      name: client.name,
+      balance,
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
 
   // 5. Fetch Recent Activities (sales, payments, orders)
   const [recentPayments, recentSales, recentOrders] = await Promise.all([

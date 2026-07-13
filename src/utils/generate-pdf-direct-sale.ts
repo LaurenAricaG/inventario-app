@@ -1,6 +1,7 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { SerializedDirectSaleWithRelations } from "@/types/direct-sale";
+import { formatDateTime } from "@/utils/date.utils";
 
 // Initialize vfs fonts for client-side
 if (typeof window !== "undefined") {
@@ -16,21 +17,6 @@ export function generatePdfDirectSale(
   systemName: string,
 ) {
   if (typeof window === "undefined") return;
-
-  const formatLocalDate = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch {
-      return isoString;
-    }
-  };
 
   const calculatedSubtotal = sale.items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
@@ -163,7 +149,7 @@ export function generatePdfDirectSale(
               {
                 text: [
                   { text: "F. EMISIÓN: ", style: "detailLabel" },
-                  { text: formatLocalDate(sale.createdAt), style: "detailValue" },
+                  { text: formatDateTime(sale.createdAt), style: "detailValue" },
                 ],
                 margin: [0, 2, 0, 2],
               },
@@ -366,5 +352,5 @@ export function generatePdfDirectSale(
     },
   };
 
-  pdfMake.createPdf(docDefinition).download(`boleta_venta_DS-${sale.id.toString().padStart(6, "0")}.pdf`);
+  pdfMake.createPdf(docDefinition).download(`venta_directa_DS-${sale.id.toString().padStart(6, "0")}.pdf`);
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
@@ -21,6 +21,8 @@ export default function FormCategories({
   onClose,
   category,
 }: FormCategoriesProps) {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   const [nameInput, setNameInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
@@ -42,7 +44,7 @@ export default function FormCategories({
     if (!validation.success) {
       setFormError(
         validation.error.issues[0]?.message ||
-        "El nombre de la categoría no es válido."
+          "El nombre de la categoría no es válido.",
       );
       return;
     }
@@ -67,8 +69,14 @@ export default function FormCategories({
         toast.error(res.message);
       }
     } catch (error: any) {
-      setFormError(error.message || "Ocurrió un error inesperado al procesar la solicitud.");
-      toast.error(error.message || "Ocurrió un error inesperado al procesar la solicitud.");
+      setFormError(
+        error.message ||
+          "Ocurrió un error inesperado al procesar la solicitud.",
+      );
+      toast.error(
+        error.message ||
+          "Ocurrió un error inesperado al procesar la solicitud.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -80,6 +88,7 @@ export default function FormCategories({
       onClose={onClose}
       title={category ? "Editar Categoría" : "Crear Categoría"}
       size="md"
+      initialFocusRef={nameInputRef}
       footer={
         <div className="flex items-center gap-3">
           <Button
@@ -104,6 +113,7 @@ export default function FormCategories({
       <Form id="category-form" onSubmit={handleSubmit}>
         <FormField label="Nombre de la Categoría">
           <Input
+            ref={nameInputRef}
             type="text"
             placeholder="Ej. Perfumes, Maquillaje, Accesorios..."
             value={nameInput}

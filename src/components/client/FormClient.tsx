@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
@@ -17,7 +17,13 @@ interface FormClientProps {
   client: SerializedClient | null;
 }
 
-export default function FormClient({ isOpen, onClose, client }: FormClientProps) {
+export default function FormClient({
+  isOpen,
+  onClose,
+  client,
+}: FormClientProps) {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   const [nameInput, setNameInput] = useState("");
   const [phoneInput, setPhoneInput] = useState("");
   const [addressInput, setAddressInput] = useState("");
@@ -83,7 +89,9 @@ export default function FormClient({ isOpen, onClose, client }: FormClientProps)
         }
       }
     } catch (error: any) {
-      toast.error(error.message || "Ocurrió un error al procesar la solicitud.");
+      toast.error(
+        error.message || "Ocurrió un error al procesar la solicitud.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -95,6 +103,7 @@ export default function FormClient({ isOpen, onClose, client }: FormClientProps)
       onClose={onClose}
       title={client ? "Editar Cliente" : "Registrar Cliente"}
       size="md"
+      initialFocusRef={nameInputRef}
       footer={
         <div className="flex items-center gap-3">
           <Button
@@ -120,16 +129,17 @@ export default function FormClient({ isOpen, onClose, client }: FormClientProps)
         {/* Nombre completo */}
         <FormField label="Nombre Completo">
           <Input
+            ref={nameInputRef}
             type="text"
             placeholder="Ej. Alexandra Guerrero..."
             value={nameInput}
             onChange={(e) => {
               setNameInput(e.target.value);
-              if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+              if (errors.name)
+                setErrors((prev) => ({ ...prev, name: undefined }));
             }}
             error={errors.name}
             disabled={isSubmitting}
-            autoFocus={true}
           />
         </FormField>
 
@@ -141,7 +151,8 @@ export default function FormClient({ isOpen, onClose, client }: FormClientProps)
             value={phoneInput}
             onChange={(e) => {
               setPhoneInput(e.target.value);
-              if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+              if (errors.phone)
+                setErrors((prev) => ({ ...prev, phone: undefined }));
             }}
             error={errors.phone}
             disabled={isSubmitting}
@@ -156,7 +167,8 @@ export default function FormClient({ isOpen, onClose, client }: FormClientProps)
             value={addressInput}
             onChange={(e) => {
               setAddressInput(e.target.value);
-              if (errors.address) setErrors((prev) => ({ ...prev, address: undefined }));
+              if (errors.address)
+                setErrors((prev) => ({ ...prev, address: undefined }));
             }}
             error={errors.address}
             disabled={isSubmitting}
@@ -170,7 +182,8 @@ export default function FormClient({ isOpen, onClose, client }: FormClientProps)
             value={notesInput}
             onChange={(e) => {
               setNotesInput(e.target.value);
-              if (errors.notes) setErrors((prev) => ({ ...prev, notes: undefined }));
+              if (errors.notes)
+                setErrors((prev) => ({ ...prev, notes: undefined }));
             }}
             error={errors.notes}
             disabled={isSubmitting}

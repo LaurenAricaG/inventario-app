@@ -1,14 +1,8 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { toast } from "sonner";
-import {
-  FiUploadCloud,
-  FiLink,
-  FiImage,
-  FiX,
-  FiTrash2,
-} from "react-icons/fi";
+import { FiUploadCloud, FiLink, FiImage, FiX, FiTrash2 } from "react-icons/fi";
 import Input from "@/components/ui/Input";
 import { cn } from "@/utils/cn.utils";
 
@@ -39,6 +33,11 @@ export default function ImageUpload({
   const [fileInputKey, setFileInputKey] = useState(0);
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
 
+  const localPreviewUrlRef = useRef<string | null>(null);
+  useEffect(() => {
+    localPreviewUrlRef.current = localPreviewUrl;
+  }, [localPreviewUrl]);
+
   // Sync tab based on initial value type (http vs local/base64 file)
   useEffect(() => {
     if (value) {
@@ -61,11 +60,11 @@ export default function ImageUpload({
   // Clean up on component unmount
   useEffect(() => {
     return () => {
-      if (localPreviewUrl) {
-        URL.revokeObjectURL(localPreviewUrl);
+      if (localPreviewUrlRef.current) {
+        URL.revokeObjectURL(localPreviewUrlRef.current);
       }
     };
-  }, [localPreviewUrl]);
+  }, []);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -76,7 +75,9 @@ export default function ImageUpload({
       return;
     }
     if (file.size > maxSizeInMB * 1024 * 1024) {
-      toast.error(`La imagen es demasiado grande. El límite es de ${maxSizeInMB}MB.`);
+      toast.error(
+        `La imagen es demasiado grande. El límite es de ${maxSizeInMB}MB.`,
+      );
       return;
     }
 
@@ -112,7 +113,7 @@ export default function ImageUpload({
             "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
             uploadTab === "file"
               ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
-              : "border border-transparent text-text-secondary hover:text-text-primary"
+              : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
           Subir archivo
@@ -125,7 +126,7 @@ export default function ImageUpload({
             "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
             uploadTab === "url"
               ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
-              : "border border-transparent text-text-secondary hover:text-text-primary"
+              : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
           Pegar URL
@@ -140,7 +141,11 @@ export default function ImageUpload({
             /* Preview inside Upload Zone */
             <div className="relative w-full h-40 border border-border-strong rounded-2xl overflow-hidden bg-bg-surface flex items-center justify-center shadow-xs">
               <img
-                src={value === "pending-local-file" ? (localPreviewUrl || undefined) : (value || undefined)}
+                src={
+                  value === "pending-local-file"
+                    ? localPreviewUrl || undefined
+                    : value || undefined
+                }
                 alt={previewAlt}
                 className="max-h-full max-w-full object-contain p-4 transition-transform duration-300 group-hover:scale-[1.03]"
                 onError={() => {
@@ -152,7 +157,8 @@ export default function ImageUpload({
                 <label
                   className={cn(
                     "p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer hover:scale-[1.05] active:scale-[0.95] transition-all border border-white/20",
-                    disabled && "opacity-50 cursor-not-allowed pointer-events-none"
+                    disabled &&
+                      "opacity-50 cursor-not-allowed pointer-events-none",
                   )}
                   title="Cambiar imagen"
                 >
@@ -182,7 +188,8 @@ export default function ImageUpload({
             <label
               className={cn(
                 "flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border-strong hover:border-beauty-500 rounded-2xl bg-bg-surface hover:bg-beauty-50/10 dark:hover:bg-beauty-950/5 cursor-pointer text-center transition-all duration-300 select-none group",
-                disabled && "opacity-50 cursor-not-allowed pointer-events-none border-border-default hover:border-border-default hover:bg-bg-surface"
+                disabled &&
+                  "opacity-50 cursor-not-allowed pointer-events-none border-border-default hover:border-border-default hover:bg-bg-surface",
               )}
             >
               <div className="p-3 bg-bg-card border border-border-soft rounded-xl shadow-xs text-text-secondary group-hover:scale-[1.05] group-hover:text-text-accent transition-all duration-300 mb-3">

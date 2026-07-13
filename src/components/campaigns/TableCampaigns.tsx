@@ -1,6 +1,7 @@
 "use client";
 
 import { FiEdit2, FiTrash2, FiCalendar } from "react-icons/fi";
+import { formatDateUTC } from "@/utils/date.utils";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
@@ -32,14 +33,6 @@ export default function TableCampaigns({
   onEdit,
   onDelete,
 }: TableCampaignsProps) {
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("es-PE", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      timeZone: "UTC", // Usar UTC para evitar desfases causados por la zona horaria local
-    });
-  };
 
   return (
     <ErrorBoundary variant="embedded" title="Tabla de Campañas">
@@ -81,7 +74,7 @@ export default function TableCampaigns({
               <TableCell className="text-center text-xs text-text-secondary">
                 <div className="flex items-center justify-center gap-1.5">
                   <FiCalendar className="w-3.5 h-3.5 text-text-tertiary" />
-                  <span>{formatDate(campania.startDate)}</span>
+                  <span>{formatDateUTC(campania.startDate)}</span>
                 </div>
               </TableCell>
 
@@ -89,7 +82,7 @@ export default function TableCampaigns({
               <TableCell className="text-center text-xs text-text-secondary">
                 <div className="flex items-center justify-center gap-1.5">
                   <FiCalendar className="w-3.5 h-3.5 text-text-tertiary" />
-                  <span>{formatDate(campania.endDate)}</span>
+                  <span>{formatDateUTC(campania.endDate)}</span>
                 </div>
               </TableCell>
 

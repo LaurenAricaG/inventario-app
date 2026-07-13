@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { cn } from "@/utils/cn.utils";
+import { formatDateLocal } from "@/utils/date.utils";
 import LinkComponent from "next/link";
 
 interface SerializedPayment {
@@ -35,7 +36,7 @@ const methodTranslations: Record<PaymentMethod, string> = {
   CASH: "Efectivo",
   YAPE: "Yape",
   PLIN: "Plin",
-  BANK_TRANSFER: "Transf. Bancaria",
+  BANK_TRANSFER: "Transf.",
   OTHER: "Otro",
 };
 
@@ -43,8 +44,10 @@ const badgeColors: Record<PaymentMethod, string> = {
   CASH: "bg-blue-50/70 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800",
   YAPE: "bg-purple-50/70 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800",
   PLIN: "bg-teal-50/70 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800",
-  BANK_TRANSFER: "bg-indigo-50/70 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800",
-  OTHER: "bg-stone-50/70 text-stone-700 border-stone-200 dark:bg-stone-900/20 dark:text-stone-300 dark:border-stone-800",
+  BANK_TRANSFER:
+    "bg-indigo-50/70 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800",
+  OTHER:
+    "bg-stone-50/70 text-stone-700 border-stone-200 dark:bg-stone-900/20 dark:text-stone-300 dark:border-stone-800",
 };
 
 export default function TablePayments({
@@ -52,30 +55,21 @@ export default function TablePayments({
   canDelete,
   onDelete,
 }: TablePaymentsProps) {
-  const formatLocalDate = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleDateString("es-PE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    } catch {
-      return isoString;
-    }
-  };
-
   return (
     <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left w-[200px]">Cliente</TableHead>
-            <TableHead className="text-right w-[110px]">Monto</TableHead>
-            <TableHead className="text-center w-[120px]">Método</TableHead>
-            <TableHead className="text-center w-[180px]">Fecha de Pago</TableHead>
-            <TableHead className="text-left min-w-[200px]">Notas / Observaciones</TableHead>
-            {canDelete && <TableHead className="text-center w-[80px]">Acciones</TableHead>}
+            <TableHead className="text-left w-50">Cliente</TableHead>
+            <TableHead className="text-right w-27.5">Monto</TableHead>
+            <TableHead className="text-center w-30">Método</TableHead>
+            <TableHead className="text-center w-45">Fecha de Pago</TableHead>
+            <TableHead className="text-left min-w-50">
+              Notas / Observaciones
+            </TableHead>
+            {canDelete && (
+              <TableHead className="text-center w-20">Acciones</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -99,7 +93,7 @@ export default function TablePayments({
                 <span
                   className={cn(
                     "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border",
-                    badgeColors[payment.method]
+                    badgeColors[payment.method],
                   )}
                 >
                   {methodTranslations[payment.method]}
@@ -108,16 +102,22 @@ export default function TablePayments({
 
               {/* Fecha de Pago */}
               <TableCell className="text-center text-xs text-text-secondary font-medium whitespace-nowrap">
-                <span suppressHydrationWarning className="flex items-center justify-center gap-1 font-semibold text-text-primary whitespace-nowrap">
+                <span
+                  suppressHydrationWarning
+                  className="flex items-center justify-center gap-1 font-semibold text-text-primary whitespace-nowrap"
+                >
                   <FiCalendar className="w-3.5 h-3.5 text-text-tertiary shrink-0" />
-                  {formatLocalDate(payment.paidAt)}
+                  {formatDateLocal(payment.paidAt)}
                 </span>
               </TableCell>
 
               {/* Notas */}
               <TableCell className="text-left text-xs text-text-secondary italic">
                 {payment.note ? (
-                  <p className="max-w-[200px] sm:max-w-[250px] truncate whitespace-nowrap" title={payment.note}>
+                  <p
+                    className="max-w-50 sm:max-w-62.5 truncate whitespace-nowrap"
+                    title={payment.note}
+                  >
                     {payment.note}
                   </p>
                 ) : (

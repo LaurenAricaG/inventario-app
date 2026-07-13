@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -9,7 +9,6 @@ import {
   FiArchive,
   FiAlertCircle,
   FiUser,
-  FiRotateCcw,
 } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
 import Button from "@/components/ui/Button";
@@ -73,6 +72,8 @@ export default function OrderPackingConsole({
   campaign,
   orders,
 }: OrderPackingConsoleProps) {
+  const discountInputRef = useRef<HTMLInputElement>(null);
+
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -430,6 +431,7 @@ export default function OrderPackingConsole({
               onClose={() => setPackingOrder(null)}
               title={`Empacar Pedido: ${packingOrder.client.name}`}
               size="sm"
+              initialFocusRef={discountInputRef}
             >
               <Form
                 onSubmit={(e) => {
@@ -516,17 +518,17 @@ export default function OrderPackingConsole({
 
                 <FormField label="Descuento Especial (S/)">
                   <Input
+                    ref={discountInputRef}
                     type="number"
                     min="0"
                     step="0.01"
                     value={discountInput}
                     onChange={(e) => setDiscountInput(e.target.value)}
                     placeholder="0.00"
-                    autoFocus
                   />
                 </FormField>
 
-                <FormField label="Nota / Plazo de Pago (Opcional)">
+                <FormField label="Nota (Opcional)">
                   <Input
                     type="text"
                     value={notesInput}

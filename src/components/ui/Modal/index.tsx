@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, ReactNode } from "react";
+import { useEffect, useRef, ReactNode } from "react";
 import { FiX } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
 
@@ -12,6 +12,7 @@ interface ModalProps {
   footer?: ReactNode;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  initialFocusRef?: React.RefObject<HTMLElement | null>;
 }
 
 export default function Modal({
@@ -22,7 +23,12 @@ export default function Modal({
   footer,
   size = "md",
   className,
+  initialFocusRef,
 }: ModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previouslyFocusedElement = useRef<HTMLElement | null>(null);
+
   // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -35,11 +41,28 @@ export default function Modal({
     };
   }, [isOpen]);
 
-  // Handle escape key
+  // Handle escape key + focus trap (Tab)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
+        return;
+      }
+      if (e.key === "Tab" && modalRef.current) {
+        const focusableElements =
+          modalRef.current.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          );
+        if (focusableElements.length === 0) return;
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
       }
     };
     if (isOpen) {
@@ -49,6 +72,19 @@ export default function Modal({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
+
+  // Move focus into the modal on open, restore it on close
+  useEffect(() => {
+    if (isOpen) {
+      previouslyFocusedElement.current = document.activeElement as HTMLElement;
+      const timer = setTimeout(() => {
+        (initialFocusRef?.current ?? closeButtonRef.current)?.focus(); // 👈 usa initialFocusRef si viene
+      }, 0);
+      return () => clearTimeout(timer);
+    } else {
+      previouslyFocusedElement.current?.focus();
+    }
+  }, [isOpen, initialFocusRef]);
 
   if (!isOpen) return null;
 
@@ -65,10 +101,15 @@ export default function Modal({
       <div
         className="absolute inset-0 bg-black/45 backdrop-blur-xs transition-opacity duration-300"
         onClick={onClose}
+        aria-hidden="true"
       />
 
       {/* Modal Card */}
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? "modal-title" : undefined}
         className={cn(
           "relative w-full bg-bg-card border border-border-default/80 rounded-3xl shadow-xl z-10 flex flex-col max-h-[90vh] scale-100 opacity-100 transition-all duration-300 animate-in fade-in zoom-in-95",
           sizes[size],
@@ -83,6 +124,7 @@ export default function Modal({
             <div />
           )}
           <button
+            ref={closeButtonRef}
             onClick={onClose}
             className="p-1.5 rounded-lg hover:bg-bg-surface text-text-secondary hover:text-text-primary transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
             aria-label="Cerrar modal"

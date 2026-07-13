@@ -1,6 +1,7 @@
 "use client";
 
 import { FiEye, FiTrash2, FiCalendar, FiArrowDownLeft, FiArrowUpRight, FiPlus } from "react-icons/fi";
+import { formatDateLocal } from "@/utils/date.utils";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
@@ -86,18 +87,6 @@ export default function MovementHistoryTable({
   canDeletePayment,
   canDeleteDebt,
 }: MovementHistoryTableProps) {
-  const formatDate = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    } catch {
-      return isoString;
-    }
-  };
 
   return (
     <ErrorBoundary variant="embedded" title="Historial de Movimientos">
@@ -140,7 +129,7 @@ export default function MovementHistoryTable({
                   <TableCell>
                     <div className="flex items-center gap-1.5 text-text-secondary text-xs sm:text-sm font-medium">
                       <FiCalendar className="w-3.5 h-3.5 text-text-tertiary" />
-                      <span suppressHydrationWarning>{formatDate(movement.date)}</span>
+                      <span suppressHydrationWarning>{formatDateLocal(movement.date)}</span>
                     </div>
                   </TableCell>
 

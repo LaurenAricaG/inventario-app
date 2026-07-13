@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ChangeEvent, DragEvent, useEffect } from "react";
+import { useState, useRef, ChangeEvent, DragEvent, useEffect } from "react";
 import { toast } from "sonner";
 import {
   FiUploadCloud,
@@ -40,10 +40,15 @@ export default function MultiImageUpload({
   const [urlInput, setUrlInput] = useState("");
   const [uploadTab, setUploadTab] = useState<"file" | "url">("file");
 
+  const valueRef = useRef(value);
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+
   // Limpiar objectURLs de archivos locales cuando el componente se desmonte
   useEffect(() => {
     return () => {
-      value.forEach((img) => {
+      valueRef.current.forEach((img) => {
         if (img.file && img.url.startsWith("blob:")) {
           URL.revokeObjectURL(img.url);
         }
@@ -57,7 +62,9 @@ export default function MultiImageUpload({
       return;
     }
     if (file.size > maxSizeInMB * 1024 * 1024) {
-      toast.error(`La imagen "${file.name}" supera el límite de ${maxSizeInMB}MB.`);
+      toast.error(
+        `La imagen "${file.name}" supera el límite de ${maxSizeInMB}MB.`,
+      );
       return;
     }
 
@@ -79,7 +86,9 @@ export default function MultiImageUpload({
     if (files.length === 0) return;
 
     if (value.length + files.length > maxImages) {
-      toast.error(`Solo puedes seleccionar un máximo de ${maxImages} imágenes.`);
+      toast.error(
+        `Solo puedes seleccionar un máximo de ${maxImages} imágenes.`,
+      );
       return;
     }
 
@@ -105,7 +114,9 @@ export default function MultiImageUpload({
     if (files.length === 0) return;
 
     if (value.length + files.length > maxImages) {
-      toast.error(`Solo puedes seleccionar un máximo de ${maxImages} imágenes.`);
+      toast.error(
+        `Solo puedes seleccionar un máximo de ${maxImages} imágenes.`,
+      );
       return;
     }
 
@@ -200,7 +211,7 @@ export default function MultiImageUpload({
             "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
             uploadTab === "file"
               ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
-              : "border border-transparent text-text-secondary hover:text-text-primary"
+              : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
           Subir archivos
@@ -213,7 +224,7 @@ export default function MultiImageUpload({
             "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
             uploadTab === "url"
               ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
-              : "border border-transparent text-text-secondary hover:text-text-primary"
+              : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
           Pegar URL
@@ -221,65 +232,66 @@ export default function MultiImageUpload({
       </div>
 
       {/* Upload Zone */}
-      {uploadTab === "file" ? (
-        value.length < maxImages && (
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={cn(
-              "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border-strong hover:border-beauty-500 rounded-2xl bg-bg-surface hover:bg-beauty-50/10 dark:hover:bg-beauty-950/5 cursor-pointer text-center transition-all duration-300 select-none group",
-              isDragging && "border-beauty-600 bg-beauty-50/20",
-              disabled && "opacity-50 cursor-not-allowed pointer-events-none"
-            )}
-          >
-            <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
-              <div className="p-2.5 bg-bg-card border border-border-soft rounded-xl shadow-xs text-text-secondary group-hover:scale-[1.05] group-hover:text-text-accent transition-all duration-300 mb-2">
-                <FiUploadCloud className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-bold text-text-primary">
-                Arrastra aquí tus imágenes o haz clic para seleccionar
-              </span>
-              <span className="text-[10px] text-text-secondary mt-1">
-                Límite: {value.length}/{maxImages} imágenes. Formatos PNG, JPG, WEBP (máx {maxSizeInMB}MB)
-              </span>
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-                disabled={disabled || value.length >= maxImages}
-              />
-            </label>
-          </div>
-        )
-      ) : (
-        value.length < maxImages && (
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <Input
-                type="text"
-                placeholder="https://ejemplo.com/imagen.png"
-                value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                disabled={disabled}
-                icon={<FiLink className="w-4 h-4 text-text-tertiary" />}
-                className="text-xs h-10"
-              />
-            </div>
-            <Button
-              type="button"
-              onClick={handleAddUrl}
-              disabled={disabled || !urlInput.trim() || value.length >= maxImages}
-              variant="outline"
-              className="px-4 border-border-strong text-text-primary hover:bg-bg-surface"
+      {uploadTab === "file"
+        ? value.length < maxImages && (
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={cn(
+                "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border-strong hover:border-beauty-500 rounded-2xl bg-bg-surface hover:bg-beauty-50/10 dark:hover:bg-beauty-950/5 cursor-pointer text-center transition-all duration-300 select-none group",
+                isDragging && "border-beauty-600 bg-beauty-50/20",
+                disabled && "opacity-50 cursor-not-allowed pointer-events-none",
+              )}
             >
-              Agregar
-            </Button>
-          </div>
-        )
-      )}
+              <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
+                <div className="p-2.5 bg-bg-card border border-border-soft rounded-xl shadow-xs text-text-secondary group-hover:scale-[1.05] group-hover:text-text-accent transition-all duration-300 mb-2">
+                  <FiUploadCloud className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-text-primary">
+                  Arrastra aquí tus imágenes o haz clic para seleccionar
+                </span>
+                <span className="text-[10px] text-text-secondary mt-1">
+                  Límite: {value.length}/{maxImages} imágenes. Formatos PNG,
+                  JPG, WEBP (máx {maxSizeInMB}MB)
+                </span>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  disabled={disabled || value.length >= maxImages}
+                />
+              </label>
+            </div>
+          )
+        : value.length < maxImages && (
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  placeholder="https://ejemplo.com/imagen.png"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  disabled={disabled}
+                  icon={<FiLink className="w-4 h-4 text-text-tertiary" />}
+                  className="text-xs h-10"
+                />
+              </div>
+              <Button
+                type="button"
+                onClick={handleAddUrl}
+                disabled={
+                  disabled || !urlInput.trim() || value.length >= maxImages
+                }
+                variant="outline"
+                className="px-4 border-border-strong text-text-primary hover:bg-bg-surface"
+              >
+                Agregar
+              </Button>
+            </div>
+          )}
 
       {/* Grid of Images / Previews */}
       {value.length > 0 && (
@@ -292,7 +304,7 @@ export default function MultiImageUpload({
                 "relative group w-full aspect-square border rounded-2xl overflow-hidden bg-bg-surface flex items-center justify-center p-2 shadow-xs transition-all duration-300",
                 img.isMain
                   ? "border-beauty-400 ring-2 ring-beauty-400/20"
-                  : "border-border-default hover:border-border-strong"
+                  : "border-border-default hover:border-border-strong",
               )}
             >
               <img
@@ -327,9 +339,11 @@ export default function MultiImageUpload({
                       "p-1.5 rounded-lg border transition-all duration-200 cursor-pointer",
                       img.isMain
                         ? "bg-beauty-600 border-beauty-500 text-white"
-                        : "bg-white/10 border-white/20 text-white/80 hover:text-white hover:bg-white/20"
+                        : "bg-white/10 border-white/20 text-white/80 hover:text-white hover:bg-white/20",
                     )}
-                    title={img.isMain ? "Imagen principal" : "Marcar como principal"}
+                    title={
+                      img.isMain ? "Imagen principal" : "Marcar como principal"
+                    }
                   >
                     <FiStar className="w-3.5 h-3.5" />
                   </button>

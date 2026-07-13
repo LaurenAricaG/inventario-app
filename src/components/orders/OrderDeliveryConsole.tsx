@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { formatDateUTC } from "@/utils/date.utils";
 import { toast } from "sonner";
 import {
   FiArrowLeft,
@@ -59,24 +60,11 @@ export default function OrderDeliveryConsole({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-
-
-  const formatLocalDate = (isoString: string | null | undefined) => {
-    if (!isoString) return "";
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "UTC",
-      });
-    } catch {
-      return isoString;
-    }
-  };
-
-  const handleUpdateStatus = async (orderId: number, status: CampaignOrderStatus, successMsg: string) => {
+  const handleUpdateStatus = async (
+    orderId: number,
+    status: CampaignOrderStatus,
+    successMsg: string,
+  ) => {
     try {
       const res = await transitionOrderStatusAction(orderId, status);
       if (res.success) {
@@ -95,7 +83,8 @@ export default function OrderDeliveryConsole({
     const subtotal = order.items.reduce((sum, item) => {
       if (item.arrivalStatus === ItemArrivalStatus.MISSING) return sum;
       const price =
-        item.arrivalStatus === ItemArrivalStatus.SUBSTITUTED && item.substitutePrice !== null
+        item.arrivalStatus === ItemArrivalStatus.SUBSTITUTED &&
+        item.substitutePrice !== null
           ? item.substitutePrice
           : item.catalogPrice;
       return sum + item.quantity * price;
@@ -106,18 +95,28 @@ export default function OrderDeliveryConsole({
 
   // Filtrar pedidos listos para entregar (que no estén entregados/anulados y tengan al menos un producto que no haya faltado)
   const pendingDeliveries = orders.filter((o) => {
-    if (o.status === CampaignOrderStatus.DELIVERED || o.status === CampaignOrderStatus.CANCELLED) return false;
-    const itemsToDeliverCount = o.items.filter((i) => i.arrivalStatus !== ItemArrivalStatus.MISSING).length;
+    if (
+      o.status === CampaignOrderStatus.DELIVERED ||
+      o.status === CampaignOrderStatus.CANCELLED
+    )
+      return false;
+    const itemsToDeliverCount = o.items.filter(
+      (i) => i.arrivalStatus !== ItemArrivalStatus.MISSING,
+    ).length;
     return itemsToDeliverCount > 0;
   });
-  const deliveredOrders = orders.filter((o) => o.status === CampaignOrderStatus.DELIVERED);
+  const deliveredOrders = orders.filter(
+    (o) => o.status === CampaignOrderStatus.DELIVERED,
+  );
 
   return (
     <div className="space-y-6">
       {/* Botón Volver y Encabezado */}
       <div className="flex items-center gap-3 select-none">
         <button
-          onClick={() => router.push(`/admin/pedidos?campaignId=${campaign.id}`)}
+          onClick={() =>
+            router.push(`/admin/pedidos?campaignId=${campaign.id}`)
+          }
           className="p-2.5 rounded-xl border border-border-default/60 bg-bg-surface hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
         >
           <FiArrowLeft className="w-4 h-4" />
@@ -127,7 +126,10 @@ export default function OrderDeliveryConsole({
             Despacho y Entrega Rápida de Pedidos
           </h1>
           <p className="text-xs text-text-secondary mt-0.5">
-            Campaña: <span className="font-bold text-text-primary">{campaign.company.name} - {campaign.number}</span>
+            Campaña:{" "}
+            <span className="font-bold text-text-primary">
+              {campaign.company.name} - {campaign.number}
+            </span>
           </p>
         </div>
       </div>
@@ -149,7 +151,9 @@ export default function OrderDeliveryConsole({
             <div className="space-y-3">
               {pendingDeliveries.map((order) => {
                 const { subtotal, total } = getOrderTotals(order);
-                const itemsCount = order.items.filter((i) => i.arrivalStatus !== ItemArrivalStatus.MISSING).length;
+                const itemsCount = order.items.filter(
+                  (i) => i.arrivalStatus !== ItemArrivalStatus.MISSING,
+                ).length;
 
                 return (
                   <div
@@ -167,7 +171,10 @@ export default function OrderDeliveryConsole({
                             {order.client.name}
                           </span>
                           <span className="text-[10px] text-text-tertiary font-semibold block">
-                            {itemsCount} productos • Estado: {order.status === "PACKED" ? "Empacado" : "Verificado"}
+                            {itemsCount} productos • Estado:{" "}
+                            {order.status === "PACKED"
+                              ? "Empacado"
+                              : "Verificado"}
                           </span>
                         </div>
                       </div>
@@ -182,13 +189,13 @@ export default function OrderDeliveryConsole({
                         {order.notes && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-warning-bg/50 border border-warning-text/10 text-warning-text">
                             <FiCalendar className="w-3 h-3 text-warning-text shrink-0" />
-                            Plazo: {order.notes}
+                            Nota: {order.notes}
                           </span>
                         )}
                         {order.paymentDate && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-beauty-500/10 border border-beauty-500/20 text-beauty-600 dark:text-beauty-400">
                             <FiCalendar className="w-3 h-3 text-beauty-500 shrink-0" />
-                            F. Pago: {formatLocalDate(order.paymentDate)}
+                            F. Pago: {formatDateUTC(order.paymentDate)}
                           </span>
                         )}
                       </div>
@@ -212,7 +219,7 @@ export default function OrderDeliveryConsole({
                           handleUpdateStatus(
                             order.id,
                             CampaignOrderStatus.DELIVERED,
-                            `Pedido de ${order.client.name} marcado como entregado.`
+                            `Pedido de ${order.client.name} marcado como entregado.`,
                           )
                         }
                         className="py-2 px-4 text-xs font-bold rounded-xl gap-1.5 bg-success-text hover:bg-success-text/90 border-transparent text-white shadow-sm shrink-0"
@@ -244,22 +251,31 @@ export default function OrderDeliveryConsole({
               {deliveredOrders.map((order) => {
                 const { total } = getOrderTotals(order);
                 return (
-                  <div key={order.id} className="p-4 bg-bg-card border border-border-default/80 rounded-2xl shadow-xs space-y-2">
+                  <div
+                    key={order.id}
+                    className="p-4 bg-bg-card border border-border-default/80 rounded-2xl shadow-xs space-y-2"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 min-w-0">
                         <FiUser className="w-4 h-4 text-success-text shrink-0" />
-                        <span className="font-bold text-text-primary text-xs truncate">{order.client.name}</span>
+                        <span className="font-bold text-text-primary text-xs truncate">
+                          {order.client.name}
+                        </span>
                       </div>
                     </div>
                     <div className="space-y-1.5">
                       <div className="flex justify-between items-center text-[11px] bg-bg-surface p-2 border border-border-soft/60 rounded-xl">
                         <span className="text-text-secondary">Por cobrar:</span>
-                        <span className="font-mono font-bold text-success-text">S/ {total.toFixed(2)}</span>
+                        <span className="font-mono font-bold text-success-text">
+                          S/ {total.toFixed(2)}
+                        </span>
                       </div>
                       <div className="flex justify-between items-center text-[11px] bg-bg-surface p-2 border border-border-soft/60 rounded-xl select-none">
                         <span className="text-text-secondary">F. Pago:</span>
                         <span className="font-mono text-text-primary font-bold">
-                          {order.paymentDate ? formatLocalDate(order.paymentDate) : "Sin definir"}
+                          {order.paymentDate
+                            ? formatDateUTC(order.paymentDate)
+                            : "Sin definir"}
                         </span>
                       </div>
                     </div>

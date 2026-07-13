@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { formatDateUTC } from "@/utils/date.utils";
 import Link from "next/link";
 import { toast } from "sonner";
 import {
@@ -117,21 +118,6 @@ export default function OrdersDashboard({
   const [campaignPaymentDateVal, setCampaignPaymentDateVal] = useState("");
   const [isSubmittingCampaignPaymentDate, setIsSubmittingCampaignPaymentDate] =
     useState(false);
-
-  const formatLocalDate = (isoString: string | null | undefined) => {
-    if (!isoString) return "";
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "UTC",
-      });
-    } catch {
-      return isoString;
-    }
-  };
 
   // Obtener lista única de empresas que tienen al menos una campaña
   const companiesMap = new Map<number, { id: number; name: string }>();
@@ -415,7 +401,7 @@ export default function OrdersDashboard({
                     <span>
                       F. Pago:{" "}
                       <span className="font-bold text-text-primary">
-                        {formatLocalDate(currentCampaign.paymentDate)}
+                        {formatDateUTC(currentCampaign.paymentDate)}
                       </span>
                     </span>
                   </div>
@@ -604,7 +590,7 @@ export default function OrdersDashboard({
                           <span className="block">{order.client.name}</span>
                           {order.paymentDate ? (
                             <span className="text-[10px] text-beauty-500 font-bold block mt-0.5 select-none">
-                              Límite Pago: {formatLocalDate(order.paymentDate)}
+                              Límite Pago: {formatDateUTC(order.paymentDate)}
                             </span>
                           ) : (
                             <>

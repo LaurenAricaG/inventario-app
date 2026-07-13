@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
@@ -19,7 +19,14 @@ interface FormUserProps {
   roles: { id: number; name: string }[];
 }
 
-export default function FormUser({ isOpen, onClose, user, roles }: FormUserProps) {
+export default function FormUser({
+  isOpen,
+  onClose,
+  user,
+  roles,
+}: FormUserProps) {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   const [nameInput, setNameInput] = useState("");
   const [usernameInput, setUsernameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
@@ -54,7 +61,8 @@ export default function FormUser({ isOpen, onClose, user, roles }: FormUserProps
 
     // Contraseña obligatoria solo al crear nuevo usuario
     if (!user && (!passwordInput || passwordInput.trim() === "")) {
-      fieldErrors.password = "La contraseña es obligatoria para nuevos usuarios.";
+      fieldErrors.password =
+        "La contraseña es obligatoria para nuevos usuarios.";
     }
 
     const validation = userSchema.safeParse({
@@ -95,12 +103,17 @@ export default function FormUser({ isOpen, onClose, user, roles }: FormUserProps
         // Mapear errores de duplicados a los campos específicos si corresponden
         if (res.message.toLowerCase().includes("usuario")) {
           setErrors((prev) => ({ ...prev, username: res.message }));
-        } else if (res.message.toLowerCase().includes("correo") || res.message.toLowerCase().includes("email")) {
+        } else if (
+          res.message.toLowerCase().includes("correo") ||
+          res.message.toLowerCase().includes("email")
+        ) {
           setErrors((prev) => ({ ...prev, email: res.message }));
         }
       }
     } catch (error: any) {
-      toast.error(error.message || "Ocurrió un error al procesar la solicitud.");
+      toast.error(
+        error.message || "Ocurrió un error al procesar la solicitud.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -112,6 +125,7 @@ export default function FormUser({ isOpen, onClose, user, roles }: FormUserProps
       onClose={onClose}
       title={user ? "Editar Usuario" : "Crear Usuario"}
       size="md"
+      initialFocusRef={nameInputRef}
       footer={
         <div className="flex items-center gap-3">
           <Button
@@ -137,16 +151,17 @@ export default function FormUser({ isOpen, onClose, user, roles }: FormUserProps
         {/* Nombre completo */}
         <FormField label="Nombre Completo">
           <Input
+            ref={nameInputRef}
             type="text"
             placeholder="Ej. Juan Pérez..."
             value={nameInput}
             onChange={(e) => {
               setNameInput(e.target.value);
-              if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+              if (errors.name)
+                setErrors((prev) => ({ ...prev, name: undefined }));
             }}
             error={errors.name}
             disabled={isSubmitting}
-            autoFocus={true}
           />
         </FormField>
 
@@ -158,7 +173,8 @@ export default function FormUser({ isOpen, onClose, user, roles }: FormUserProps
             value={usernameInput}
             onChange={(e) => {
               setUsernameInput(e.target.value);
-              if (errors.username) setErrors((prev) => ({ ...prev, username: undefined }));
+              if (errors.username)
+                setErrors((prev) => ({ ...prev, username: undefined }));
             }}
             icon={<CiAt className="w-4 h-4" />}
             error={errors.username}
@@ -174,7 +190,8 @@ export default function FormUser({ isOpen, onClose, user, roles }: FormUserProps
             value={emailInput}
             onChange={(e) => {
               setEmailInput(e.target.value);
-              if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+              if (errors.email)
+                setErrors((prev) => ({ ...prev, email: undefined }));
             }}
             error={errors.email}
             disabled={isSubmitting}
@@ -182,16 +199,19 @@ export default function FormUser({ isOpen, onClose, user, roles }: FormUserProps
         </FormField>
 
         {/* Contraseña */}
-        <FormField
-          label={user ? "Nueva Contraseña (Opcional)" : "Contraseña"}
-        >
+        <FormField label={user ? "Nueva Contraseña (Opcional)" : "Contraseña"}>
           <Input
             type="password"
-            placeholder={user ? "Dejar en blanco para no modificar..." : "Mínimo 6 caracteres..."}
+            placeholder={
+              user
+                ? "Dejar en blanco para no modificar..."
+                : "Mínimo 6 caracteres..."
+            }
             value={passwordInput}
             onChange={(e) => {
               setPasswordInput(e.target.value);
-              if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+              if (errors.password)
+                setErrors((prev) => ({ ...prev, password: undefined }));
             }}
             error={errors.password}
             disabled={isSubmitting}
@@ -204,7 +224,8 @@ export default function FormUser({ isOpen, onClose, user, roles }: FormUserProps
             value={roleInput}
             onChange={(e) => {
               setRoleInput(e.target.value);
-              if (errors.roleId) setErrors((prev) => ({ ...prev, roleId: undefined }));
+              if (errors.roleId)
+                setErrors((prev) => ({ ...prev, roleId: undefined }));
             }}
             error={errors.roleId}
             placeholder="Seleccione un rol..."

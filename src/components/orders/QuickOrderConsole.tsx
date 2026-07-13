@@ -18,6 +18,7 @@ import {
   FiCheck,
 } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
+import { formatDateShort } from "@/utils/date.utils";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
@@ -441,7 +442,13 @@ export default function QuickOrderConsole({
       {/* Botón Volver y Encabezado */}
       <div className="flex items-center gap-3">
         <button
-          onClick={() => router.push(selectedCampaign ? `/admin/pedidos?campaignId=${selectedCampaign.id}` : "/admin/pedidos")}
+          onClick={() =>
+            router.push(
+              selectedCampaign
+                ? `/admin/pedidos?campaignId=${selectedCampaign.id}`
+                : "/admin/pedidos",
+            )
+          }
           className="p-2.5 rounded-xl border border-border-default/60 bg-bg-surface hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
         >
           <FiArrowLeft className="w-4 h-4" />
@@ -481,7 +488,7 @@ export default function QuickOrderConsole({
               </div>
               <div>
                 <span className="text-[10px] text-beauty-600 dark:text-beauty-400 font-extrabold uppercase tracking-wider block">
-                  Campaña Activa Detectada
+                  Campaña Activa
                 </span>
                 <span className="text-base font-black text-text-primary mt-0.5 block">
                   {selectedCampaign.number}
@@ -496,12 +503,11 @@ export default function QuickOrderConsole({
                 </span>
               )}
               {selectedCampaign.endDate && (
-                <span className="text-xs text-text-secondary font-medium">
-                  Cierre:{" "}
-                  {new Date(selectedCampaign.endDate).toLocaleDateString(
-                    "es-ES",
-                    { day: "2-digit", month: "short" },
-                  )}
+                <span
+                  suppressHydrationWarning
+                  className="text-xs text-text-secondary font-medium"
+                >
+                  Cierre: {formatDateShort(selectedCampaign.endDate)}
                 </span>
               )}
             </div>
@@ -752,7 +758,7 @@ export default function QuickOrderConsole({
               <Button
                 type="submit"
                 variant="primary"
-                className="py-3 px-4 shadow-sm shrink-0 mt-[24px]"
+                className="py-3 px-4 shadow-sm shrink-0 mt-6"
               >
                 Agregar
               </Button>
@@ -902,7 +908,13 @@ export default function QuickOrderConsole({
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push(selectedCampaign ? `/admin/pedidos?campaignId=${selectedCampaign.id}` : "/admin/pedidos")}
+            onClick={() =>
+              router.push(
+                selectedCampaign
+                  ? `/admin/pedidos?campaignId=${selectedCampaign.id}`
+                  : "/admin/pedidos",
+              )
+            }
             disabled={isSaving}
             className="w-full sm:w-auto border-border-strong text-text-primary hover:bg-bg-surface"
           >

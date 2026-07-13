@@ -1,6 +1,7 @@
 "use client";
 
 import { FiEdit2, FiUserX, FiUserCheck, FiMail, FiCalendar, FiShield } from "react-icons/fi";
+import { formatDateLong } from "@/utils/date.utils";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import CopyButton from "@/components/ui/CopyButton";
 import ButtonIcon from "@/components/ui/ButtonIcon";
@@ -156,12 +157,8 @@ export default function TableUser({
                   <TableCell className="text-xs text-text-secondary hidden md:table-cell">
                     <div className="flex items-center gap-1.5">
                       <FiCalendar className="w-3.5 h-3.5 text-text-tertiary" />
-                      <span>
-                        {new Date(user.createdAt).toLocaleDateString("es-PE", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                      <span suppressHydrationWarning>
+                        {formatDateLong(user.createdAt)}
                       </span>
                     </div>
                   </TableCell>

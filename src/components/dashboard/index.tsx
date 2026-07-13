@@ -15,6 +15,7 @@ import {
 } from "react-icons/fi";
 import Link from "next/link";
 import FormPayments from "@/components/payments/FormPayments";
+import { formatDateShort, formatDateShortWithTime } from "@/utils/date.utils";
 import TableDashboard, { PendingDebtor } from "./TableDashboard";
 import Button from "../ui/Button";
 
@@ -49,7 +50,7 @@ interface DashboardProps {
   totalOutstanding: number;
   activeCampaigns: ActiveCampaign[];
   activities: Activity[];
-  clientsList: { id: number; name: string }[];
+  clientsList: { id: number; name: string; balance: number }[];
   permissions: string[];
 }
 
@@ -194,13 +195,6 @@ export default function Dashboard({
                   const diffTime = end.getTime() - today.getTime();
                   const remainingDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
 
-                  const formatLocalDate = (dateObj: Date) => {
-                    return dateObj.toLocaleDateString("es-ES", {
-                      day: "2-digit",
-                      month: "short",
-                    });
-                  };
-
                   return (
                     <div key={camp.id} className="bg-bg-card border border-border-default rounded-2xl p-5 hover:shadow-xs transition-shadow duration-300">
                       <p className="text-xs font-bold text-beauty-600 mb-1">
@@ -234,8 +228,8 @@ export default function Dashboard({
                           <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-medium mb-1">
                             Recepción
                           </p>
-                          <p className="text-sm font-semibold text-text-primary">
-                            {formatLocalDate(end)}
+                          <p suppressHydrationWarning className="text-sm font-semibold text-text-primary">
+                            {formatDateShort(end)}
                           </p>
                         </div>
                         <div className="bg-bg-page rounded-xl p-3 border border-border-soft">
@@ -284,20 +278,6 @@ export default function Dashboard({
                     bgClass = "bg-info-bg/50 text-info-text border-info-text/10";
                   }
 
-                  const formatDateShort = (isoString: string) => {
-                    try {
-                      const date = new Date(isoString);
-                      return date.toLocaleDateString("es-ES", {
-                        day: "2-digit",
-                        month: "short",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      });
-                    } catch {
-                      return "";
-                    }
-                  };
-
                   return (
                     <div key={act.id} className="flex items-start gap-3 text-xs leading-normal">
                       <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${bgClass}`}>
@@ -310,8 +290,8 @@ export default function Dashboard({
                         <p className="text-[11px] text-text-secondary">
                           {act.description}
                         </p>
-                        <p className="text-[10px] text-text-tertiary font-medium">
-                          {formatDateShort(act.date)}
+                        <p suppressHydrationWarning className="text-[10px] text-text-tertiary font-medium">
+                          {formatDateShortWithTime(act.date)}
                         </p>
                       </div>
                     </div>

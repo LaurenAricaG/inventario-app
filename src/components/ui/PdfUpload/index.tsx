@@ -69,7 +69,9 @@ export default function PdfUpload({
       return;
     }
     if (file.size > maxSizeInMB * 1024 * 1024) {
-      toast.error(`El archivo es demasiado grande. El límite es de ${maxSizeInMB}MB.`);
+      toast.error(
+        `El archivo es demasiado grande. El límite es de ${maxSizeInMB}MB.`,
+      );
       return;
     }
 
@@ -97,7 +99,7 @@ export default function PdfUpload({
             "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
             uploadTab === "file"
               ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
-              : "border border-transparent text-text-secondary hover:text-text-primary"
+              : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
           Subir archivo
@@ -110,7 +112,7 @@ export default function PdfUpload({
             "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
             uploadTab === "url"
               ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
-              : "border border-transparent text-text-secondary hover:text-text-primary"
+              : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
           Pegar URL
@@ -129,7 +131,9 @@ export default function PdfUpload({
                 {fileName}
               </span>
               <span className="text-xs text-text-tertiary mt-1">
-                {value === "pending-local-file" ? "Listo para subir (se guardará al enviar)" : "Listo para guardar"}
+                {value === "pending-local-file"
+                  ? "Listo para subir (se guardará al enviar)"
+                  : "Listo para guardar"}
               </span>
 
               {/* Overlay controls */}
@@ -147,7 +151,8 @@ export default function PdfUpload({
                 <label
                   className={cn(
                     "p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer hover:scale-[1.05] active:scale-[0.95] transition-all border border-white/20",
-                    disabled && "opacity-50 cursor-not-allowed pointer-events-none"
+                    disabled &&
+                      "opacity-50 cursor-not-allowed pointer-events-none",
                   )}
                   title="Cambiar archivo PDF"
                 >
@@ -177,7 +182,8 @@ export default function PdfUpload({
             <label
               className={cn(
                 "flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-border-strong hover:border-beauty-500 rounded-2xl bg-bg-surface hover:bg-beauty-50/10 dark:hover:bg-beauty-950/5 cursor-pointer text-center transition-all duration-300 select-none group",
-                disabled && "opacity-50 cursor-not-allowed pointer-events-none border-border-default hover:border-border-default hover:bg-bg-surface"
+                disabled &&
+                  "opacity-50 cursor-not-allowed pointer-events-none border-border-default hover:border-border-default hover:bg-bg-surface",
               )}
             >
               <div className="p-3 bg-bg-card border border-border-soft rounded-xl shadow-xs text-text-secondary group-hover:scale-[1.05] group-hover:text-text-accent transition-all duration-300 mb-2">
@@ -222,10 +228,12 @@ export default function PdfUpload({
               <div className="flex items-center gap-3">
                 <FiFileText className="w-8 h-8 text-danger-text/80 shrink-0" />
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-xs font-semibold text-text-primary truncate max-w-[280px] sm:max-w-md">
+                  <span className="text-xs font-semibold text-text-primary truncate max-w-70 sm:max-w-md">
                     {value}
                   </span>
-                  <span className="text-[10px] text-text-tertiary">Enlace del catálogo externo</span>
+                  <span className="text-[10px] text-text-tertiary">
+                    Enlace del catálogo externo
+                  </span>
                 </div>
               </div>
               <div className="flex gap-2 justify-end w-full border-t border-border-default/30 pt-2.5">

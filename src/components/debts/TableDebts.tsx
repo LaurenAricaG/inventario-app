@@ -1,6 +1,7 @@
 "use client";
 
 import LinkComponent from "next/link";
+import { formatDateLocal } from "@/utils/date.utils";
 import { FiCalendar, FiTrash2 } from "react-icons/fi";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
@@ -33,30 +34,23 @@ export default function TableDebts({
   canDelete,
   onDelete,
 }: TableDebtsProps) {
-  const formatLocalDate = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleDateString("es-PE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    } catch {
-      return isoString;
-    }
-  };
-
   return (
     <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left w-[200px]">Cliente</TableHead>
-            <TableHead className="text-right w-[110px]">Monto</TableHead>
-            <TableHead className="text-left w-[200px]">Motivo</TableHead>
-            <TableHead className="text-center w-[180px]">Fecha de Registro</TableHead>
-            <TableHead className="text-left min-w-[200px]">Notas / Observaciones</TableHead>
-            {canDelete && <TableHead className="text-center w-[80px]">Acciones</TableHead>}
+            <TableHead className="text-left w-50">Cliente</TableHead>
+            <TableHead className="text-right w-27.5">Monto</TableHead>
+            <TableHead className="text-left w-50">Motivo</TableHead>
+            <TableHead className="text-center w-45">
+              Fecha de Registro
+            </TableHead>
+            <TableHead className="text-left min-w-50">
+              Notas / Observaciones
+            </TableHead>
+            {canDelete && (
+              <TableHead className="text-center w-20">Acciones</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -82,16 +76,22 @@ export default function TableDebts({
 
               {/* Fecha */}
               <TableCell className="text-center text-xs text-text-secondary font-medium whitespace-nowrap">
-                <span suppressHydrationWarning className="flex items-center justify-center gap-1 font-semibold text-text-primary whitespace-nowrap">
+                <span
+                  suppressHydrationWarning
+                  className="flex items-center justify-center gap-1 font-semibold text-text-primary whitespace-nowrap"
+                >
                   <FiCalendar className="w-3.5 h-3.5 text-text-tertiary shrink-0" />
-                  {formatLocalDate(debt.createdAt)}
+                  {formatDateLocal(debt.createdAt)}
                 </span>
               </TableCell>
 
               {/* Notas */}
               <TableCell className="text-left text-xs text-text-secondary italic">
                 {debt.notes ? (
-                  <p className="max-w-[200px] sm:max-w-[250px] truncate whitespace-nowrap" title={debt.notes}>
+                  <p
+                    className="max-w-50 sm:max-w-62.5 truncate whitespace-nowrap"
+                    title={debt.notes}
+                  >
                     {debt.notes}
                   </p>
                 ) : (

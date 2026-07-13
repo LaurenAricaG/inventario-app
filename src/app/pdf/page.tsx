@@ -1,6 +1,7 @@
 import { FiArrowLeft, FiBookOpen, FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import { formatDateUTC } from "@/utils/date.utils";
 import { prisma } from "@/lib/prisma";
 
 export const revalidate = 0;
@@ -109,8 +110,7 @@ export default async function CatalogoPdfPublico() {
                   {campaign.startDate && campaign.endDate && (
                     <span className="text-[11px] text-text-tertiary sm:ml-auto">
                       Vigencia:{" "}
-                      {new Date(campaign.startDate).toLocaleDateString("es-PE")}{" "}
-                      - {new Date(campaign.endDate).toLocaleDateString("es-PE")}
+                      {formatDateUTC(campaign.startDate)} - {formatDateUTC(campaign.endDate)}
                     </span>
                   )}
                 </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { FiEye, FiClock, FiSearch, FiCopy, FiCheck } from "react-icons/fi";
 import { toast } from "sonner";
+import { formatDateTimeWithSeconds } from "@/utils/date.utils";
 import { LuHistory } from "react-icons/lu";
 import {
   Table,
@@ -128,23 +129,6 @@ export default function BitacoraClient({
     setIsOpenDetailsModal(true);
   };
 
-  // Formateador de fecha legible local
-  const formatLocalDate = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-    } catch {
-      return isoString;
-    }
-  };
-
   // Obtener traducción de entidad
   const getEntityLabel = (entityName: string) => {
     return entityTranslations[entityName] || entityName;
@@ -266,7 +250,7 @@ export default function BitacoraClient({
                           suppressHydrationWarning
                           className="font-mono text-[11px] text-text-secondary text-center select-all"
                         >
-                          {formatLocalDate(log.createdAt)}
+                          {formatDateTimeWithSeconds(log.createdAt)}
                         </TableCell>
 
                         {/* Usuario que ejecutó la acción */}
@@ -362,7 +346,7 @@ export default function BitacoraClient({
                   <span>Fecha y Hora:</span>
                 </div>
                 <p className="font-mono font-semibold text-text-primary text-left">
-                  {formatLocalDate(selectedLog.createdAt)}
+                  {formatDateTimeWithSeconds(selectedLog.createdAt)}
                 </p>
               </div>
 

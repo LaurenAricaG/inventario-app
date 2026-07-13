@@ -11,6 +11,7 @@ import PdfUpload from "@/components/ui/PdfUpload";
 import { createCatalogPdfAction, updateCatalogPdfAction } from "@/lib/catalog";
 import { catalogPdfSchema } from "@/lib/catalog/schema";
 import { SerializedCatalogPdf } from "@/types/catalogs";
+import { formatDateUTC } from "@/utils/date.utils";
 
 interface FormCatalogPdfsProps {
   isOpen: boolean;
@@ -298,13 +299,8 @@ export default function FormCatalogPdfs({
                 {currentCampaign.startDate && currentCampaign.endDate && (
                   <div className="text-[10px] text-success-text/80 font-medium font-sans">
                     Vigencia:{" "}
-                    {new Date(currentCampaign.startDate).toLocaleDateString(
-                      "es-PE",
-                    )}{" "}
-                    al{" "}
-                    {new Date(currentCampaign.endDate).toLocaleDateString(
-                      "es-PE",
-                    )}
+                    {formatDateUTC(currentCampaign.startDate)} al{" "}
+                    {formatDateUTC(currentCampaign.endDate)}
                   </div>
                 )}
               </div>
