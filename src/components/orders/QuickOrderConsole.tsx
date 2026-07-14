@@ -26,6 +26,7 @@ import Modal from "@/components/ui/Modal";
 import Form, { FormField } from "@/components/ui/Form";
 import Textarea from "@/components/ui/Textarea";
 import { createClientAction } from "@/lib/client";
+import PageHeader from "@/components/ui/PageHeader";
 import {
   saveCampaignOrdersAction,
   getAutocompleteSuggestionsAction,
@@ -139,6 +140,7 @@ export default function QuickOrderConsole({
   const [newClientPhone, setNewClientPhone] = useState("");
   const [newClientAddress, setNewClientAddress] = useState("");
   const [isCreatingClient, setIsCreatingClient] = useState(false);
+  const [newClientNameError, setNewClientNameError] = useState<string | null>(null);
 
   // Referencias para enfoque por teclado rápido
   const productCodeInputRef = useRef<HTMLInputElement>(null);
@@ -310,7 +312,7 @@ export default function QuickOrderConsole({
   const handleCreateClientQuick = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newClientName.trim()) {
-      toast.error("El nombre del cliente es obligatorio.");
+      setNewClientNameError("El nombre completo es obligatorio.");
       return;
     }
 
@@ -329,6 +331,7 @@ export default function QuickOrderConsole({
         );
         setSelectedClientId(createdClient.id.toString());
         setClientError(null);
+        setNewClientNameError(null);
         setIsClientModalOpen(false);
         setNewClientName("");
         setNewClientPhone("");
@@ -439,29 +442,32 @@ export default function QuickOrderConsole({
 
   return (
     <div className="space-y-6">
-      {/* Botón Volver y Encabezado */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() =>
-            router.push(
-              selectedCampaign
-                ? `/admin/pedidos?campaignId=${selectedCampaign.id}`
-                : "/admin/pedidos",
-            )
-          }
-          className="p-2.5 rounded-xl border border-border-default/60 bg-bg-surface hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
-        >
-          <FiArrowLeft className="w-4 h-4" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-black text-text-primary tracking-tight">
-            Consola de Carga Rápida de Pedidos
-          </h1>
-          <p className="text-xs text-text-secondary mt-0.5">
-            Registra consecutivamente productos por cliente para una campaña.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Consola de Carga Rápida de Pedidos"
+        subtitle="Registra consecutivamente productos por cliente para una campaña."
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "pedidos", href: "/admin/pedidos" },
+          { label: "registrar pedidos" },
+        ]}
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() =>
+              router.push(
+                selectedCampaign
+                  ? `/admin/pedidos?campaignId=${selectedCampaign.id}`
+                  : "/admin/pedidos",
+              )
+            }
+            className="flex items-center gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
+          >
+            <FiArrowLeft className="w-4 h-4" />
+            Volver
+          </Button>
+        }
+      />
 
       {/* Configuración de Campaña / Empresa */}
       <div className="p-6 bg-linear-to-br from-bg-card to-bg-surface border border-border-default/80 rounded-3xl shadow-md select-none flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -570,7 +576,13 @@ export default function QuickOrderConsole({
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setIsClientModalOpen(true)}
+                  onClick={() => {
+                    setNewClientNameError(null);
+                    setNewClientName("");
+                    setNewClientPhone("");
+                    setNewClientAddress("");
+                    setIsClientModalOpen(true);
+                  }}
                   className="border-border-strong text-text-primary hover:bg-bg-surface px-3"
                   title="Nuevo Cliente Rápido"
                 >
@@ -937,7 +949,10 @@ export default function QuickOrderConsole({
       {/* Modal de Nuevo Cliente Rápido */}
       <Modal
         isOpen={isClientModalOpen}
-        onClose={() => setIsClientModalOpen(false)}
+        onClose={() => {
+          setIsClientModalOpen(false);
+          setNewClientNameError(null);
+        }}
         title="Crear Cliente Rápido"
         size="md"
         footer={
@@ -945,7 +960,10 @@ export default function QuickOrderConsole({
             <Button
               type="button"
               variant="outline"
-              onClick={() => setIsClientModalOpen(false)}
+              onClick={() => {
+                setIsClientModalOpen(false);
+                setNewClientNameError(null);
+              }}
               disabled={isCreatingClient}
               className="border-border-strong text-text-primary hover:bg-bg-surface"
             >
@@ -967,12 +985,16 @@ export default function QuickOrderConsole({
           onSubmit={handleCreateClientQuick}
           className="space-y-4"
         >
-          <FormField label="Nombre Completo">
+          <FormField label="Nombre Completo" required error={newClientNameError || undefined}>
             <Input
               value={newClientName}
-              onChange={(e) => setNewClientName(e.target.value)}
+              onChange={(e) => {
+                setNewClientName(e.target.value);
+                if (e.target.value.trim()) {
+                  setNewClientNameError(null);
+                }
+              }}
               placeholder="Ej. Camila Arica"
-              required
             />
           </FormField>
           <FormField label="Teléfono (Opcional)">

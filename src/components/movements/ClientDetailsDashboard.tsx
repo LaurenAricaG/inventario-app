@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/utils/cn.utils";
+import PageHeader from "@/components/ui/PageHeader";
 import {
   FiArrowLeft,
   FiDollarSign,
@@ -61,6 +62,26 @@ export default function ClientDetailsDashboard({
   totalItems,
 }: ClientDetailsDashboardProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const source = searchParams.get("source") || "movimientos";
+
+  const sourceMappers: Record<string, { label: string; href: string }> = {
+    clientes: { label: "clientes", href: "/admin/clientes" },
+    pagos: { label: "pagos", href: "/admin/pagos" },
+    deudas: { label: "deudas", href: "/admin/deudas" },
+    deuda: { label: "deudas", href: "/admin/deudas" },
+    bitacora: { label: "bitácora", href: "/admin/bitacora" },
+    movimientos: { label: "movimientos", href: "/admin/movimientos" },
+  };
+
+  const currentSource = sourceMappers[source] || sourceMappers.movimientos;
+
+  const breadcrumbs = [
+    { label: "admin", href: "/admin" },
+    { label: currentSource.label, href: currentSource.href },
+    { label: "fic cliente" },
+  ];
+
   const [origin, setOrigin] = useState("");
 
   // Estados de Modales
@@ -115,20 +136,22 @@ export default function ClientDetailsDashboard({
 
   return (
     <div className="space-y-6">
-      {/* Botón de retorno y título */}
-      <div className="flex items-center gap-3">
-        <ButtonIcon
-          href="/admin/movimientos"
-          variant="secondary"
-          icon={FiArrowLeft}
-          title="Regresar a saldos de clientes"
-        />
-        <div>
-          <h2 className="text-xl font-bold tracking-tight text-text-primary">
-            Ficha de Cuenta del Cliente
-          </h2>
-        </div>
-      </div>
+      <PageHeader
+        title="Ficha de Cuenta del Cliente"
+        subtitle={`Historial de transacciones y saldos de ${client.name}`}
+        breadcrumbs={breadcrumbs}
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push(currentSource.href)}
+            className="flex items-center gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
+          >
+            <FiArrowLeft className="w-4 h-4" />
+            Volver
+          </Button>
+        }
+      />
 
       {/* Top Grid: Datos de Cliente + Resumen Consolidado */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

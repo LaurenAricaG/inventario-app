@@ -20,6 +20,7 @@ import Select from "@/components/ui/Select";
 import Modal from "@/components/ui/Modal";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface SerializedUser {
   id: number;
@@ -136,17 +137,14 @@ export default function BitacoraClient({
 
   return (
     <div className="space-y-6">
-      {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Bitácora de Auditoría
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Historial detallado de acciones y modificaciones del sistema.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Bitácora de Auditoría"
+        subtitle="Historial detallado de acciones y modificaciones del sistema."
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "bitacora" },
+        ]}
+      />
 
       {/* Contenido Principal */}
       {overallCount === 0 ? (

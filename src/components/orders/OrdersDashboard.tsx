@@ -23,6 +23,7 @@ import ButtonIcon from "@/components/ui/ButtonIcon";
 import Select from "@/components/ui/Select";
 import SearchInput from "@/components/ui/SearchInput";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
+import PageHeader from "@/components/ui/PageHeader";
 import OrderDetailModal from "@/components/movements/OrderDetailModal";
 import Modal from "@/components/ui/Modal";
 import Form, { FormField } from "@/components/ui/Form";
@@ -40,6 +41,7 @@ interface SerializedCampaign {
   isActive: boolean;
   company: { id: number; name: string };
   paymentDate?: string | null;
+  endDate?: string | null;
 }
 
 interface SerializedOrderItem {
@@ -118,6 +120,7 @@ export default function OrdersDashboard({
   const [campaignPaymentDateVal, setCampaignPaymentDateVal] = useState("");
   const [isSubmittingCampaignPaymentDate, setIsSubmittingCampaignPaymentDate] =
     useState(false);
+  const [paymentDateError, setPaymentDateError] = useState<string | null>(null);
 
   // Obtener lista única de empresas que tienen al menos una campaña
   const companiesMap = new Map<number, { id: number; name: string }>();
@@ -158,6 +161,32 @@ export default function OrdersDashboard({
     e.preventDefault();
     if (!selectedCampaignId) return;
 
+    if (!campaignPaymentDateVal) {
+      setPaymentDateError("La fecha límite de pago es obligatoria.");
+      return;
+    }
+
+    if (currentCampaign?.endDate) {
+      const [year, month, day] = campaignPaymentDateVal.split("-").map(Number);
+      const chosenDateUTC = new Date(Date.UTC(year, month - 1, day));
+
+      const targetMinDate = new Date(currentCampaign.endDate);
+      targetMinDate.setUTCDate(targetMinDate.getUTCDate() + 5);
+      targetMinDate.setUTCHours(0, 0, 0, 0);
+
+      if (chosenDateUTC < targetMinDate) {
+        const yyyy = targetMinDate.getUTCFullYear();
+        const mm = String(targetMinDate.getUTCMonth() + 1).padStart(2, "0");
+        const dd = String(targetMinDate.getUTCDate()).padStart(2, "0");
+        const minFormatted = `${dd}/${mm}/${yyyy}`;
+
+        setPaymentDateError(
+          `La fecha debe ser a partir de 5 días más que el fin de campaña (${minFormatted}).`
+        );
+        return;
+      }
+    }
+
     setIsSubmittingCampaignPaymentDate(true);
     try {
       const res = await updateCampaignPaymentDateAction(
@@ -166,6 +195,7 @@ export default function OrdersDashboard({
       );
       if (res.success) {
         toast.success(res.message);
+        setPaymentDateError(null);
         setIsCampaignPaymentDateModalOpen(false);
         router.refresh();
       } else {
@@ -189,9 +219,83 @@ export default function OrdersDashboard({
         o.status !== CampaignOrderStatus.CANCELLED,
     );
 
+  const hasOrders = initialOrders.length > 0;
+
   const isVerificationFinished =
-    initialOrders.length > 0 &&
-    initialOrders.every((o) => o.status !== CampaignOrderStatus.PENDING);
+    hasOrders &&
+    initialOrders.every(
+      (o) =>
+        o.status !== CampaignOrderStatus.PENDING &&
+        o.status !== CampaignOrderStatus.ARRIVED,
+    );
+
+  const hasPaymentDate = !!currentCampaign?.paymentDate;
+
+  const hasPackedOrDeliveredOrders = initialOrders.some(
+    (o) =>
+      o.status === CampaignOrderStatus.PACKED ||
+      o.status === CampaignOrderStatus.DELIVERED,
+  );
+
+  const handleGoToRegister = (e: React.MouseEvent) => {
+    if (hasOrders) {
+      e.preventDefault();
+      return;
+    }
+    router.push(`/admin/pedidos/nueva?campaignId=${selectedCampaignId}`);
+  };
+
+  const handleGoToVerify = (e: React.MouseEvent) => {
+    if (!hasOrders) {
+      e.preventDefault();
+      toast.info("Primero se debe registrar el pedido.");
+      return;
+    }
+    router.push(`/admin/pedidos/verificar?campaignId=${selectedCampaignId}`);
+  };
+
+  const handleGoToPack = (e: React.MouseEvent) => {
+    if (!hasOrders) {
+      e.preventDefault();
+      toast.info("Primero se debe registrar el pedido.");
+      return;
+    }
+    if (!isVerificationFinished) {
+      e.preventDefault();
+      toast.info("Falta verificar los pedidos.");
+      return;
+    }
+    if (!hasPaymentDate) {
+      e.preventDefault();
+      toast.info("Falta registrar la fecha límite de pago.");
+      return;
+    }
+    router.push(`/admin/pedidos/empacado?campaignId=${selectedCampaignId}`);
+  };
+
+  const handleGoToDeliver = (e: React.MouseEvent) => {
+    if (!hasOrders) {
+      e.preventDefault();
+      toast.info("Primero se debe registrar el pedido.");
+      return;
+    }
+    if (!isVerificationFinished) {
+      e.preventDefault();
+      toast.info("Falta verificar los pedidos.");
+      return;
+    }
+    if (!hasPaymentDate) {
+      e.preventDefault();
+      toast.info("Falta registrar la fecha límite de pago.");
+      return;
+    }
+    if (!hasPackedOrDeliveredOrders) {
+      e.preventDefault();
+      toast.info("Falta empacar los pedidos.");
+      return;
+    }
+    router.push(`/admin/pedidos/entregar?campaignId=${selectedCampaignId}`);
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -275,148 +379,139 @@ export default function OrdersDashboard({
 
   return (
     <div className="space-y-6">
-      {/* Encabezado con filtros globales */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-border-soft pb-5">
-        <div>
-          <h1 className="text-2xl font-black text-text-primary tracking-tight">
-            Pedidos de Catálogo
-          </h1>
-          <p className="text-xs text-text-secondary mt-1">
-            Gestión completa de pedidos por campaña, recepción de cajas y
-            despacho.
-          </p>
-        </div>
-
-        {/* Selección de Empresa y Campaña */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative w-40">
-            <Select
-              value={selectedCompanyId}
-              onChange={(e) => handleCompanyChange(e.target.value)}
-              disabled={filteredCampaigns.length === 0 || isPending}
-            >
-              {companiesList.map((comp) => (
-                <option key={comp.id} value={comp.id.toString()}>
-                  {`${comp.name}`}
-                </option>
-              ))}
-            </Select>
-            {isPending && (
-              <FiLoader className="absolute right-8 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary animate-spin pointer-events-none" />
-            )}
-          </div>
-          <div className="w-44">
-            <Select
-              value={selectedCampaignId.toString()}
-              onChange={(e) => handleCampaignChange(e.target.value)}
-              disabled={filteredCampaigns.length === 0}
-            >
-              {filteredCampaigns.length === 0 ? (
-                <option value="0">{`Sin campañas`}</option>
-              ) : (
-                filteredCampaigns.map((c) => (
-                  <option key={c.id} value={c.id.toString()}>
-                    {`${c.number}${c.isActive ? " (Activa)" : ""}`}
+      <PageHeader
+        title="Pedidos de Catálogo"
+        subtitle="Gestión completa de pedidos por campaña, recepción de cajas y despacho."
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "pedidos" },
+        ]}
+        action={
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative w-40">
+              <Select
+                value={selectedCompanyId}
+                onChange={(e) => handleCompanyChange(e.target.value)}
+                disabled={filteredCampaigns.length === 0 || isPending}
+              >
+                {companiesList.map((comp) => (
+                  <option key={comp.id} value={comp.id.toString()}>
+                    {`${comp.name}`}
                   </option>
-                ))
+                ))}
+              </Select>
+              {isPending && (
+                <FiLoader className="absolute right-8 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary animate-spin pointer-events-none" />
               )}
-            </Select>
-          </div>
-        </div>
-      </div>
-
-      {/* Botones de Flujo de Campaña */}
-      {currentCampaign?.isActive && (
-        <div className="flex flex-wrap items-center gap-3">
-          {canCreate && (
-            <Link
-              href={`/admin/pedidos/nueva?campaignId=${selectedCampaignId}`}
-              onClick={(e) => {
-                if (isRegistrationLocked) {
-                  e.preventDefault();
-                  toast.error(
-                    "El registro para esta campaña está cerrado porque ya se inició la verificación o despacho.",
-                  );
-                }
-              }}
-              className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-beauty-400"
-            >
-              <Button
-                tabIndex={-1}
-                variant="primary"
-                className="gap-2 shadow-sm"
-                disabled={isRegistrationLocked}
+            </div>
+            <div className="w-44">
+              <Select
+                value={selectedCampaignId.toString()}
+                onChange={(e) => handleCampaignChange(e.target.value)}
+                disabled={filteredCampaigns.length === 0}
               >
-                <FiPlus className="w-4 h-4 shrink-0" />
-                Registrar Pedidos
-              </Button>
-            </Link>
-          )}
-          {canUpdate && selectedCampaignId > 0 && (
-            <>
-              <Link
-                href={`/admin/pedidos/verificar?campaignId=${selectedCampaignId}`}
-                className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-beauty-400"
-              >
-                <Button
-                  tabIndex={-1}
-                  variant="outline"
-                  className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
-                >
-                  <FiCheckCircle className="w-4 h-4 shrink-0 text-success-text" />
-                  Verificar
-                </Button>
-              </Link>
-              <Link
-                href={`/admin/pedidos/empacado?campaignId=${selectedCampaignId}`}
-                className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-beauty-400"
-              >
-                <Button
-                  tabIndex={-1}
-                  variant="outline"
-                  className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
-                >
-                  <FiArchive className="w-4 h-4 shrink-0 text-beauty-500" />
-                  Empacar
-                </Button>
-              </Link>
-              <Link
-                href={`/admin/pedidos/entregar?campaignId=${selectedCampaignId}`}
-                className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-beauty-400"
-              >
-                <Button
-                  tabIndex={-1}
-                  variant="outline"
-                  className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
-                >
-                  <FiTruck className="w-4 h-4 shrink-0 text-info-text" />
-                  Entregar
-                </Button>
-              </Link>
-
-              {isVerificationFinished &&
-                (currentCampaign?.paymentDate ? (
-                  <div className="flex items-center gap-1.5 px-4 py-2 border border-border-default bg-bg-surface/50 rounded-2xl text-xs font-semibold text-text-secondary select-none">
-                    <FiCalendar className="w-4 h-4 text-beauty-500 shrink-0" />
-                    <span>
-                      F. Pago:{" "}
-                      <span className="font-bold text-text-primary">
-                        {formatDateUTC(currentCampaign.paymentDate)}
-                      </span>
-                    </span>
-                  </div>
+                {filteredCampaigns.length === 0 ? (
+                  <option value="0">{`Sin campañas`}</option>
                 ) : (
+                  filteredCampaigns.map((c) => (
+                    <option key={c.id} value={c.id.toString()}>
+                      {`${c.number}${c.isActive ? " (Activa)" : ""}`}
+                    </option>
+                  ))
+                )}
+              </Select>
+            </div>
+          </div>
+        }
+      />
+
+      {/* Botones de Acción */}
+      {selectedCampaignId > 0 && (
+        <div className="flex flex-wrap items-center gap-2.5">
+          {currentCampaign?.isActive ? (
+            <>
+              {canCreate && (
+                <Button
+                  type="button"
+                  onClick={handleGoToRegister}
+                  variant="primary"
+                  className="gap-2 shadow-sm"
+                  disabled={hasOrders}
+                >
+                  <FiPlus className="w-4 h-4 shrink-0" />
+                  Registrar Pedidos
+                </Button>
+              )}
+              {canUpdate && (
+                <>
                   <Button
                     type="button"
+                    onClick={handleGoToVerify}
                     variant="outline"
-                    onClick={() => setIsCampaignPaymentDateModalOpen(true)}
                     className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
                   >
-                    <FiCalendar className="w-4 h-4 shrink-0 text-beauty-500" />
-                    F. Pago
+                    <FiCheckCircle className="w-4 h-4 shrink-0 text-success-text" />
+                    Verificar
                   </Button>
-                ))}
+                  <Button
+                    type="button"
+                    onClick={handleGoToPack}
+                    variant="outline"
+                    className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
+                  >
+                    <FiArchive className="w-4 h-4 shrink-0 text-beauty-500" />
+                    Empacar
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleGoToDeliver}
+                    variant="outline"
+                    className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
+                  >
+                    <FiTruck className="w-4 h-4 shrink-0 text-info-text" />
+                    Entregar
+                  </Button>
+
+                  {isVerificationFinished &&
+                    (currentCampaign?.paymentDate ? (
+                      <div className="flex items-center gap-1.5 px-4 py-2 border border-border-default bg-bg-surface/50 rounded-2xl text-xs font-semibold text-text-secondary select-none">
+                        <FiCalendar className="w-4 h-4 text-beauty-500 shrink-0" />
+                        <span>
+                          F. Pago:{" "}
+                          <span className="font-bold text-text-primary">
+                            {formatDateUTC(currentCampaign.paymentDate)}
+                          </span>
+                        </span>
+                      </div>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setPaymentDateError(null);
+                          setIsCampaignPaymentDateModalOpen(true);
+                        }}
+                        className="gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
+                      >
+                        <FiCalendar className="w-4 h-4 shrink-0 text-beauty-500" />
+                        F. Pago
+                      </Button>
+                    ))}
+                </>
+              )}
             </>
+          ) : (
+            currentCampaign?.paymentDate && (
+              <div className="flex items-center gap-1.5 px-4 py-2 border border-border-default bg-bg-surface/50 rounded-2xl text-xs font-semibold text-text-secondary select-none">
+                <FiCalendar className="w-4 h-4 text-beauty-500 shrink-0" />
+                <span>
+                  F. Pago:{" "}
+                  <span className="font-bold text-text-primary">
+                    {formatDateUTC(currentCampaign.paymentDate)}
+                  </span>
+                </span>
+              </div>
+            )
           )}
         </div>
       )}
@@ -692,15 +787,21 @@ export default function OrdersDashboard({
       {isCampaignPaymentDateModalOpen && (
         <Modal
           isOpen={isCampaignPaymentDateModalOpen}
-          onClose={() => setIsCampaignPaymentDateModalOpen(false)}
-          title={`Fecha de Pago - Campaña ${currentCampaign?.number}`}
-          size="sm"
+          onClose={() => {
+            setIsCampaignPaymentDateModalOpen(false);
+            setPaymentDateError(null);
+          }}
+          title="Fecha Límite de Pago de Campaña"
+          size="md"
           footer={
             <div className="flex items-center gap-3">
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setIsCampaignPaymentDateModalOpen(false)}
+                onClick={() => {
+                  setIsCampaignPaymentDateModalOpen(false);
+                  setPaymentDateError(null);
+                }}
                 disabled={isSubmittingCampaignPaymentDate}
                 className="border-border-strong text-text-primary hover:bg-bg-surface"
               >
@@ -727,11 +828,16 @@ export default function OrdersDashboard({
               pedidos entregados heredarán esta fecha automáticamente si no se
               define una específica para el cliente.
             </p>
-            <FormField label="Fecha de Pago de Campaña">
+            <FormField label="Fecha de Pago de Campaña" required error={paymentDateError || undefined}>
               <Input
                 type="date"
                 value={campaignPaymentDateVal}
-                onChange={(e) => setCampaignPaymentDateVal(e.target.value)}
+                onChange={(e) => {
+                  setCampaignPaymentDateVal(e.target.value);
+                  if (e.target.value) {
+                    setPaymentDateError(null);
+                  }
+                }}
                 placeholder="Seleccionar fecha"
               />
             </FormField>

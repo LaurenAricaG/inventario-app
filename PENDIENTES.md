@@ -24,27 +24,40 @@
 
 ## PARA BITACORA
 
-si bien en cierto que en la bitacora se guarda return pero no se entiendo que se guarde eso más el label
+si bien en cierto que en la bitacora se guarda return, gift pero no se entiendo que se guarde eso más el label
 aparte el producto se nececita su codigo para poder identificarlo
 
-## PARA PEDIDOS
-
-_/ Las fichas que se orden de la sigueitne manera
-las fichas que tiene un producto
-de dos
-de tres y asi para que no ahorre espacio
-/_
 
 ver que los botones de exportar e imprimi se vean bien en responsive
 y los card esten bien en responsive
 
 ver que todos los modulos esten en responsive
 
-todos los botones de accion como editar eliminar hacerlo como componente para que tengan los mismo estilos
-
 dentro de los modulos que tienen cards ver que en todo momento no se rompa la UI
 
 - Agregar un breadcrumb en la ruta de admin
--
 
-ver que los modales de mostra el detalle de un pedido, el detalle de una venta, el titulo de los pdf tenga el nombre de la tabla congi-name porque por ahora estan estaticos
+
+
+Agregar un titulo como componente porque en todos los modulo tiene un titulo un subtitulo entonces puede ser un componentes
+que además tenga en la parte de arriba una ruta como
+admin->usuarios
+admin->roles
+admin->categorias
+admin->marca
+admin->ventas
+admin->ventas->nueva venta
+
+    admin->pedidos
+        admin->pedidos->registrar pedidos
+        admin->pedidos->verificar pedidos
+        admin->pedidos->empacas pedidos
+        admin->pedidos->entregar pedidos
+
+    Ejemplo:
+
+    [ruta]
+    Titulo                                [BOTON DE CREAR]
+    sub titulo
+
+ELIMINAR codigo que no se esta utilizando

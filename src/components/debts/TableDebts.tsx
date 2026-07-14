@@ -56,9 +56,10 @@ export default function TableDebts({
         <TableBody>
           {debts.map((debt) => (
             <TableRow key={debt.id} className="hover:bg-bg-surface/30">
-              {/* Cliente */}
-              <TableCell className="text-left font-semibold text-text-primary">
-                {debt.client.name}
+              <TableCell className="text-left font-semibold text-text-primary hover:text-beauty-500 hover:underline">
+                <LinkComponent href={`/admin/movimientos/${debt.client.id}?source=deudas`}>
+                  {debt.client.name}
+                </LinkComponent>
                 <span className="text-[10px] text-text-tertiary font-medium block mt-0.5">
                   ID: {debt.clientId}
                 </span>

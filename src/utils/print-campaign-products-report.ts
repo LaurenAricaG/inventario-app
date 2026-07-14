@@ -9,6 +9,7 @@ interface PrintItem {
   catalogPrice: number;
   quantity: number;
   arrivalStatus: string;
+  substituteName: string | null;
   brand: { name: string };
 }
 
@@ -71,7 +72,9 @@ export function printCampaignProductsReport(
       productCode: string | null;
       brandName: string;
       catalogPrice: number;
-      totalQuantity: number;
+      totalQuantity: number;       // cantidad pedida total
+      arrivedQuantity: number;     // cantidad que efectivamente llegó (excluye MISSING)
+      substituteName: string | null; // nombre del sustituto (si aplica)
       items: {
         arrivalStatus: string;
         orderStatus: string;
@@ -89,11 +92,21 @@ export function printCampaignProductsReport(
           brandName: item.brand.name,
           catalogPrice: item.catalogPrice,
           totalQuantity: 0,
+          arrivedQuantity: 0,
+          substituteName: null,
           items: [],
         });
       }
       const group = groupedProductsMap.get(key)!;
       group.totalQuantity += item.quantity;
+      // Solo cuenta las unidades que llegaron (no las MISSING)
+      if (item.arrivalStatus !== "MISSING") {
+        group.arrivedQuantity += item.quantity;
+      }
+      // Guardar el nombre del sustituto si este item fue sustituido
+      if (item.arrivalStatus === "SUBSTITUTED" && item.substituteName && !group.substituteName) {
+        group.substituteName = item.substituteName;
+      }
       group.items.push({
         arrivalStatus: item.arrivalStatus,
         orderStatus: order.status,
@@ -126,18 +139,39 @@ export function printCampaignProductsReport(
         groupStatusBadgeStyles[status] ||
         "background-color: #f4f4f5; color: #52525b; border: 1px solid #e4e4e7;";
 
-      totalUnits += p.totalQuantity;
-      totalConsolidatedValue += p.totalQuantity * p.catalogPrice;
+      // Acumular solo las unidades que llegaron (excluye MISSING)
+      totalUnits += p.arrivedQuantity;
+      totalConsolidatedValue += p.arrivedQuantity * p.catalogPrice;
+
+      // --- Columna PRODUCTO ---
+      // SUSTITUIDO: nombre del sustituto (lo que llegó) arriba
+      //             + (nombre original, lo que no llegó) abajo en gris
+      const productDisplay =
+        status === "SUBSTITUTED" && p.substituteName
+          ? `${p.substituteName}<br/><span style="color:#71717a; font-size:9.5px; font-style:italic;">(${p.productName})</span>`
+          : p.productName;
+
+      // --- Columna CANTIDAD ---
+      // FALTÓ: solo muestra la cantidad pedida (sin "0 u." confuso)
+      // INCOMPLETO: cantidad llegada arriba, (ped. X) abajo en línea aparte
+      let quantityDisplay: string;
+      if (status === "MISSING") {
+        quantityDisplay = `${p.totalQuantity} u.`;
+      } else if (p.arrivedQuantity !== p.totalQuantity) {
+        quantityDisplay = `${p.arrivedQuantity} u.<br/><span style="color:#71717a; font-size:10px; font-weight:400;">(ped. ${p.totalQuantity})</span>`;
+      } else {
+        quantityDisplay = `${p.totalQuantity} u.`;
+      }
 
       return `
       <tr>
         <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; font-family: monospace; font-size: 11px; color: #18181b;">${p.productCode || "-"}</td>
         <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; color: #52525b; font-size: 11px;">${p.brandName}</td>
-        <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; font-weight: 600; color: #18181b; font-size: 11.5px;">${p.productName}</td>
-        <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; text-align: center; font-weight: 700; color: #be185d; font-size: 12px;">${p.totalQuantity} u.</td>
+        <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; font-weight: 600; color: #18181b; font-size: 11.5px;">${productDisplay}</td>
+        <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; text-align: center; font-weight: 700; color: #be185d; font-size: 12px; line-height: 1.6;">${quantityDisplay}</td>
         <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; text-align: right; font-family: monospace; color: #52525b; font-size: 11px;">S/ ${p.catalogPrice.toFixed(2)}</td>
         <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; text-align: right; font-family: monospace; font-weight: 700; color: #18181b; font-size: 11px;">
-          S/ ${(p.totalQuantity * p.catalogPrice).toFixed(2)}
+          S/ ${(p.arrivedQuantity * p.catalogPrice).toFixed(2)}
         </td>
         <td style="padding: 10px 12px; border-bottom: 1px solid #e4e4e7; text-align: center; font-size: 10px;">
           <span style="font-weight: 700; padding: 3px 8px; border-radius: 9999px; text-transform: uppercase; ${badgeStyle}">

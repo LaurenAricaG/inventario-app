@@ -45,6 +45,13 @@ export function printCampaignSlips(
     return;
   }
 
+  // Ordenar de mayor a menor cantidad de productos (excluyendo MISSING)
+  targetOrders.sort((a, b) => {
+    const countA = a.items.filter((i) => i.arrivalStatus !== "MISSING").length;
+    const countB = b.items.filter((i) => i.arrivalStatus !== "MISSING").length;
+    return countB - countA;
+  });
+
   let iframe = document.getElementById(
     "print-slips-iframe",
   ) as HTMLIFrameElement;

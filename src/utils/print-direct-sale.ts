@@ -1,5 +1,5 @@
 import { SerializedDirectSaleWithRelations } from "@/types/direct-sale";
-import { formatDateTime } from "@/utils/date.utils";
+import { formatDateUTC } from "@/utils/date.utils";
 
 export function printDirectSale(
   sale: SerializedDirectSaleWithRelations,
@@ -80,7 +80,7 @@ export function printDirectSale(
           .items-table th { background: #f4f4f5; padding: 10px 8px; font-weight: 700; color: #71717a; border-bottom: 2px dashed #e4e4e7; font-size: 10px; text-transform: uppercase; }
           .footer-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 15px; align-items: start; margin-top: 10px; }
           .totals-box { border: 1px solid #e4e4e7; border-radius: 10px; padding: 12px; background: #fafafa; }
-          .note-box { font-size: 11px; color: #71717a; border-left: 3px solid #db2777; padding-left: 10px; margin-top: 8px; }
+          .note-box { font-size: 11px; color: #71717a; border: 1px dashed #db2777; border-radius: 12px; background: rgba(219,39,119,0.05); padding: 10px 14px; margin-top: 16px; }
           .thank-you { text-align: center; font-size: 9px; color: #db2777; text-transform: uppercase; letter-spacing: 2px; margin-top: 30px; font-weight: 600; border: 1px dashed #db2777; padding: 10px 15px; border-radius: 6px; }
           @media print {
             body { padding: 0; background-color: transparent; }
@@ -115,7 +115,7 @@ export function printDirectSale(
             <div>
               <div class="details-row">
                 <span class="details-label">F. Emisión:</span>
-                <span class="details-value">${formatDateTime(sale.createdAt)}</span>
+                <span class="details-value">${formatDateUTC(sale.createdAt)}</span>
               </div>
             </div>
           </div>
@@ -123,7 +123,7 @@ export function printDirectSale(
           <table class="items-table">
             <thead>
               <tr>
-                <th style="width: 100px;">Cód. Producto</th>
+                <th style="width: 100px;">Cód.</th>
                 <th>Descripción del Producto</th>
                 <th style="text-align: center; width: 60px;">Cant.</th>
                 <th style="text-align: right; width: 100px;">P. Unitario</th>
@@ -136,15 +136,7 @@ export function printDirectSale(
           </table>
 
           <div class="footer-grid">
-            <div>
-              ${sale.notes
-      ? `<div class="note-box">
-                      <strong style="color: #09090b; font-size: 10px; text-transform: uppercase;">Observaciones:</strong><br/>
-                      <span style="font-style: italic; display: inline-block; margin-top: 4px;">${sale.notes}</span>
-                    </div>`
-      : ""
-    }
-            </div>
+            <div></div>
             <div class="totals-box">
               <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #71717a; font-family: monospace;">
                 <span>SUBTOTAL:</span>
@@ -158,6 +150,14 @@ export function printDirectSale(
               </div>
             </div>
           </div>
+
+          ${sale.notes
+      ? `<div class="note-box">
+                      <strong style="font-size: 9px; text-transform: uppercase; display: block; margin-bottom: 4px; font-weight: 700; color: #18181b; letter-spacing: 0.5px;">NOTA:</strong>
+                      <span style="color: #71717a;">${sale.notes}</span>
+                    </div>`
+      : ""
+    }
 
           <div class="thank-you">¡Gracias por su preferencia!</div>
         </div>

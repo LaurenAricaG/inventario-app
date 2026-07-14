@@ -17,6 +17,7 @@ import TableCampaigns from "./TableCampaigns";
 import FormCampaigns from "./FormCampaigns";
 import TableCatalogPdfs from "./TableCatalogPdfs";
 import FormCatalogPdfs from "./FormCatalogPdfs";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface CampaignsProps {
   tab: string;
@@ -177,43 +178,37 @@ export default function Campaigns({
 
   return (
     <div className="space-y-6">
-      {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Campañas / Catálogos PDF
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Administración de períodos de campañas, calendarios de venta y
-            documentos PDF
-          </p>
-        </div>
-
-        {/* Botón de creación condicional según la pestaña activa */}
-        {isCampaignsTab
-          ? overallCount > 0 &&
-          canCreateCampaign && (
-            <Button
-              variant="primary"
-              onClick={() => handleOpenForm(null)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-            >
-              <FiPlus className="w-4 h-4" />
-              Nueva campaña
-            </Button>
-          )
-          : overallCount > 0 &&
-          canUploadCatalog && (
-            <Button
-              variant="primary"
-              onClick={() => handleOpenCatalogForm(null)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-            >
-              <FiPlus className="w-4 h-4" />
-              Subir catálogo
-            </Button>
-          )}
-      </div>
+      <PageHeader
+        title="Campañas / Catálogos PDF"
+        subtitle="Administración de períodos de campañas, calendarios de venta y documentos PDF"
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "campañas" },
+        ]}
+        action={
+          isCampaignsTab
+            ? overallCount > 0 && canCreateCampaign ? (
+              <Button
+                variant="primary"
+                onClick={() => handleOpenForm(null)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+              >
+                <FiPlus className="w-4 h-4" />
+                Nueva campaña
+              </Button>
+            ) : undefined
+            : overallCount > 0 && canUploadCatalog ? (
+              <Button
+                variant="primary"
+                onClick={() => handleOpenCatalogForm(null)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+              >
+                <FiPlus className="w-4 h-4" />
+                Subir catálogo
+              </Button>
+            ) : undefined
+        }
+      />
 
       {/* Selector de Pestañas (Tabs) Premium Segmentadas */}
       <div className="flex items-center p-1 rounded-xl bg-bg-surface border border-border-default/50 self-start select-none w-full sm:w-auto gap-1">

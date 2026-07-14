@@ -103,14 +103,6 @@ export default function TableDirectSales({
                           {sale.client.name}
                         </span>
                       </div>
-                      {sale.notes && (
-                        <span
-                          className="text-[11px] text-text-tertiary mt-0.5 truncate max-w-50"
-                          title={sale.notes}
-                        >
-                          {sale.notes}
-                        </span>
-                      )}
                     </div>
                   </TableCell>
 

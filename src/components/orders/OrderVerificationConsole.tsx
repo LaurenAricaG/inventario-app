@@ -18,6 +18,7 @@ import { cn } from "@/utils/cn.utils";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
+import PageHeader from "@/components/ui/PageHeader";
 import Form, { FormField } from "@/components/ui/Form";
 import {
   updateItemArrivalStatusAction,
@@ -413,30 +414,28 @@ export default function OrderVerificationConsole({
 
   return (
     <div className="space-y-6">
-      {/* Cabecera de Página */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <button
+      <PageHeader
+        title="Verificación de Arribos y Cajas"
+        subtitle={`Campaña: ${campaign.company.name} - ${campaign.number}`}
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "pedidos", href: "/admin/pedidos" },
+          { label: "verificar pedidos" },
+        ]}
+        action={
+          <Button
+            type="button"
+            variant="outline"
             onClick={() =>
               router.push(`/admin/pedidos?campaignId=${campaign.id}`)
             }
-            className="p-2.5 rounded-xl border border-border-default/60 bg-bg-surface hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
+            className="flex items-center gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
           >
             <FiArrowLeft className="w-4 h-4" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-black text-text-primary tracking-tight">
-              Verificación de Arribos y Cajas
-            </h1>
-            <p className="text-xs text-text-secondary mt-0.5">
-              Campaña:{" "}
-              <span className="font-bold text-text-primary">
-                {campaign.company.name} - {campaign.number}
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
+            Volver
+          </Button>
+        }
+      />
 
       {/* Barra de Progreso de Verificación */}
       <div className="p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs space-y-3 select-none">

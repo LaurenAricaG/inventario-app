@@ -107,17 +107,21 @@ export function printCampaignReport(
           const isMissing = item.arrivalStatus === "MISSING";
           const isSub = item.arrivalStatus === "SUBSTITUTED";
           const code = isSub ? item.substituteCode : item.productCode;
-          const name = isSub
-            ? `[Sustituto] ${item.substituteName}`
-            : item.productName;
           const price = isSub ? item.substitutePrice : item.catalogPrice;
+
+          // Columna PRODUCTO:
+          // SUSTITUIDO → nombre sustituto (lo que llegó) + (original, lo que no llegó) en gris
+          // FALTÓ      → nombre original tachado con badge rojo
+          const nameDisplay = isSub
+            ? `${item.substituteName ?? item.productName}<br/><span style="color:#71717a; font-size:9px; font-style:italic;">(${item.productName})</span>`
+            : `${item.productName} ${isMissing ? '<strong style="display: inline-block; text-decoration: none; color: #ef4444; font-size: 9px; margin-left: 4px; border: 1px solid #fecaca; background: #fef2f2; padding: 1px 4px; border-radius: 4px;">(FALTÓ)</strong>' : ""}`;
 
           return `
         <tr style="${isMissing ? "text-decoration: line-through; color: #a1a1aa;" : ""}">
           <td style="padding: 8px 10px; border-bottom: 1px solid #f4f4f5; font-family: monospace; font-size: 10px;">${code || "-"}</td>
           <td style="padding: 8px 10px; border-bottom: 1px solid #f4f4f5; color: #52525b;">${item.brand.name}</td>
-          <td style="padding: 8px 10px; border-bottom: 1px solid #f4f4f5; font-weight: 500; color: #18181b;">
-            ${name} ${isMissing ? '<strong style="display: inline-block; text-decoration: none; color: #ef4444; font-size: 9px; margin-left: 4px; border: 1px solid #fecaca; background: #fef2f2; padding: 1px 4px; border-radius: 4px;">(FALTÓ)</strong>' : ""}
+          <td style="padding: 8px 10px; border-bottom: 1px solid #f4f4f5; font-weight: 500; color: #18181b; line-height: 1.5;">
+            ${nameDisplay}
           </td>
           <td style="padding: 8px 10px; border-bottom: 1px solid #f4f4f5; text-align: center; font-weight: 600; color: #18181b;">${item.quantity}</td>
           <td style="padding: 8px 10px; border-bottom: 1px solid #f4f4f5; text-align: right; font-family: monospace; color: #52525b;">S/ ${price?.toFixed(2) || "0.00"}</td>

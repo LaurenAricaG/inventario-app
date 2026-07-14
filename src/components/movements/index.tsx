@@ -5,6 +5,7 @@ import ErrorBoundary from "@/components/error/ErrorBoundary";
 import SearchInput from "@/components/ui/SearchInput";
 import Pagination from "@/components/ui/Pagination";
 import TableMovements, { SerializedClientBalance } from "./TableMovements";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface MovementsProps {
   clients: SerializedClientBalance[];
@@ -33,17 +34,14 @@ export default function Movements({
 }: MovementsProps) {
   return (
     <div className="space-y-6">
-      {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Movimientos de Clientes
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Historial de compras, abonos y estado de deudas de los clientes
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Movimientos de Clientes"
+        subtitle="Historial de compras, abonos y estado de deudas de los clientes"
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "movimientos" },
+        ]}
+      />
 
       {/* Tarjetas de Resumen Consolidado */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 select-none">

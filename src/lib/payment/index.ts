@@ -135,6 +135,17 @@ export async function deletePaymentAction(id: number) {
       };
     }
 
+    // Verificar si han pasado más de 48 horas desde paidAt
+    const diffInMs = Date.now() - existingPayment.paidAt.getTime();
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+
+    if (diffInHours > 48) {
+      return {
+        success: false,
+        message: "No se puede eliminar, pago procesado",
+      };
+    }
+
     // Eliminar físicamente el pago
     await prisma.payment.delete({
       where: { id },

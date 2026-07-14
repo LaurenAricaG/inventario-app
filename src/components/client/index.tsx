@@ -12,6 +12,7 @@ import { seedMockDataAction } from "@/app/admin/actions";
 import { SerializedClient } from "@/types/client";
 import TableClient from "./TableClient";
 import FormClient from "./FormClient";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface ClientsProps {
   initialClients: SerializedClient[];
@@ -102,27 +103,26 @@ export default function Clients({
 
   return (
     <div className="space-y-6">
-      {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Clientes
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Listado y control de clientes de Natura y Avon
-          </p>
-        </div>
-        {overallCount > 0 && canCreate && (
-          <Button
-            variant="primary"
-            onClick={() => handleOpenForm(null)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-          >
-            <FiPlus className="w-4 h-4" />
-            Nuevo cliente
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title="Clientes"
+        subtitle="Listado y control de clientes de Natura y Avon"
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "clientes" },
+        ]}
+        action={
+          overallCount > 0 && canCreate ? (
+            <Button
+              variant="primary"
+              onClick={() => handleOpenForm(null)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Nuevo cliente
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Contenido Principal */}
       {overallCount === 0 ? (

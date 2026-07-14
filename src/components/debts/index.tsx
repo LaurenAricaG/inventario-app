@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import TableDebts from "./TableDebts";
 import FormDebts from "./FormDebts";
+import PageHeader from "@/components/ui/PageHeader";
 import { deleteExternalDebtAction } from "@/lib/external-debt";
 
 interface SerializedDebt {
@@ -74,29 +75,26 @@ export default function Debts({
 
   return (
     <div className="space-y-6">
-      {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Control de Deudas Adicionales
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Registro de cargos externos y saldos pendientes iniciales de
-            clientes
-          </p>
-        </div>
-
-        {canCreateDebt && (
-          <Button
-            variant="primary"
-            onClick={() => setIsOpenCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-          >
-            <FiPlus className="w-4 h-4" />
-            <span>Registrar Deuda</span>
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title="Control de Deudas Adicionales"
+        subtitle="Registro de cargos externos y saldos pendientes iniciales de clientes"
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "deudas" },
+        ]}
+        action={
+          canCreateDebt ? (
+            <Button
+              variant="primary"
+              onClick={() => setIsOpenCreateModal(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              <span>Registrar Deuda</span>
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Caja Contenedora Premium */}
       <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">

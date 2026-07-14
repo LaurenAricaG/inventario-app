@@ -1,6 +1,7 @@
 "use client";
 
 import { FiEdit2, FiTrash2, FiPhone, FiMapPin, FiExternalLink } from "react-icons/fi";
+import Link from "next/link";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import CopyButton from "@/components/ui/CopyButton";
 import RegenerateTokenButton from "@/components/ui/RegenerateTokenButton";
@@ -98,8 +99,10 @@ export default function TableClient({
                         {initials}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-text-primary truncate leading-snug">
-                          {client.name}
+                        <p className="text-sm font-semibold text-text-primary truncate leading-snug hover:text-beauty-500 hover:underline">
+                          <Link href={`/admin/movimientos/${client.id}?source=clientes`}>
+                            {client.name}
+                          </Link>
                         </p>
                         <p className="text-xs text-text-secondary flex items-center gap-1 mt-0.5">
                           <FiPhone className="w-3.5 h-3.5 shrink-0" />

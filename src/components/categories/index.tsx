@@ -11,6 +11,7 @@ import { deleteCategoryAction } from "@/lib/category";
 import { SerializedCategory } from "@/types/categories";
 import TableCategories from "./TableCategories";
 import FormCategories from "./FormCategories";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface CategoriesProps {
   initialCategories: SerializedCategory[];
@@ -75,27 +76,26 @@ export default function Categories({
 
   return (
     <div className="space-y-6">
-      {/* Module Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Categorías
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Administración de categorías para los productos del inventario.
-          </p>
-        </div>
-        {overallCount > 0 && canCreate && (
-          <Button
-            variant="primary"
-            onClick={() => handleOpenForm(null)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-          >
-            <FiPlus className="w-4 h-4" />
-            Nueva categoría
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title="Categorías"
+        subtitle="Administración de categorías para los productos del inventario."
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "categorias" },
+        ]}
+        action={
+          overallCount > 0 && canCreate ? (
+            <Button
+              variant="primary"
+              onClick={() => handleOpenForm(null)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Nueva categoría
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Main Content */}
       {overallCount === 0 ? (

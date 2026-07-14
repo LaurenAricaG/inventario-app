@@ -13,6 +13,7 @@ import Select from "@/components/ui/Select";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import TablePayments from "./TablePayments";
 import FormPayments from "./FormPayments";
+import PageHeader from "@/components/ui/PageHeader";
 import { deletePaymentAction } from "@/lib/payment";
 
 interface SerializedPayment {
@@ -104,28 +105,26 @@ export default function Payments({
 
   return (
     <div className="space-y-6">
-      {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary animate-fade-in">
-            Registro de Pagos Recibidos
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Administración central de abonos y facturación de cuentas
-          </p>
-        </div>
-
-        {canCreatePayment && (
-          <Button
-            variant="primary"
-            onClick={() => setIsOpenCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-          >
-            <FiPlus className="w-4 h-4" />
-            <span>Registrar Pago</span>
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title="Registro de Pagos Recibidos"
+        subtitle="Administración central de abonos y facturación de cuentas"
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "pagos" },
+        ]}
+        action={
+          canCreatePayment ? (
+            <Button
+              variant="primary"
+              onClick={() => setIsOpenCreateModal(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              <span>Registrar Pago</span>
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Caja Contenedora Premium */}
       <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">

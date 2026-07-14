@@ -1,7 +1,7 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { SerializedDirectSaleWithRelations } from "@/types/direct-sale";
-import { formatDateTime } from "@/utils/date.utils";
+import { formatDateUTC } from "@/utils/date.utils";
 
 // Initialize vfs fonts for client-side
 if (typeof window !== "undefined") {
@@ -26,7 +26,7 @@ export function generatePdfDirectSale(
   // Construir las filas de productos
   const tableBody: any[] = [
     [
-      { text: "CÓD. PRODUCTO", style: "tableHeader" },
+      { text: "CÓD.", style: "tableHeader" },
       { text: "DESCRIPCIÓN DEL PRODUCTO", style: "tableHeader" },
       { text: "CANT.", style: "tableHeader", alignment: "center" },
       { text: "P. UNITARIO", style: "tableHeader", alignment: "right" },
@@ -149,7 +149,7 @@ export function generatePdfDirectSale(
               {
                 text: [
                   { text: "F. EMISIÓN: ", style: "detailLabel" },
-                  { text: formatDateTime(sale.createdAt), style: "detailValue" },
+                  { text: formatDateUTC(sale.createdAt), style: "detailValue" },
                 ],
                 margin: [0, 2, 0, 2],
               },
@@ -177,40 +177,10 @@ export function generatePdfDirectSale(
         margin: [0, 0, 0, 20],
       },
 
-      // FOOTER/SUMMARY SECTION
+      // FOOTER/SUMMARY SECTION - solo totales alineados a la derecha
       {
         columns: [
-          // Notes
-          {
-            stack: sale.notes
-              ? [
-                {
-                  table: {
-                    widths: ["*"],
-                    body: [
-                      [
-                        {
-                          stack: [
-                            { text: "OBSERVACIONES:", bold: true, fontSize: 8, color: "#09090b" },
-                            { text: sale.notes, italics: true, fontSize: 9, color: "#4b5563", margin: [0, 4, 0, 0] },
-                          ],
-                          margin: [10, 8, 10, 8],
-                        },
-                      ],
-                    ],
-                  },
-                  layout: {
-                    hLineWidth: () => 0.5,
-                    vLineWidth: (i: number) => i === 0 ? 3 : 0.5, // Left thick border
-                    hLineColor: () => "#e4e4e7",
-                    vLineColor: (i: number) => i === 0 ? "#db2777" : "#e4e4e7", // Pink left border
-                    fillColor: () => "#fafafa",
-                  },
-                },
-              ]
-              : [],
-            width: "55%",
-          },
+          { width: "*", text: "" },
           // Totals
           {
             table: {
@@ -231,8 +201,39 @@ export function generatePdfDirectSale(
             width: "40%",
           },
         ],
-        margin: [0, 0, 0, 30],
+        margin: [0, 0, 0, 16],
       },
+
+      // NOTA - ancho completo, antes del ¡GRACIAS!
+      ...(sale.notes
+        ? [
+          {
+            table: {
+              widths: ["*"],
+              body: [
+                [
+                  {
+                    stack: [
+                      { text: "NOTA:", bold: true, fontSize: 8, color: "#18181b", letterSpacing: 0.5 },
+                      { text: sale.notes, fontSize: 9, color: "#71717a", margin: [0, 4, 0, 0] },
+                    ],
+                    margin: [12, 10, 12, 10],
+                  },
+                ],
+              ],
+            },
+            layout: {
+              hLineWidth: () => 0.8,
+              vLineWidth: () => 0.8,
+              hLineColor: () => "#db2777",
+              vLineColor: () => "#db2777",
+              hLineStyle: () => ({ dash: { length: 4, space: 3 } }),
+              vLineStyle: () => ({ dash: { length: 4, space: 3 } }),
+            },
+            margin: [0, 0, 0, 16],
+          },
+        ]
+        : []),
 
       // THANK YOU
       {

@@ -13,6 +13,7 @@ import { deleteUserAction, reactivateUserAction } from "@/lib/user";
 import { SerializedUserWithRole } from "@/types/user";
 import TableUser from "./TableUser";
 import FormUser from "./FormUser";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface UsersProps {
   initialUsers: SerializedUserWithRole[];
@@ -121,27 +122,26 @@ export default function Users({
 
   return (
     <div className="space-y-6">
-      {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Usuarios
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Listado y control de accesos al sistema
-          </p>
-        </div>
-        {overallCount > 0 && canCreate && (
-          <Button
-            variant="primary"
-            onClick={() => handleOpenForm(null)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-          >
-            <FiPlus className="w-4 h-4" />
-            Nuevo usuario
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title="Usuarios"
+        subtitle="Listado y control de accesos al sistema"
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "usuarios" },
+        ]}
+        action={
+          overallCount > 0 && canCreate ? (
+            <Button
+              variant="primary"
+              onClick={() => handleOpenForm(null)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Nuevo usuario
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Contenido Principal */}
       {overallCount === 0 ? (

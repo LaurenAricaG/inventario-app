@@ -42,17 +42,14 @@ export default function TableCatalogPdfs({
             <TableHead className="text-left">Campaña / Empresa</TableHead>
             <TableHead className="text-left">Marca</TableHead>
             <TableHead className="text-left">Título / Nombre</TableHead>
-            <TableHead className="text-center w-40">Documento</TableHead>
-            {(canUpdate || canDelete) && (
-              <TableHead className="text-center w-28">Acciones</TableHead>
-            )}
+            <TableHead className="text-center w-36">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {catalogs.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={canUpdate || canDelete ? 6 : 5}
+                colSpan={5}
                 className="text-center py-10 text-text-tertiary"
               >
                 No se encontraron catálogos PDF registrados.
@@ -100,43 +97,34 @@ export default function TableCatalogPdfs({
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
-                    {catalog.pdfUrl ? (
-
-                      <Link
-                        href={catalog.pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-beauty-400/10 hover:bg-beauty-400/20 text-beauty-600 dark:text-beauty-400 text-xs font-semibold transition-all border border-beauty-400/20 cursor-pointer"
-                      >
-                        <FiFileText className="w-3.5 h-3.5" />
-                        <span>PDF</span>
-                      </Link>
-                    ) : (
-                      <span className="text-xs text-text-tertiary">Sin archivo</span>
-                    )}
+                    <div className="flex items-center justify-center gap-2">
+                      {catalog.pdfUrl && (
+                        <ButtonIcon
+                          href={catalog.pdfUrl}
+                          target="_blank"
+                          variant="info"
+                          icon={FiFileText}
+                          title="Ver documento"
+                        />
+                      )}
+                      {canUpdate && (
+                        <ButtonIcon
+                          onClick={() => onEdit(catalog)}
+                          variant="warning"
+                          icon={FiEdit2}
+                          title="Editar catálogo"
+                        />
+                      )}
+                      {canDelete && (
+                        <ButtonIcon
+                          onClick={() => onDelete(catalog)}
+                          variant="danger"
+                          icon={FiTrash2}
+                          title="Eliminar catálogo"
+                        />
+                      )}
+                    </div>
                   </TableCell>
-                  {(canUpdate || canDelete) && (
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        {canUpdate && (
-                          <ButtonIcon
-                            onClick={() => onEdit(catalog)}
-                            variant="warning"
-                            icon={FiEdit2}
-                            title="Editar catálogo"
-                          />
-                        )}
-                        {canDelete && (
-                          <ButtonIcon
-                            onClick={() => onDelete(catalog)}
-                            variant="danger"
-                            icon={FiTrash2}
-                            title="Eliminar catálogo"
-                          />
-                        )}
-                      </div>
-                    </TableCell>
-                  )}
                 </TableRow>
               );
             })

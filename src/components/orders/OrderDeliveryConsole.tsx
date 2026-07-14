@@ -16,6 +16,7 @@ import {
 } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
 import Button from "@/components/ui/Button";
+import PageHeader from "@/components/ui/PageHeader";
 import { transitionOrderStatusAction } from "@/lib/campaign-order/index";
 import { CampaignOrderStatus, ItemArrivalStatus } from "@/generated/prisma";
 
@@ -95,11 +96,7 @@ export default function OrderDeliveryConsole({
 
   // Filtrar pedidos listos para entregar (que no estén entregados/anulados y tengan al menos un producto que no haya faltado)
   const pendingDeliveries = orders.filter((o) => {
-    if (
-      o.status === CampaignOrderStatus.DELIVERED ||
-      o.status === CampaignOrderStatus.CANCELLED
-    )
-      return false;
+    if (o.status !== CampaignOrderStatus.PACKED) return false;
     const itemsToDeliverCount = o.items.filter(
       (i) => i.arrivalStatus !== ItemArrivalStatus.MISSING,
     ).length;
@@ -111,28 +108,28 @@ export default function OrderDeliveryConsole({
 
   return (
     <div className="space-y-6">
-      {/* Botón Volver y Encabezado */}
-      <div className="flex items-center gap-3 select-none">
-        <button
-          onClick={() =>
-            router.push(`/admin/pedidos?campaignId=${campaign.id}`)
-          }
-          className="p-2.5 rounded-xl border border-border-default/60 bg-bg-surface hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
-        >
-          <FiArrowLeft className="w-4 h-4" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-black text-text-primary tracking-tight">
-            Despacho y Entrega Rápida de Pedidos
-          </h1>
-          <p className="text-xs text-text-secondary mt-0.5">
-            Campaña:{" "}
-            <span className="font-bold text-text-primary">
-              {campaign.company.name} - {campaign.number}
-            </span>
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Despacho y Entrega Rápida de Pedidos"
+        subtitle={`Campaña: ${campaign.company.name} - ${campaign.number}`}
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "pedidos", href: "/admin/pedidos" },
+          { label: "entregar pedidos" },
+        ]}
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() =>
+              router.push(`/admin/pedidos?campaignId=${campaign.id}`)
+            }
+            className="flex items-center gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
+          >
+            <FiArrowLeft className="w-4 h-4" />
+            Volver
+          </Button>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 select-none">
         {/* Panel Izquierdo/Centro: Pedidos por Entregar (Ancho 2 cols) */}

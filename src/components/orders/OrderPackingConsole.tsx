@@ -13,6 +13,7 @@ import {
 import { cn } from "@/utils/cn.utils";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
+import PageHeader from "@/components/ui/PageHeader";
 import Form, { FormField } from "@/components/ui/Form";
 import Input from "@/components/ui/Input";
 import {
@@ -31,6 +32,7 @@ interface SerializedCampaign {
   number: string;
   company: { id: number; name: string };
   paymentDate?: string | null;
+  endDate?: string | null;
 }
 
 interface SerializedOrderItem {
@@ -86,6 +88,7 @@ export default function OrderPackingConsole({
   const [discountInput, setDiscountInput] = useState("0");
   const [notesInput, setNotesInput] = useState("");
   const [paymentDateInput, setPaymentDateInput] = useState("");
+  const [paymentDateError, setPaymentDateError] = useState<string | null>(null);
 
   const toggleItemCheck = (itemId: number) => {
     setCheckedItems((prev) => ({
@@ -118,6 +121,26 @@ export default function OrderPackingConsole({
     const discount = parseFloat(discountInput) || 0;
     const notes = notesInput ? notesInput.trim() : null;
     const paymentDateStr = paymentDateInput || null;
+
+    if (paymentDateStr && packingOrder.campaign.paymentDate) {
+      const [year, month, day] = paymentDateStr.split("-").map(Number);
+      const chosenDateUTC = new Date(Date.UTC(year, month - 1, day));
+
+      const minDate = new Date(packingOrder.campaign.paymentDate);
+      minDate.setUTCHours(0, 0, 0, 0);
+
+      if (chosenDateUTC < minDate) {
+        const yyyy = minDate.getUTCFullYear();
+        const mm = String(minDate.getUTCMonth() + 1).padStart(2, "0");
+        const dd = String(minDate.getUTCDate()).padStart(2, "0");
+        const minFormatted = `${dd}/${mm}/${yyyy}`;
+
+        setPaymentDateError(
+          `La fecha debe ser mayor o igual a la fecha de la campaña (${minFormatted}).`
+        );
+        return;
+      }
+    }
 
     try {
       // 1. Guardar descuento, nota y fecha de pago en base de datos
@@ -164,28 +187,28 @@ export default function OrderPackingConsole({
 
   return (
     <div className="space-y-6">
-      {/* Botón Volver y Encabezado */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() =>
-            router.push(`/admin/pedidos?campaignId=${campaign.id}`)
-          }
-          className="p-2.5 rounded-xl border border-border-default/60 bg-bg-surface hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-500/20"
-        >
-          <FiArrowLeft className="w-4 h-4" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-black text-text-primary tracking-tight">
-            Guía de Armado de Bolsas y Empacado
-          </h1>
-          <p className="text-xs text-text-secondary mt-0.5">
-            Campaña:{" "}
-            <span className="font-bold text-text-primary">
-              {campaign.company.name} - {campaign.number}
-            </span>
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Guía de Armado de Bolsas y Empacado"
+        subtitle={`Campaña: ${campaign.company.name} - ${campaign.number}`}
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "pedidos", href: "/admin/pedidos" },
+          { label: "empacar pedidos" },
+        ]}
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() =>
+              router.push(`/admin/pedidos?campaignId=${campaign.id}`)
+            }
+            className="flex items-center gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
+          >
+            <FiArrowLeft className="w-4 h-4" />
+            Volver
+          </Button>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 select-none">
         {/* Panel Izquierdo/Centro: Pendientes de Empacado (Ancho 2 cols) */}
@@ -254,6 +277,7 @@ export default function OrderPackingConsole({
                               ? order.campaign.paymentDate.split("T")[0]
                               : "",
                         );
+                        setPaymentDateError(null);
                       }}
                       className={cn(
                         "py-1.5 px-4 text-xs font-bold rounded-xl gap-1.5 transition-all duration-300",
@@ -537,11 +561,16 @@ export default function OrderPackingConsole({
                   />
                 </FormField>
 
-                <FormField label="Fecha Límite de Pago (Opcional)">
+                <FormField label="Fecha Límite de Pago (Opcional)" error={paymentDateError || undefined}>
                   <Input
                     type="date"
                     value={paymentDateInput}
-                    onChange={(e) => setPaymentDateInput(e.target.value)}
+                    onChange={(e) => {
+                      setPaymentDateInput(e.target.value);
+                      if (e.target.value) {
+                        setPaymentDateError(null);
+                      }
+                    }}
                     placeholder="Seleccionar fecha"
                   />
                 </FormField>
@@ -550,7 +579,10 @@ export default function OrderPackingConsole({
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setPackingOrder(null)}
+                    onClick={() => {
+                      setPackingOrder(null);
+                      setPaymentDateError(null);
+                    }}
                   >
                     Cancelar
                   </Button>

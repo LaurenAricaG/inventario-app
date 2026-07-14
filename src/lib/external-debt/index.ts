@@ -119,6 +119,17 @@ export async function deleteExternalDebtAction(id: number) {
       };
     }
 
+    // Verificar si han pasado más de 48 horas desde createdAt
+    const diffInMs = Date.now() - existingDebt.createdAt.getTime();
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+
+    if (diffInHours > 48) {
+      return {
+        success: false,
+        message: "No se puede eliminar, deuda procesada",
+      };
+    }
+
     // Eliminar físicamente la deuda externa
     await prisma.externalDebt.delete({
       where: { id },

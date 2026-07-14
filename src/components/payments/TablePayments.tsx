@@ -75,9 +75,10 @@ export default function TablePayments({
         <TableBody>
           {payments.map((payment) => (
             <TableRow key={payment.id} className="hover:bg-bg-surface/30">
-              {/* Cliente */}
-              <TableCell className="text-left font-semibold text-text-primary">
-                {payment.client.name}
+              <TableCell className="text-left font-semibold text-text-primary hover:text-beauty-500 hover:underline">
+                <LinkComponent href={`/admin/movimientos/${payment.client.id}?source=pagos`}>
+                  {payment.client.name}
+                </LinkComponent>
                 <span className="text-[10px] text-text-tertiary font-medium block mt-0.5">
                   ID: {payment.clientId}
                 </span>

@@ -11,6 +11,7 @@ import { deleteRoleAction } from "@/lib/role";
 import { SerializedRoleWithPermissions } from "@/types/role";
 import TableRoles from "./TableRoles";
 import FormRole from "./FormRole";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface RolesProps {
   initialRoles: SerializedRoleWithPermissions[];
@@ -77,27 +78,26 @@ export default function Roles({
 
   return (
     <div className="space-y-6">
-      {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Roles y Permisos
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Configuración de perfiles y asignación de accesos del sistema
-          </p>
-        </div>
-        {overallCount > 0 && canCreate && (
-          <Button
-            variant="primary"
-            onClick={() => handleOpenForm(null)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-          >
-            <FiPlus className="w-4 h-4" />
-            Nuevo rol
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title="Roles y Permisos"
+        subtitle="Configuración de perfiles y asignación de accesos del sistema"
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "roles" },
+        ]}
+        action={
+          overallCount > 0 && canCreate ? (
+            <Button
+              variant="primary"
+              onClick={() => handleOpenForm(null)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Nuevo rol
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Contenido Principal */}
       {overallCount === 0 ? (

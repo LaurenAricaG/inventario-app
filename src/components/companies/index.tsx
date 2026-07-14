@@ -12,6 +12,7 @@ import { deleteCompanyAction } from "@/lib/company";
 import { SerializedCompany } from "@/types/companies";
 import TableCompanies from "./TableCompanies";
 import FormCompanies from "./FormCompanies";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface CompaniesProps {
   initialEmpresas: SerializedCompany[];
@@ -76,27 +77,26 @@ export default function Companies({
 
   return (
     <div className="space-y-6">
-      {/* Module Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Empresas
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Administración de empresas para clasificación de productos
-          </p>
-        </div>
-        {overallCount > 0 && canCreate && (
-          <Button
-            variant="primary"
-            onClick={() => handleOpenForm(null)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-          >
-            <FiPlus className="w-4 h-4" />
-            Nueva empresa
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title="Empresas"
+        subtitle="Administración de empresas para clasificación de productos"
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "empresas" },
+        ]}
+        action={
+          overallCount > 0 && canCreate ? (
+            <Button
+              variant="primary"
+              onClick={() => handleOpenForm(null)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Nueva empresa
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Main Content */}
       {overallCount === 0 ? (

@@ -10,6 +10,7 @@ import Select from "@/components/ui/Select";
 import { SerializedStockMovement } from "@/types/stockmovement";
 import TableInventory from "./TableInventory";
 import FormInventory from "./FormInventory";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface ActiveProduct {
   id: number;
@@ -80,27 +81,26 @@ export default function Inventory({
 
   return (
     <div className="space-y-6">
-      {/* Encabezado de Página */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Inventario (Kardex)
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Consulta el historial detallado de movimientos de stock y realiza ajustes manuales de inventario.
-          </p>
-        </div>
-        {overallCount > 0 && canAdjust && (
-          <Button
-            variant="primary"
-            onClick={handleOpenForm}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-          >
-            <FiPlus className="w-4 h-4" />
-            Ajustar Stock
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title="Inventario (Kardex)"
+        subtitle="Consulta el historial detallado de movimientos de stock y realiza ajustes manuales de inventario."
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "inventario" },
+        ]}
+        action={
+          overallCount > 0 && canAdjust ? (
+            <Button
+              variant="primary"
+              onClick={handleOpenForm}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Ajustar Stock
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Contenido Principal */}
       {overallCount === 0 ? (

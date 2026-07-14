@@ -118,7 +118,7 @@ export default function OrderDetailModal({
                 <span className="font-bold text-text-primary">
                   F. Registro:
                 </span>{" "}
-                {formatDateTime(order.createdAt)}
+                {formatDateUTC(order.createdAt)}
               </div>
             </div>
           </div>
@@ -147,8 +147,9 @@ export default function OrderDetailModal({
                 ) : (
                   activeItems.map((item) => {
                     const isSubstituted = item.arrivalStatus === "SUBSTITUTED";
+                    // Vista pública: solo muestra el producto que llegó (sustituto)
                     const displayName = isSubstituted
-                      ? `${item.productName} (Sustituido por: ${item.substituteName})`
+                      ? (item.substituteName ?? item.productName)
                       : item.productName;
                     const displayPrice =
                       isSubstituted && item.substitutePrice !== null
@@ -299,12 +300,11 @@ export default function OrderDetailModal({
             </div>
             <div className="flex items-start">
               <span className="w-24 text-zinc-400 font-bold uppercase tracking-wider shrink-0 select-none">
-                Estado Pedido:
+                Estado:
               </span>
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
-                  statusColors[order.status]
-                }`}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColors[order.status]
+                  }`}
               >
                 {statusTranslations[order.status] || order.status}
               </span>
@@ -316,7 +316,7 @@ export default function OrderDetailModal({
                 F. Registro:
               </span>
               <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                {formatDateTime(order.createdAt)}
+                {formatDateUTC(order.createdAt)}
               </span>
             </div>
           </div>
@@ -344,13 +344,26 @@ export default function OrderDetailModal({
                 const displayCode = isSubstituted
                   ? item.substituteCode
                   : item.productCode;
-                const displayName = isSubstituted
-                  ? `${item.productName} (Sustituido por: ${item.substituteName})`
-                  : item.productName;
                 const displayPrice =
                   isSubstituted && item.substitutePrice !== null
                     ? item.substitutePrice
                     : item.catalogPrice;
+
+                // Vista sistema: sustituto arriba + (original que no llegó) abajo
+                const nameNode = isSubstituted ? (
+                  <>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                      {item.substituteName ?? item.productName}
+                    </span>
+                    <span className="text-[10px] text-text-tertiary italic mt-0.5 block">
+                      ({item.productName})
+                    </span>
+                  </>
+                ) : (
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                    {item.productName}
+                  </span>
+                );
 
                 return (
                   <tr
@@ -362,9 +375,7 @@ export default function OrderDetailModal({
                     </td>
                     <td className="py-3 px-3">
                       <div className="flex flex-col">
-                        <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                          {displayName}
-                        </span>
+                        {nameNode}
                         <span className="text-[10px] text-text-tertiary mt-0.5">
                           Marca: {item.brand.name}
                         </span>
@@ -375,9 +386,8 @@ export default function OrderDetailModal({
                     </td>
                     <td className="py-3 px-3 text-center">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
-                          itemStatusColors[item.arrivalStatus]
-                        }`}
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${itemStatusColors[item.arrivalStatus]
+                          }`}
                       >
                         {itemStatusTranslations[item.arrivalStatus] ||
                           item.arrivalStatus}
@@ -402,57 +412,57 @@ export default function OrderDetailModal({
         <hr className="border-t border-dashed border-zinc-200 dark:border-zinc-800" />
 
         {/* Resumen Final */}
-        <div className="flex flex-col md:flex-row gap-6 justify-between items-start">
-          <div className="flex-1 w-full">
-            {order.notes ? (
-              <div className="p-3.5 border-l-4 border-beauty-400 bg-zinc-50 dark:bg-zinc-900 rounded-r-xl text-xs space-y-1">
-                <span className="font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider text-[10px] select-none">
-                  Nota:
-                </span>
-                <p className="text-zinc-600 dark:text-zinc-300 italic">
-                  {order.notes}
-                </p>
-              </div>
-            ) : (
-              <div className="h-full"></div>
-            )}
-          </div>
-
-          <div className="w-full md:w-64 space-y-3">
-            <div className="border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 bg-zinc-50/50 dark:bg-zinc-900/30 space-y-2.5">
-              <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 select-none">
-                <span>SUBTOTAL:</span>
-                <span className="font-mono font-bold">
-                  S/ {calculatedSubtotal.toFixed(2)}
-                </span>
-              </div>
-              {order.discount > 0 && (
-                <div className="flex items-center justify-between text-xs text-danger-text font-medium select-none">
-                  <span>DESCUENTO:</span>
+        <div className="flex flex-col gap-4">
+          {/* Totales - alineados a la derecha */}
+          <div className="flex justify-end">
+            <div className="w-full md:w-64">
+              <div className="border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 bg-zinc-50/50 dark:bg-zinc-900/30 space-y-2.5">
+                <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 select-none">
+                  <span>SUBTOTAL:</span>
                   <span className="font-mono font-bold">
-                    -S/ {order.discount.toFixed(2)}
+                    S/ {calculatedSubtotal.toFixed(2)}
                   </span>
                 </div>
-              )}
-              <hr className="border-t border-dashed border-zinc-200 dark:border-zinc-800" />
-              <div className="flex items-center justify-between text-sm font-black text-beauty-500 dark:text-beauty-400 select-none">
-                <span>TOTAL NETO:</span>
-                <span className="font-mono text-base">
-                  S/{" "}
-                  {order.status === "CANCELLED"
-                    ? "0.00"
-                    : (
+                {order.discount > 0 && (
+                  <div className="flex items-center justify-between text-xs text-danger-text font-medium select-none">
+                    <span>DESCUENTO:</span>
+                    <span className="font-mono font-bold">
+                      -S/ {order.discount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                <hr className="border-t border-dashed border-zinc-200 dark:border-zinc-800" />
+                <div className="flex items-center justify-between text-sm font-black text-beauty-500 dark:text-beauty-400 select-none">
+                  <span>TOTAL NETO:</span>
+                  <span className="font-mono text-base">
+                    S/{" "}
+                    {order.status === "CANCELLED"
+                      ? "0.00"
+                      : (
                         order.total || calculatedSubtotal - order.discount
                       ).toFixed(2)}
-                </span>
+                  </span>
+                </div>
               </div>
             </div>
-            {order.paymentDate && (
-              <div className="p-3 bg-beauty-500/10 border border-dashed border-beauty-500/30 text-beauty-600 dark:text-beauty-400 rounded-xl text-center font-extrabold text-[12.5px] select-none">
-                Fecha límite de pago hasta {formatDateUTC(order.paymentDate)}
-              </div>
-            )}
           </div>
+
+          {/* Plazo / Mensaje de Pago */}
+          {order.status === "DELIVERED" && order.notes && (
+            <div className="mt-4 p-3 border border-dashed border-beauty-500/30 bg-beauty-500/5 rounded-2xl text-[11px] text-text-secondary">
+              <span className="font-bold uppercase tracking-wider block text-[9px] mb-1">
+                Nota:
+              </span>
+              {order.notes}
+            </div>
+          )}
+
+          {/* Fecha límite - ancho completo, al final */}
+          {order.paymentDate && (
+            <div className="w-full p-3.5 bg-beauty-500/10 border border-dashed border-beauty-500/30 text-beauty-600 dark:text-beauty-400 rounded-xl text-center font-extrabold text-[13px] select-none">
+              Fecha límite de pago hasta {formatDateUTC(order.paymentDate)}
+            </div>
+          )}
         </div>
 
         {/* Info Deuda */}

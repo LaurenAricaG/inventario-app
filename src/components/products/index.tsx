@@ -12,6 +12,7 @@ import { ProductWithRelations } from "@/types/models";
 import TableProducts from "./TableProducts";
 import FormProducts from "./FormProducts";
 import DetailProductModal from "./DetailProductModal";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface ProductsProps {
   initialProducts: ProductWithRelations[];
@@ -89,27 +90,26 @@ export default function Products({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">
-            Inventario de Productos
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Administración del stock, precios y catálogo general de productos.
-          </p>
-        </div>
-        {overallCount > 0 && canCreate && (
-          <Button
-            variant="primary"
-            onClick={() => handleOpenForm(null)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
-          >
-            <FiPlus className="w-4 h-4" />
-            Nuevo producto
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title="Inventario de Productos"
+        subtitle="Administración del stock, precios y catálogo general de productos."
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "productos" },
+        ]}
+        action={
+          overallCount > 0 && canCreate ? (
+            <Button
+              variant="primary"
+              onClick={() => handleOpenForm(null)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Nuevo producto
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Main Container */}
       {overallCount === 0 ? (

@@ -23,6 +23,9 @@ import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
 import { createDirectSaleAction } from "@/lib/direct-sale";
 import { directSaleSchema } from "@/lib/direct-sale/schema";
+import Modal from "@/components/ui/Modal";
+import { createClientAction } from "@/lib/client";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface ProductOption {
   id: number;
@@ -76,15 +79,25 @@ export default function FormDirectSale({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const clientDropdownRef = useRef<HTMLDivElement>(null);
 
+  const [localClients, setLocalClients] = useState(clients);
+
   // Client Selection searchable state
   const [clientSearchQuery, setClientSearchQuery] = useState("");
   const [isClientDropdownOpen, setIsClientDropdownOpen] = useState(false);
 
+  // Quick Client creation states
+  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
+  const [newClientName, setNewClientName] = useState("");
+  const [newClientPhone, setNewClientPhone] = useState("");
+  const [newClientAddress, setNewClientAddress] = useState("");
+  const [isCreatingClient, setIsCreatingClient] = useState(false);
+  const [newClientNameError, setNewClientNameError] = useState<string | null>(null);
+
   // Compute selected client object
-  const selectedClient = clients.find((c) => c.id === Number(clientId)) || null;
+  const selectedClient = localClients.find((c) => c.id === Number(clientId)) || null;
 
   // Filter clients based on client search query inside the dropdown
-  const filteredClients = clients.filter((c) =>
+  const filteredClients = localClients.filter((c) =>
     c.name.toLowerCase().includes(clientSearchQuery.toLowerCase().trim()),
   );
 
@@ -143,6 +156,48 @@ export default function FormDirectSale({
     setQtyInput("1");
     setIsDropdownOpen(false);
     setSearchQuery("");
+  };
+
+  // Crear cliente rápido
+  const handleCreateClientQuick = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newClientName.trim()) {
+      setNewClientNameError("El nombre completo es obligatorio.");
+      return;
+    }
+
+    setIsCreatingClient(true);
+    try {
+      const res = await createClientAction({
+        name: newClientName.trim(),
+        phone: newClientPhone.trim() || undefined,
+        address: newClientAddress.trim() || undefined,
+      });
+
+      if (res.success && res.data) {
+        const createdClient = res.data;
+        setLocalClients((prev) =>
+          [...prev, createdClient].sort((a, b) => a.name.localeCompare(b.name)),
+        );
+        setClientId(createdClient.id.toString());
+        setErrors((prev) => ({
+          ...prev,
+          clientId: "",
+        }));
+        setNewClientNameError(null);
+        setIsClientModalOpen(false);
+        setNewClientName("");
+        setNewClientPhone("");
+        setNewClientAddress("");
+        toast.success("Cliente creado y seleccionado.");
+      } else {
+        toast.error(res.message || "Error al crear cliente.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Error inesperado.");
+    } finally {
+      setIsCreatingClient(false);
+    }
   };
 
   // Add selected product to the sales table
@@ -311,23 +366,26 @@ export default function FormDirectSale({
 
   return (
     <div className="space-y-6">
-      {/* Header and Back Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <button
+      <PageHeader
+        title="Registrar Nueva Venta Directa"
+        subtitle="Registra ventas directas para clientes con stock disponible."
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "ventas", href: "/admin/ventas" },
+          { label: "nueva venta" },
+        ]}
+        action={
+          <Button
             type="button"
+            variant="outline"
             onClick={() => router.push("/admin/ventas")}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-text-secondary hover:text-beauty-500 transition-colors mb-2 cursor-pointer select-none"
+            className="flex items-center gap-2 border-border-strong text-text-primary hover:bg-bg-surface"
           >
-            <FiArrowLeft className="w-3.5 h-3.5 animate-pulse" />
+            <FiArrowLeft className="w-4 h-4" />
             Volver al listado
-          </button>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2">
-            <FiShoppingBag className="w-6 h-6 text-beauty-500" />
-            Registrar Nueva Venta Directa
-          </h2>
-        </div>
-      </div>
+          </Button>
+        }
+      />
 
       <Form onSubmit={handleSubmit} noValidate className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -713,102 +771,120 @@ export default function FormDirectSale({
 
               {/* Client Selection */}
               <FormField label="Cliente" error={errors.clientId}>
-                <div ref={clientDropdownRef} className="w-full relative">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setIsClientDropdownOpen(!isClientDropdownOpen)
-                    }
-                    className={cn(
-                      "w-full px-4 py-3 rounded-2xl border text-sm bg-bg-card text-text-primary transition-all duration-200 outline-none flex items-center justify-between text-left cursor-pointer select-none",
-                      "border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10",
-                      isClientDropdownOpen &&
-                        "border-beauty-400 ring-4 ring-beauty-400/10",
-                      errors.clientId &&
-                        "border-danger-text focus:border-danger-text focus:ring-danger-text/10",
-                    )}
-                  >
-                    <div className="flex items-center gap-2 truncate min-w-0">
-                      {selectedClient ? (
-                        <>
-                          <FiUser className="w-4 h-4 text-beauty-500 shrink-0" />
-                          <span className="font-semibold text-text-primary truncate">
-                            {selectedClient.name}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-text-tertiary">
-                          Seleccione el cliente...
-                        </span>
-                      )}
-                    </div>
-                    <FiChevronDown
+                <div className="flex gap-2 w-full">
+                  <div ref={clientDropdownRef} className="flex-1 relative">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setIsClientDropdownOpen(!isClientDropdownOpen)
+                      }
                       className={cn(
-                        "w-4 h-4 text-text-tertiary transition-transform duration-250 shrink-0 ml-2",
-                        isClientDropdownOpen && "rotate-180",
+                        "w-full px-4 py-3 rounded-2xl border text-sm bg-bg-card text-text-primary transition-all duration-200 outline-none flex items-center justify-between text-left cursor-pointer select-none",
+                        "border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10",
+                        isClientDropdownOpen &&
+                          "border-beauty-400 ring-4 ring-beauty-400/10",
+                        errors.clientId &&
+                          "border-danger-text focus:border-danger-text focus:ring-danger-text/10",
                       )}
-                    />
-                  </button>
-
-                  {isClientDropdownOpen && (
-                    <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-bg-card border border-border-default rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-72 animate-in fade-in zoom-in-95 duration-150">
-                      {/* Buscador de Cliente Interno */}
-                      <div className="p-2 border-b border-border-soft">
-                        <div className="relative flex items-center">
-                          <FiSearch className="absolute left-3 text-text-tertiary w-3.5 h-3.5" />
-                          <input
-                            type="text"
-                            placeholder="Buscar por nombre..."
-                            value={clientSearchQuery}
-                            onChange={(e) =>
-                              setClientSearchQuery(e.target.value)
-                            }
-                            className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-border-strong/40 bg-bg-surface text-text-primary focus:border-beauty-400 outline-none transition-all"
-                            autoFocus
-                          />
-                        </div>
-                      </div>
-
-                      {/* Lista de clientes */}
-                      <div className="overflow-y-auto p-1.5 space-y-1 scrollbar-thin scrollbar-thumb-stone-300 dark:scrollbar-thumb-zinc-700">
-                        {filteredClients.length === 0 ? (
-                          <div className="px-4 py-3 text-xs text-text-tertiary text-center select-none">
-                            No se encontraron clientes
-                          </div>
+                    >
+                      <div className="flex items-center gap-2 truncate min-w-0">
+                        {selectedClient ? (
+                          <>
+                            <FiUser className="w-4 h-4 text-beauty-500 shrink-0" />
+                            <span className="font-semibold text-text-primary truncate">
+                              {selectedClient.name}
+                            </span>
+                          </>
                         ) : (
-                          filteredClients.map((c) => {
-                            const isSelected = selectedClient?.id === c.id;
-                            return (
-                              <button
-                                key={c.id}
-                                type="button"
-                                onClick={() => {
-                                  setClientId(c.id.toString());
-                                  setIsClientDropdownOpen(false);
-                                  setClientSearchQuery("");
-                                  setErrors((prev) => ({
-                                    ...prev,
-                                    clientId: "",
-                                  }));
-                                }}
-                                className={cn(
-                                  "w-full px-3 py-2.5 rounded-xl text-xs text-left flex items-center justify-between cursor-pointer transition-colors select-none",
-                                  isSelected
-                                    ? "bg-beauty-400/10 text-beauty-600 dark:bg-beauty-400/15 dark:text-beauty-400 font-semibold"
-                                    : "text-text-secondary hover:bg-beauty-400/10 hover:text-beauty-600 dark:hover:bg-beauty-400/15 dark:hover:text-beauty-400",
-                                )}
-                              >
-                                <span className="truncate">{c.name}</span>
-                                {isSelected && (
-                                  <FiCheck className="w-3.5 h-3.5 text-beauty-400 shrink-0 ml-2" />
-                                )}
-                              </button>
-                            );
-                          })
+                          <span className="text-text-tertiary">
+                            Seleccione el cliente...
+                          </span>
                         )}
                       </div>
-                    </div>
-                  )}
+                      <FiChevronDown
+                        className={cn(
+                          "w-4 h-4 text-text-tertiary transition-transform duration-250 shrink-0 ml-2",
+                          isClientDropdownOpen && "rotate-180",
+                        )}
+                      />
+                    </button>
+
+                    {isClientDropdownOpen && (
+                      <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-bg-card border border-border-default rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-72 animate-in fade-in zoom-in-95 duration-150">
+                        {/* Buscador de Cliente Interno */}
+                        <div className="p-2 border-b border-border-soft">
+                          <div className="relative flex items-center">
+                            <FiSearch className="absolute left-3 text-text-tertiary w-3.5 h-3.5" />
+                            <input
+                              type="text"
+                              placeholder="Buscar por nombre..."
+                              value={clientSearchQuery}
+                              onChange={(e) =>
+                                setClientSearchQuery(e.target.value)
+                              }
+                              className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-border-strong/40 bg-bg-surface text-text-primary focus:border-beauty-400 outline-none transition-all"
+                              autoFocus
+                            />
+                          </div>
+                        </div>
+
+                        {/* Lista de clientes */}
+                        <div className="overflow-y-auto p-1.5 space-y-1 scrollbar-thin scrollbar-thumb-stone-300 dark:scrollbar-thumb-zinc-700">
+                          {filteredClients.length === 0 ? (
+                            <div className="px-4 py-3 text-xs text-text-tertiary text-center select-none">
+                              No se encontraron clientes
+                            </div>
+                          ) : (
+                            filteredClients.map((c) => {
+                              const isSelected = selectedClient?.id === c.id;
+                              return (
+                                <button
+                                  key={c.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setClientId(c.id.toString());
+                                    setIsClientDropdownOpen(false);
+                                    setClientSearchQuery("");
+                                    setErrors((prev) => ({
+                                      ...prev,
+                                      clientId: "",
+                                    }));
+                                  }}
+                                  className={cn(
+                                    "w-full px-3 py-2.5 rounded-xl text-xs text-left flex items-center justify-between cursor-pointer transition-colors select-none",
+                                    isSelected
+                                      ? "bg-beauty-400/10 text-beauty-600 dark:bg-beauty-400/15 dark:text-beauty-400 font-semibold"
+                                      : "text-text-secondary hover:bg-beauty-400/10 hover:text-beauty-600 dark:hover:bg-beauty-400/15 dark:hover:text-beauty-400",
+                                  )}
+                                >
+                                  <span className="truncate">{c.name}</span>
+                                  {isSelected && (
+                                    <FiCheck className="w-3.5 h-3.5 text-beauty-400 shrink-0 ml-2" />
+                                  )}
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setNewClientNameError(null);
+                      setNewClientName("");
+                      setNewClientPhone("");
+                      setNewClientAddress("");
+                      setIsClientModalOpen(true);
+                    }}
+                    className="border-border-strong text-text-primary hover:bg-bg-surface px-3"
+                    title="Nuevo Cliente Rápido"
+                  >
+                    <FiPlus className="w-5 h-5 shrink-0" />
+                  </Button>
                 </div>
               </FormField>
 
@@ -883,6 +959,74 @@ export default function FormDirectSale({
           </div>
         </div>
       </Form>
+
+      {/* Modal de Nuevo Cliente Rápido */}
+      <Modal
+        isOpen={isClientModalOpen}
+        onClose={() => {
+          setIsClientModalOpen(false);
+          setNewClientNameError(null);
+        }}
+        title="Crear Cliente Rápido"
+        size="md"
+        footer={
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsClientModalOpen(false);
+                setNewClientNameError(null);
+              }}
+              disabled={isCreatingClient}
+              className="border-border-strong text-text-primary hover:bg-bg-surface"
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              form="client-quick-form"
+              loading={isCreatingClient}
+            >
+              Crear y Seleccionar
+            </Button>
+          </div>
+        }
+      >
+        <Form
+          id="client-quick-form"
+          onSubmit={handleCreateClientQuick}
+          className="space-y-4"
+        >
+          <FormField label="Nombre Completo" required error={newClientNameError || undefined}>
+            <Input
+              value={newClientName}
+              onChange={(e) => {
+                setNewClientName(e.target.value);
+                if (e.target.value.trim()) {
+                  setNewClientNameError(null);
+                }
+              }}
+              placeholder="Ej. Camila Arica"
+            />
+          </FormField>
+          <FormField label="Teléfono (Opcional)">
+            <Input
+              value={newClientPhone}
+              onChange={(e) => setNewClientPhone(e.target.value)}
+              placeholder="Ej. 987654321"
+            />
+          </FormField>
+          <FormField label="Dirección (Opcional)">
+            <Input
+              value={newClientAddress}
+              onChange={(e) => setNewClientAddress(e.target.value)}
+              placeholder="Ej. Av. Larco 123, Miraflores"
+            />
+          </FormField>
+        </Form>
+      </Modal>
     </div>
   );
 }
