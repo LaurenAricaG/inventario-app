@@ -71,7 +71,6 @@ const typeConfig = {
 
 const orderStatusTranslations: Record<string, string> = {
   PENDING: "Pendiente",
-  ARRIVED: "Llegado",
   VERIFIED: "Verificado",
   PACKED: "Empacado",
   DELIVERED: "Entregado",

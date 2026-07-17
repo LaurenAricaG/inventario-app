@@ -5,14 +5,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   FiArrowLeft,
-  FiCheckCircle,
-  FiXCircle,
-  FiEdit,
   FiAlertCircle,
   FiChevronDown,
   FiUser,
   FiPackage,
-  FiCheck,
 } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
 import Button from "@/components/ui/Button";
@@ -44,13 +40,13 @@ interface SerializedOrderItem {
   productCode: string | null;
   productName: string;
   catalogPrice: number;
-  costPrice: number | null;
   quantity: number;
   arrivalStatus: ItemArrivalStatus;
-  substituteCode: string | null;
-  substituteName: string | null;
-  substitutePrice: number | null;
-  substituteCostPrice: number | null;
+  substitute?: {
+    productCode: string | null;
+    productName: string;
+    catalogPrice: number;
+  } | null;
   brand: SerializedBrand;
 }
 
@@ -143,11 +139,10 @@ export default function OrderVerificationConsole({
               : item.arrivalStatus !== ItemArrivalStatus.PENDING,
           );
 
-          // Si todos están verificados y el estado actual de la orden es PENDING o ARRIVED, transicionamos automáticamente
+          // Si todos están verificados y el estado actual de la orden es PENDING, transicionamos automáticamente
           if (
             allOtherItemsChecked &&
-            (order.status === CampaignOrderStatus.PENDING ||
-              order.status === CampaignOrderStatus.ARRIVED)
+            order.status === CampaignOrderStatus.PENDING
           ) {
             // Verificar si todos los productos de la orden faltaron
             const allItemsMissing = order.items.every((item) =>
@@ -326,10 +321,11 @@ export default function OrderVerificationConsole({
         clientName: string;
         quantity: number;
         arrivalStatus: ItemArrivalStatus;
-        substituteCode: string | null;
-        substituteName: string | null;
-        substitutePrice: number | null;
-        substituteCostPrice: number | null;
+        substitute?: {
+          productCode: string | null;
+          productName: string;
+          catalogPrice: number;
+        } | null;
         orderStatus: CampaignOrderStatus;
       }[];
     }
@@ -358,10 +354,7 @@ export default function OrderVerificationConsole({
         clientName: order.client.name,
         quantity: item.quantity,
         arrivalStatus: item.arrivalStatus,
-        substituteCode: item.substituteCode,
-        substituteName: item.substituteName,
-        substitutePrice: item.substitutePrice,
-        substituteCostPrice: item.substituteCostPrice,
+        substitute: item.substitute,
         orderStatus: order.status,
       });
     });
@@ -406,8 +399,7 @@ export default function OrderVerificationConsole({
     return groupItems
       .filter(
         (i) =>
-          i.orderStatus === CampaignOrderStatus.PENDING ||
-          i.orderStatus === CampaignOrderStatus.ARRIVED,
+          i.orderStatus === CampaignOrderStatus.PENDING,
       )
       .map((i) => i.id);
   };
@@ -650,9 +642,7 @@ export default function OrderVerificationConsole({
                                   {group.items.map((subItem) => {
                                     const isItemVerified =
                                       subItem.orderStatus !==
-                                        CampaignOrderStatus.PENDING &&
-                                      subItem.orderStatus !==
-                                        CampaignOrderStatus.ARRIVED;
+                                      CampaignOrderStatus.PENDING;
 
                                     return (
                                       <div
@@ -671,14 +661,14 @@ export default function OrderVerificationConsole({
 
                                         {subItem.arrivalStatus ===
                                           ItemArrivalStatus.SUBSTITUTED &&
-                                          subItem.substituteName && (
+                                          subItem.substitute?.productName && (
                                             <div className="text-[10px] bg-info-bg/10 border border-info-text/20 text-info-text p-1.5 rounded-lg">
                                               [Sustituto]{" "}
                                               <span className="font-semibold">
-                                                {subItem.substituteName}
+                                                {subItem.substitute.productName}
                                               </span>{" "}
                                               (Cod:{" "}
-                                              {subItem.substituteCode || "S/C"})
+                                              {subItem.substitute.productCode || "S/C"})
                                             </div>
                                           )}
 
@@ -687,13 +677,13 @@ export default function OrderVerificationConsole({
                                             className={cn(
                                               "px-2 py-0.5 rounded-full text-[9px] font-bold border",
                                               statusColors[
-                                                subItem.arrivalStatus
+                                              subItem.arrivalStatus
                                               ],
                                             )}
                                           >
                                             {
                                               statusTranslations[
-                                                subItem.arrivalStatus
+                                              subItem.arrivalStatus
                                               ]
                                             }
                                           </span>

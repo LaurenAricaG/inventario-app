@@ -12,9 +12,11 @@ interface PrintItem {
   catalogPrice: number;
   quantity: number;
   arrivalStatus: string;
-  substituteCode: string | null;
-  substituteName: string | null;
-  substitutePrice: number | null;
+  substitute?: {
+    productCode: string | null;
+    productName: string;
+    catalogPrice: number;
+  } | null;
   brand: { name: string };
 }
 
@@ -75,8 +77,10 @@ export function printCampaignSlips(
       const subtotal = order.items.reduce((s, item) => {
         if (item.arrivalStatus === "MISSING") return s;
         const price =
-          item.arrivalStatus === "SUBSTITUTED" && item.substitutePrice !== null
-            ? item.substitutePrice
+          item.arrivalStatus === "SUBSTITUTED" &&
+          item.substitute?.catalogPrice !== undefined &&
+          item.substitute?.catalogPrice !== null
+            ? item.substitute.catalogPrice
             : item.catalogPrice;
         return s + item.quantity * price;
       }, 0);
@@ -88,8 +92,8 @@ export function printCampaignSlips(
         .filter((item) => item.arrivalStatus !== "MISSING")
         .map((item) => {
           const isSub = item.arrivalStatus === "SUBSTITUTED";
-          const name = isSub ? item.substituteName : item.productName;
-          const price = isSub ? item.substitutePrice : item.catalogPrice;
+          const name = isSub ? item.substitute?.productName : item.productName;
+          const price = isSub ? item.substitute?.catalogPrice : item.catalogPrice;
 
           return `
           <tr>

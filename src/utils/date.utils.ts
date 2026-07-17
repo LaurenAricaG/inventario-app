@@ -123,6 +123,27 @@ export function formatDateShort(dateInput: Date | string | null | undefined): st
 }
 
 /**
+ * Formatea una fecha a formato corto (DD [mes corto]) usando la zona horaria UTC.
+ * Útil para evitar desfases de fecha debido a la zona horaria local.
+ * Por ejemplo: "13 jul."
+ */
+export function formatDateShortUTC(dateInput: Date | string | null | undefined): string {
+  if (!dateInput) return "";
+  try {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("es-PE", {
+      day: "2-digit",
+      month: "short",
+      timeZone: "UTC",
+    });
+  } catch {
+    return "";
+  }
+}
+
+
+/**
  * Formatea una fecha a formato corto con hora (DD [mes corto] HH:MM).
  * Por ejemplo: "13 jul 10:00"
  */

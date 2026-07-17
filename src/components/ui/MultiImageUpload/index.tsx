@@ -327,19 +327,19 @@ export default function MultiImageUpload({
                 </span>
               )}
 
-              {/* Hover overlay with action buttons */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-between p-2.5 transition-opacity duration-200">
+              {/* Controls overlay (always visible, high contrast, clean buttons) */}
+              <div className="absolute inset-0 flex flex-col items-center justify-between p-2.5 pointer-events-none">
                 {/* Header Actions (Main / Star) */}
-                <div className="w-full flex justify-end">
+                <div className="w-full flex justify-end pointer-events-auto">
                   <button
                     type="button"
                     disabled={disabled}
                     onClick={() => handleSetMain(index)}
                     className={cn(
-                      "p-1.5 rounded-lg border transition-all duration-200 cursor-pointer",
+                      "p-1.5 rounded-full border transition-all duration-200 cursor-pointer shadow-md hover:scale-110",
                       img.isMain
                         ? "bg-beauty-600 border-beauty-500 text-white"
-                        : "bg-white/10 border-white/20 text-white/80 hover:text-white hover:bg-white/20",
+                        : "bg-white dark:bg-bg-card border-border-strong text-text-secondary hover:text-beauty-600 hover:border-beauty-300 dark:text-text-primary dark:hover:text-beauty-400 dark:hover:border-beauty-700",
                     )}
                     title={
                       img.isMain ? "Imagen principal" : "Marcar como principal"
@@ -350,12 +350,12 @@ export default function MultiImageUpload({
                 </div>
 
                 {/* Footer Controls (Move Left, Delete, Move Right) */}
-                <div className="w-full flex items-center justify-between gap-1">
+                <div className="w-full flex items-center justify-between gap-1 pointer-events-auto">
                   <button
                     type="button"
                     disabled={disabled || index === 0}
                     onClick={() => handleMove(index, "left")}
-                    className="p-1.5 rounded-lg bg-white/10 border border-white/20 text-white/80 hover:text-white hover:bg-white/20 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                    className="p-1.5 rounded-full bg-white dark:bg-bg-card border border-border-strong text-text-primary dark:text-text-primary hover:text-beauty-600 hover:border-beauty-300 dark:hover:text-beauty-400 dark:hover:border-beauty-700 disabled:opacity-30 disabled:pointer-events-none cursor-pointer shadow-md hover:scale-110 transition-all"
                     title="Mover a la izquierda"
                   >
                     <FiArrowLeft className="w-3.5 h-3.5" />
@@ -365,7 +365,7 @@ export default function MultiImageUpload({
                     type="button"
                     disabled={disabled}
                     onClick={() => handleRemoveImage(index)}
-                    className="p-1.5 rounded-lg bg-danger-bg/30 border border-danger-text/20 hover:bg-danger-bg/50 text-danger-text cursor-pointer hover:scale-[1.05] transition-all"
+                    className="p-1.5 rounded-full bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/60 cursor-pointer hover:scale-110 transition-all shadow-md"
                     title="Eliminar imagen"
                   >
                     <FiTrash2 className="w-3.5 h-3.5" />
@@ -375,7 +375,7 @@ export default function MultiImageUpload({
                     type="button"
                     disabled={disabled || index === value.length - 1}
                     onClick={() => handleMove(index, "right")}
-                    className="p-1.5 rounded-lg bg-white/10 border border-white/20 text-white/80 hover:text-white hover:bg-white/20 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                    className="p-1.5 rounded-full bg-white dark:bg-bg-card border border-border-strong text-text-primary dark:text-text-primary hover:text-beauty-600 hover:border-beauty-300 dark:hover:text-beauty-400 dark:hover:border-beauty-700 disabled:opacity-30 disabled:pointer-events-none cursor-pointer shadow-md hover:scale-110 transition-all"
                     title="Mover a la derecha"
                   >
                     <FiArrowRight className="w-3.5 h-3.5" />

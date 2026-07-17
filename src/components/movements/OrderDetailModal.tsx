@@ -16,7 +16,6 @@ interface OrderDetailModalProps {
 
 const statusTranslations: Record<string, string> = {
   PENDING: "Pendiente",
-  ARRIVED: "Llegado",
   VERIFIED: "Verificado",
   PACKED: "Empacado",
   DELIVERED: "Entregado",
@@ -25,7 +24,6 @@ const statusTranslations: Record<string, string> = {
 
 const statusColors: Record<string, string> = {
   PENDING: "bg-warning-bg/50 border-warning-text/10 text-warning-text",
-  ARRIVED: "bg-info-bg/50 border-info-text/10 text-info-text",
   VERIFIED:
     "bg-beauty-100 text-beauty-800 dark:bg-beauty-900/60 dark:text-beauty-200 border-beauty-400/10",
   PACKED:
@@ -60,8 +58,10 @@ export default function OrderDetailModal({
   const calculatedSubtotal = order.items.reduce((sum, item) => {
     if (item.arrivalStatus === "MISSING") return sum;
     const price =
-      item.arrivalStatus === "SUBSTITUTED" && item.substitutePrice !== null
-        ? item.substitutePrice
+      item.arrivalStatus === "SUBSTITUTED" &&
+      item.substitute?.catalogPrice !== undefined &&
+      item.substitute?.catalogPrice !== null
+        ? item.substitute.catalogPrice
         : item.catalogPrice;
     return sum + item.quantity * price;
   }, 0);
@@ -149,11 +149,13 @@ export default function OrderDetailModal({
                     const isSubstituted = item.arrivalStatus === "SUBSTITUTED";
                     // Vista pública: solo muestra el producto que llegó (sustituto)
                     const displayName = isSubstituted
-                      ? (item.substituteName ?? item.productName)
+                      ? (item.substitute?.productName ?? item.productName)
                       : item.productName;
                     const displayPrice =
-                      isSubstituted && item.substitutePrice !== null
-                        ? item.substitutePrice
+                      isSubstituted &&
+                      item.substitute?.catalogPrice !== undefined &&
+                      item.substitute?.catalogPrice !== null
+                        ? item.substitute.catalogPrice
                         : item.catalogPrice;
 
                     return (
@@ -342,18 +344,20 @@ export default function OrderDetailModal({
               {order.items.map((item) => {
                 const isSubstituted = item.arrivalStatus === "SUBSTITUTED";
                 const displayCode = isSubstituted
-                  ? item.substituteCode
+                  ? item.substitute?.productCode
                   : item.productCode;
                 const displayPrice =
-                  isSubstituted && item.substitutePrice !== null
-                    ? item.substitutePrice
+                  isSubstituted &&
+                  item.substitute?.catalogPrice !== undefined &&
+                  item.substitute?.catalogPrice !== null
+                    ? item.substitute.catalogPrice
                     : item.catalogPrice;
 
                 // Vista sistema: sustituto arriba + (original que no llegó) abajo
                 const nameNode = isSubstituted ? (
                   <>
                     <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                      {item.substituteName ?? item.productName}
+                      {item.substitute?.productName ?? item.productName}
                     </span>
                     <span className="text-[10px] text-text-tertiary italic mt-0.5 block">
                       ({item.productName})

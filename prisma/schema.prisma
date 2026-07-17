@@ -522,19 +522,16 @@ model CampaignOrder {
 }
 
 model CampaignOrderItem {
-  id                  Int               @id @default(autoincrement())
+  id                  Int                          @id @default(autoincrement())
   campaignOrderId     Int
   brandId             Int
   productCode         String?
   productName         String
   catalogPrice        Float
-  costPrice           Float?
   quantity            Int
-  arrivalStatus       ItemArrivalStatus @default(PENDING)
-  substituteCode      String?
-  substituteName      String?
-  substitutePrice     Float?
-  substituteCostPrice Float?
+  arrivalStatus       ItemArrivalStatus            @default(PENDING)
+
+  substitute          CampaignOrderItemSubstitute?
 
   campaignOrder CampaignOrder @relation(fields: [campaignOrderId], references: [id], onDelete: Cascade)
   brand         Brand         @relation(fields: [brandId], references: [id])
@@ -544,9 +541,20 @@ model CampaignOrderItem {
   @@map("campaign_order_items")
 }
 
+model CampaignOrderItemSubstitute {
+  id                  Int               @id @default(autoincrement())
+  campaignOrderItemId Int               @unique
+  productCode         String?
+  productName         String
+  catalogPrice        Float
+
+  campaignOrderItem   CampaignOrderItem @relation(fields: [campaignOrderItemId], references: [id], onDelete: Cascade)
+
+  @@map("campaign_order_items_substitutes")
+}
+
 enum CampaignOrderStatus {
   PENDING
-  ARRIVED
   VERIFIED
   PACKED
   DELIVERED

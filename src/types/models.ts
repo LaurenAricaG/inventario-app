@@ -18,6 +18,7 @@ import {
   ProductImage,
   Permission,
   SystemConfig,
+  CampaignOrderItemSubstitute,
 } from "@/generated/prisma";
 
 // ============================================================
@@ -49,6 +50,7 @@ export type CampaignOrderWithRelations = CampaignOrder & {
   campaign: Campaign;
   items: (CampaignOrderItem & {
     brand: Brand;
+    substitute?: CampaignOrderItemSubstitute | null;
   })[];
 };
 

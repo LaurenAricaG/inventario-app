@@ -41,13 +41,13 @@ interface SerializedOrderItem {
   productCode: string | null;
   productName: string;
   catalogPrice: number;
-  costPrice: number | null;
   quantity: number;
   arrivalStatus: ItemArrivalStatus;
-  substituteCode: string | null;
-  substituteName: string | null;
-  substitutePrice: number | null;
-  substituteCostPrice: number | null;
+  substitute?: {
+    productCode: string | null;
+    productName: string;
+    catalogPrice: number;
+  } | null;
   brand: SerializedBrand;
 }
 
@@ -143,22 +143,13 @@ export default function OrderPackingConsole({
     }
 
     try {
-      // 1. Guardar descuento, nota y fecha de pago en base de datos
-      const resDiscount = await updateOrderDiscountAndNotesAction(
-        orderId,
-        discount,
-        notes,
-        paymentDateStr,
-      );
-      if (!resDiscount.success) {
-        toast.error(resDiscount.message);
-        return;
-      }
-
-      // 2. Transicionar estado del pedido a PACKED
+      // Transicionar estado del pedido a PACKED con descuento, notas y fecha de pago
       const resStatus = await transitionOrderStatusAction(
         orderId,
         CampaignOrderStatus.PACKED,
+        discount,
+        notes,
+        paymentDateStr,
       );
       if (resStatus.success) {
         toast.success("Pedido empacado y listo para entrega.");
@@ -336,7 +327,7 @@ export default function OrderPackingConsole({
                                 >
                                   Cod:{" "}
                                   {isSubstitute
-                                    ? item.substituteCode || "S/C"
+                                    ? item.substitute?.productCode || "S/C"
                                     : item.productCode || "S/C"}
                                 </span>
                                 {isSubstitute ? (
@@ -345,7 +336,7 @@ export default function OrderPackingConsole({
                                       {item.productName}
                                     </span>
                                     <span className="text-info-text text-sm font-bold block">
-                                      [Sustituto] {item.substituteName}
+                                      [Sustituto] {item.substitute?.productName}
                                     </span>
                                   </div>
                                 ) : (
@@ -353,7 +344,7 @@ export default function OrderPackingConsole({
                                     className={cn(
                                       "text-sm font-bold text-text-primary block",
                                       isChecked &&
-                                        "line-through text-text-tertiary font-normal",
+                                      "line-through text-text-tertiary font-normal",
                                     )}
                                   >
                                     {item.productName}
@@ -415,7 +406,7 @@ export default function OrderPackingConsole({
                       <div key={item.id} className="flex justify-between">
                         <span className="truncate pr-2">
                           {item.arrivalStatus === ItemArrivalStatus.SUBSTITUTED
-                            ? item.substituteName
+                            ? item.substitute?.productName
                             : item.productName}
                         </span>
                         <span className="font-semibold shrink-0">
@@ -439,8 +430,9 @@ export default function OrderPackingConsole({
           const subtotal = itemsToPack.reduce((s, item) => {
             const price =
               item.arrivalStatus === ItemArrivalStatus.SUBSTITUTED &&
-              item.substitutePrice !== null
-                ? item.substitutePrice
+                item.substitute?.catalogPrice !== undefined &&
+                item.substitute?.catalogPrice !== null
+                ? item.substitute.catalogPrice
                 : item.catalogPrice;
             return s + item.quantity * price;
           }, 0);
@@ -456,8 +448,31 @@ export default function OrderPackingConsole({
               title={`Empacar Pedido: ${packingOrder.client.name}`}
               size="sm"
               initialFocusRef={discountInputRef}
+              footer={
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setPackingOrder(null);
+                      setPaymentDateError(null);
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    form="packing-form"
+                    variant="primary"
+                    disabled={isPending}
+                  >
+                    Empacar
+                  </Button>
+                </>
+              }
             >
               <Form
+                id="packing-form"
                 onSubmit={(e) => {
                   e.preventDefault();
                   handleConfirmPacking();
@@ -478,13 +493,14 @@ export default function OrderPackingConsole({
                     {itemsToPack.map((item) => {
                       const price =
                         item.arrivalStatus === ItemArrivalStatus.SUBSTITUTED &&
-                        item.substitutePrice !== null
-                          ? item.substitutePrice
+                          item.substitute?.catalogPrice !== undefined &&
+                          item.substitute?.catalogPrice !== null
+                          ? item.substitute.catalogPrice
                           : item.catalogPrice;
                       const name =
                         item.arrivalStatus === ItemArrivalStatus.SUBSTITUTED &&
-                        item.substituteName
-                          ? item.substituteName
+                          item.substitute?.productName
+                          ? item.substitute.productName
                           : item.productName;
                       return (
                         <div
@@ -498,8 +514,8 @@ export default function OrderPackingConsole({
                             <span className="text-[10px] text-text-tertiary block font-mono">
                               Cod:{" "}
                               {item.arrivalStatus ===
-                              ItemArrivalStatus.SUBSTITUTED
-                                ? item.substituteCode || "S/C"
+                                ItemArrivalStatus.SUBSTITUTED
+                                ? item.substitute?.productCode || "S/C"
                                 : item.productCode || "S/C"}
                             </span>
                           </div>
@@ -574,22 +590,6 @@ export default function OrderPackingConsole({
                     placeholder="Seleccionar fecha"
                   />
                 </FormField>
-
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-border-soft">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setPackingOrder(null);
-                      setPaymentDateError(null);
-                    }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button type="submit" variant="primary" disabled={isPending}>
-                    Confirmar y Empacar
-                  </Button>
-                </div>
               </Form>
             </Modal>
           );

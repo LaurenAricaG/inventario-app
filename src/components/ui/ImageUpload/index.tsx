@@ -152,17 +152,17 @@ export default function ImageUpload({
                   toast.error("Error al cargar la previsualización.");
                 }}
               />
-              {/* Overlay controls */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-200 rounded-2xl">
+              {/* Overlay controls (always visible, high contrast, clean buttons) */}
+              <div className="absolute inset-0 flex items-center justify-center gap-3 rounded-2xl pointer-events-none">
                 <label
                   className={cn(
-                    "p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer hover:scale-[1.05] active:scale-[0.95] transition-all border border-white/20",
+                    "p-2.5 rounded-full bg-white dark:bg-bg-card border border-border-strong text-text-primary dark:text-text-primary hover:text-beauty-600 hover:border-beauty-300 dark:hover:text-beauty-400 dark:hover:border-beauty-700 cursor-pointer hover:scale-110 active:scale-95 transition-all shadow-md pointer-events-auto",
                     disabled &&
                       "opacity-50 cursor-not-allowed pointer-events-none",
                   )}
                   title="Cambiar imagen"
                 >
-                  <FiUploadCloud className="w-5 h-5 text-white" />
+                  <FiUploadCloud className="w-5 h-5" />
                   <input
                     key={fileInputKey}
                     type="file"
@@ -176,7 +176,7 @@ export default function ImageUpload({
                   type="button"
                   onClick={handleClear}
                   disabled={disabled}
-                  className="p-2.5 rounded-xl bg-danger-bg/20 border border-danger-text/20 hover:bg-danger-bg/40 text-danger-text cursor-pointer hover:scale-[1.05] active:scale-[0.95] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-2.5 rounded-full bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/60 cursor-pointer hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md pointer-events-auto"
                   title="Eliminar imagen"
                 >
                   <FiTrash2 className="w-5 h-5" />

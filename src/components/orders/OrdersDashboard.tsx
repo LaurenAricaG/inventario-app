@@ -3,7 +3,6 @@
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { formatDateUTC } from "@/utils/date.utils";
-import Link from "next/link";
 import { toast } from "sonner";
 import {
   FiShoppingBag,
@@ -50,13 +49,13 @@ interface SerializedOrderItem {
   productCode: string | null;
   productName: string;
   catalogPrice: number;
-  costPrice: number | null;
   quantity: number;
   arrivalStatus: string;
-  substituteCode: string | null;
-  substituteName: string | null;
-  substitutePrice: number | null;
-  substituteCostPrice: number | null;
+  substitute?: {
+    productCode: string | null;
+    productName: string;
+    catalogPrice: number;
+  } | null;
   brand: { id: number; name: string };
 }
 
@@ -86,7 +85,6 @@ interface OrdersDashboardProps {
 
 const statusTranslations: Record<CampaignOrderStatus, string> = {
   PENDING: "Pendiente",
-  ARRIVED: "Llegado",
   VERIFIED: "Verificado",
   PACKED: "Empacado",
   DELIVERED: "Entregado",
@@ -95,7 +93,6 @@ const statusTranslations: Record<CampaignOrderStatus, string> = {
 
 const statusColors: Record<CampaignOrderStatus, string> = {
   PENDING: "bg-warning-bg/50 border-warning-text/10 text-warning-text",
-  ARRIVED: "bg-info-bg/50 border-info-text/10 text-info-text",
   VERIFIED:
     "bg-beauty-100 text-beauty-800 dark:bg-beauty-900/60 dark:text-beauty-200 border-beauty-400/10",
   PACKED:
@@ -225,8 +222,7 @@ export default function OrdersDashboard({
     hasOrders &&
     initialOrders.every(
       (o) =>
-        o.status !== CampaignOrderStatus.PENDING &&
-        o.status !== CampaignOrderStatus.ARRIVED,
+        o.status !== CampaignOrderStatus.PENDING,
     );
 
   const hasPaymentDate = !!currentCampaign?.paymentDate;
@@ -323,8 +319,10 @@ export default function OrdersDashboard({
     const subtotal = order.items.reduce((sum, item) => {
       if (item.arrivalStatus === "MISSING") return sum;
       const price =
-        item.arrivalStatus === "SUBSTITUTED" && item.substitutePrice !== null
-          ? item.substitutePrice
+        item.arrivalStatus === "SUBSTITUTED" &&
+          item.substitute?.catalogPrice !== undefined &&
+          item.substitute?.catalogPrice !== null
+          ? item.substitute.catalogPrice
           : item.catalogPrice;
       return sum + item.quantity * price;
     }, 0);

@@ -9,7 +9,9 @@ interface PrintItem {
   catalogPrice: number;
   quantity: number;
   arrivalStatus: string;
-  substituteName: string | null;
+  substitute?: {
+    productName: string;
+  } | null;
   brand: { name: string };
 }
 
@@ -104,8 +106,8 @@ export function printCampaignProductsReport(
         group.arrivedQuantity += item.quantity;
       }
       // Guardar el nombre del sustituto si este item fue sustituido
-      if (item.arrivalStatus === "SUBSTITUTED" && item.substituteName && !group.substituteName) {
-        group.substituteName = item.substituteName;
+      if (item.arrivalStatus === "SUBSTITUTED" && item.substitute?.productName && !group.substituteName) {
+        group.substituteName = item.substitute.productName;
       }
       group.items.push({
         arrivalStatus: item.arrivalStatus,

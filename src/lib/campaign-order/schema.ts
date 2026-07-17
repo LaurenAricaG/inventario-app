@@ -4,7 +4,6 @@ export interface SubstituteInput {
   productCode: string;
   productName: string;
   catalogPrice: number;
-  costPrice?: number;
 }
 
 export const bulkOrderItemSchema = z.object({
@@ -12,7 +11,6 @@ export const bulkOrderItemSchema = z.object({
   productCode: z.string().optional().or(z.literal("")),
   productName: z.string().min(1, "El nombre del producto no puede estar vacío."),
   catalogPrice: z.number({ message: "El precio es obligatorio." }).min(0, "El precio no puede ser negativo."),
-  costPrice: z.number().optional().nullable(),
   quantity: z.number({ message: "La cantidad es obligatoria." }).min(1, "La cantidad debe ser al menos 1."),
 });
 

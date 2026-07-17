@@ -99,20 +99,23 @@ export async function createDirectSaleAction(data: DirectSaleInput) {
         },
       });
 
+      const stockMovementLogs = [];
+
       // 4. Actualizar stock de productos y registrar movimientos en el Kardex
       for (const item of validatedItems) {
+        const product = item.product;
+        const newStock = product.stock - item.quantity;
+
         // Disminuir stock
         await tx.product.update({
           where: { id: item.productId },
           data: {
-            stock: {
-              decrement: item.quantity,
-            },
+            stock: newStock,
           },
         });
 
         // Crear registro en StockMovement
-        await tx.stockMovement.create({
+        const movement = await tx.stockMovement.create({
           data: {
             productId: item.productId,
             quantity: item.quantity,
@@ -122,9 +125,27 @@ export async function createDirectSaleAction(data: DirectSaleInput) {
             createdById: Number(session.user.id),
           },
         });
+
+        stockMovementLogs.push({
+          movementId: movement.id,
+          productId: item.productId,
+          productName: product.name,
+          quantity: item.quantity,
+          type: "OUTPUT",
+          oldStock: product.stock,
+          newStock,
+        });
       }
 
-      return directSale;
+      return {
+        id: directSale.id,
+        client: directSale.client,
+        discount: directSale.discount,
+        total: directSale.total,
+        notes: directSale.notes,
+        items: directSale.items,
+        stockMovementLogs,
+      };
     });
 
     // 5. Registrar actividad detallada en la bitácora
@@ -146,6 +167,25 @@ export async function createDirectSaleAction(data: DirectSaleInput) {
         })),
       },
     });
+
+    // Registrar actividades de StockMovement en la bitácora
+    for (const smLog of result.stockMovementLogs) {
+      await logActivity({
+        userId: Number(session.user.id),
+        action: "CREATE",
+        entity: "StockMovement",
+        entityId: smLog.movementId,
+        details: {
+          producto: `${smLog.productName} (ID: ${smLog.productId})`,
+          cantidad: smLog.quantity,
+          tipo: smLog.type === "INPUT" ? "Entrada (+)" : "Salida (-)",
+          motivo: "Venta",
+          notas: `Venta Directa Nro: ${result.id}`,
+          stockAnterior: smLog.oldStock,
+          stockNuevo: smLog.newStock,
+        },
+      });
+    }
 
     revalidatePath("/admin/ventas");
     revalidatePath("/admin/inventario");
@@ -196,7 +236,7 @@ export async function deleteDirectSaleAction(id: number) {
       };
     }
 
-    await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       // 1. Marcar como eliminada lógicamente
       await tx.directSale.update({
         where: { id },
@@ -206,20 +246,23 @@ export async function deleteDirectSaleAction(id: number) {
         },
       });
 
+      const stockMovementLogs = [];
+
       // 2. Devolver stock de productos y registrar movimientos en el Kardex
       for (const item of sale.items) {
+        const product = item.product;
+        const newStock = product.stock + item.quantity;
+
         // Incrementar stock
         await tx.product.update({
           where: { id: item.productId },
           data: {
-            stock: {
-              increment: item.quantity,
-            },
+            stock: newStock,
           },
         });
 
         // Crear registro en StockMovement (INPUT / RETURN)
-        await tx.stockMovement.create({
+        const movement = await tx.stockMovement.create({
           data: {
             productId: item.productId,
             quantity: item.quantity,
@@ -229,7 +272,25 @@ export async function deleteDirectSaleAction(id: number) {
             createdById: Number(session.user.id),
           },
         });
+
+        stockMovementLogs.push({
+          movementId: movement.id,
+          productId: item.productId,
+          productName: product.name,
+          quantity: item.quantity,
+          type: "INPUT",
+          oldStock: product.stock,
+          newStock,
+        });
       }
+
+      return {
+        id: sale.id,
+        client: sale.client,
+        total: sale.total,
+        items: sale.items,
+        stockMovementLogs,
+      };
     });
 
     // 3. Registrar actividad en la bitácora
@@ -248,6 +309,25 @@ export async function deleteDirectSaleAction(id: number) {
         })),
       },
     });
+
+    // Registrar actividades de StockMovement en la bitácora
+    for (const smLog of result.stockMovementLogs) {
+      await logActivity({
+        userId: Number(session.user.id),
+        action: "CREATE",
+        entity: "StockMovement",
+        entityId: smLog.movementId,
+        details: {
+          producto: `${smLog.productName} (ID: ${smLog.productId})`,
+          cantidad: smLog.quantity,
+          tipo: smLog.type === "INPUT" ? "Entrada (+)" : "Salida (-)",
+          motivo: "Devolución",
+          notas: `Devolución por anulación de Venta Directa Nro: ${result.id}`,
+          stockAnterior: smLog.oldStock,
+          stockNuevo: smLog.newStock,
+        },
+      });
+    }
 
     revalidatePath("/admin/ventas");
     revalidatePath("/admin/inventario");

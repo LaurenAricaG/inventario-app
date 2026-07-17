@@ -54,7 +54,7 @@ export default async function PedidosPage(props: PedidosPageProps) {
         client: true,
         campaign: { include: { company: true } },
         items: {
-          include: { brand: true },
+          include: { brand: true, substitute: true },
         },
       },
       orderBy: { createdAt: "desc" },

@@ -9,6 +9,23 @@ import { bulkOrderSchema, BulkOrderInput, SubstituteInput } from "./schema";
 
 export type { BulkOrderInput, BulkOrderItemInput } from "./schema";
 
+// Estado del pedido del cliente
+const orderStatusTranslations: Record<string, string> = {
+  PENDING: "Pendiente",
+  VERIFIED: "Verificado",
+  PACKED: "Empacado",
+  DELIVERED: "Entregado",
+  CANCELLED: "Cancelado",
+};
+
+// Estado del producto de cada pedido
+const itemArrivalStatusTranslations: Record<string, string> = {
+  PENDING: "Pendiente",
+  RECEIVED: "Recibido",
+  MISSING: "Faltante",
+  SUBSTITUTED: "Sustituido",
+};
+
 /**
  * Guarda de forma masiva pedidos para una campaña.
  * Si ya existe un pedido para el cliente en esta campaña, lo actualiza limpiando sus ítems anteriores.
@@ -107,7 +124,6 @@ export async function saveCampaignOrdersAction(campaignId: number, orders: BulkO
               productCode: item.productCode || null,
               productName: item.productName.trim(),
               catalogPrice: item.catalogPrice,
-              costPrice: item.costPrice || null,
               quantity: item.quantity,
               arrivalStatus: ItemArrivalStatus.PENDING,
             })),
@@ -169,7 +185,7 @@ export async function saveCampaignOrdersAction(campaignId: number, orders: BulkO
 /**
  * Consulta sugerencias de autocompletado en el historial de pedidos de catálogo e inventario general.
  */
-export async function getAutocompleteSuggestionsAction(query: string) {
+export async function getAutocompleteSuggestionsAction(query: string, companyId?: number) {
   try {
     if (!query || query.trim().length < 2) {
       return { success: true, suggestions: [] };
@@ -183,6 +199,9 @@ export async function getAutocompleteSuggestionsAction(query: string) {
           contains: cleanQuery,
           mode: "insensitive",
         },
+        brand: companyId ? {
+          companyId: companyId,
+        } : undefined,
       },
       select: {
         productName: true,
@@ -200,6 +219,9 @@ export async function getAutocompleteSuggestionsAction(query: string) {
           contains: cleanQuery,
           mode: "insensitive",
         },
+        brand: companyId ? {
+          companyId: companyId,
+        } : undefined,
         deletedAt: null,
       },
       select: {
@@ -277,23 +299,37 @@ export async function updateItemArrivalStatusAction(
       return { success: false, message: "El producto no existe." };
     }
 
-    const dataToUpdate: any = { arrivalStatus };
+    const updatedItem = await prisma.$transaction(async (tx) => {
+      await tx.campaignOrderItem.update({
+        where: { id: itemId },
+        data: { arrivalStatus },
+      });
 
-    if (arrivalStatus === ItemArrivalStatus.SUBSTITUTED && substituteData) {
-      dataToUpdate.substituteCode = substituteData.productCode || null;
-      dataToUpdate.substituteName = substituteData.productName.trim();
-      dataToUpdate.substitutePrice = substituteData.catalogPrice;
-      dataToUpdate.substituteCostPrice = substituteData.costPrice || null;
-    } else {
-      dataToUpdate.substituteCode = null;
-      dataToUpdate.substituteName = null;
-      dataToUpdate.substitutePrice = null;
-      dataToUpdate.substituteCostPrice = null;
-    }
+      if (arrivalStatus === ItemArrivalStatus.SUBSTITUTED && substituteData) {
+        await tx.campaignOrderItemSubstitute.upsert({
+          where: { campaignOrderItemId: itemId },
+          update: {
+            productCode: substituteData.productCode || null,
+            productName: substituteData.productName.trim(),
+            catalogPrice: substituteData.catalogPrice,
+          },
+          create: {
+            campaignOrderItemId: itemId,
+            productCode: substituteData.productCode || null,
+            productName: substituteData.productName.trim(),
+            catalogPrice: substituteData.catalogPrice,
+          },
+        });
+      } else {
+        await tx.campaignOrderItemSubstitute.deleteMany({
+          where: { campaignOrderItemId: itemId },
+        });
+      }
 
-    const updatedItem = await prisma.campaignOrderItem.update({
-      where: { id: itemId },
-      data: dataToUpdate,
+      return tx.campaignOrderItem.findUnique({
+        where: { id: itemId },
+        include: { substitute: true },
+      });
     });
 
     // Registrar en auditoría
@@ -305,8 +341,12 @@ export async function updateItemArrivalStatusAction(
       details: {
         cliente: `${item.campaignOrder.client.name} (ID: ${item.campaignOrder.client.id})`,
         producto: item.productName,
-        nuevoEstado: arrivalStatus,
-        sustituto: substituteData ? substituteData.productName : null,
+        nuevoEstado: itemArrivalStatusTranslations[arrivalStatus] || arrivalStatus,
+        sustituto: substituteData ? {
+          nombre: substituteData.productName,
+          codigo: substituteData.productCode || null,
+          precio: substituteData.catalogPrice,
+        } : null,
       },
     });
 
@@ -345,32 +385,52 @@ export async function updateItemsArrivalStatusAction(
       return { success: false, message: "No autorizado para actualizar estados de productos." };
     }
 
-    const dataToUpdate: any = { arrivalStatus };
+    await prisma.$transaction(async (tx) => {
+      await tx.campaignOrderItem.updateMany({
+        where: {
+          id: { in: itemIds },
+        },
+        data: { arrivalStatus },
+      });
 
-    if (arrivalStatus === ItemArrivalStatus.SUBSTITUTED && substituteData) {
-      dataToUpdate.substituteCode = substituteData.productCode || null;
-      dataToUpdate.substituteName = substituteData.productName.trim();
-      dataToUpdate.substitutePrice = substituteData.catalogPrice;
-      dataToUpdate.substituteCostPrice = substituteData.costPrice || null;
-    } else {
-      dataToUpdate.substituteCode = null;
-      dataToUpdate.substituteName = null;
-      dataToUpdate.substitutePrice = null;
-      dataToUpdate.substituteCostPrice = null;
-    }
-
-    // Actualizar en la base de datos
-    await prisma.campaignOrderItem.updateMany({
-      where: {
-        id: { in: itemIds },
-      },
-      data: dataToUpdate,
+      if (arrivalStatus === ItemArrivalStatus.SUBSTITUTED && substituteData) {
+        for (const id of itemIds) {
+          await tx.campaignOrderItemSubstitute.upsert({
+            where: { campaignOrderItemId: id },
+            update: {
+              productCode: substituteData.productCode || null,
+              productName: substituteData.productName.trim(),
+              catalogPrice: substituteData.catalogPrice,
+            },
+            create: {
+              campaignOrderItemId: id,
+              productCode: substituteData.productCode || null,
+              productName: substituteData.productName.trim(),
+              catalogPrice: substituteData.catalogPrice,
+            },
+          });
+        }
+      } else {
+        await tx.campaignOrderItemSubstitute.deleteMany({
+          where: { campaignOrderItemId: { in: itemIds } },
+        });
+      }
     });
 
-    // Obtener los IDs de los pedidos afectados
+    // Obtener los IDs de los pedidos afectados e información para auditoría
     const affectedItems = await prisma.campaignOrderItem.findMany({
       where: { id: { in: itemIds } },
-      select: { campaignOrderId: true },
+      select: {
+        campaignOrderId: true,
+        productName: true,
+        campaignOrder: {
+          select: {
+            client: {
+              select: { name: true }
+            }
+          }
+        }
+      },
     });
     const orderIds = Array.from(new Set(affectedItems.map(i => i.campaignOrderId)));
 
@@ -381,7 +441,7 @@ export async function updateItemsArrivalStatusAction(
         include: { items: true, client: true },
       });
 
-      if (order && (order.status === CampaignOrderStatus.PENDING || order.status === CampaignOrderStatus.ARRIVED)) {
+      if (order && order.status === CampaignOrderStatus.PENDING) {
         const allItemsVerified = order.items.every(
           (item) => item.arrivalStatus !== ItemArrivalStatus.PENDING
         );
@@ -399,6 +459,19 @@ export async function updateItemsArrivalStatusAction(
               updatedById: userId,
             },
           });
+
+          // Registrar en auditoría el cambio automático del pedido
+          await logActivity({
+            userId,
+            action: "UPDATE",
+            entity: "CampaignOrder",
+            entityId: orderId,
+            details: {
+              cliente: `${order.client.name} (ID: ${order.client.id})`,
+              nuevoEstado: orderStatusTranslations[targetStatus] || targetStatus,
+              description: `Pedido verificado automáticamente por actualización masiva de productos.`,
+            },
+          });
         }
       }
     }
@@ -411,9 +484,14 @@ export async function updateItemsArrivalStatusAction(
       entityId: itemIds[0] || 0,
       details: {
         itemIds,
-        nuevoEstado: arrivalStatus,
-        sustituto: substituteData ? substituteData.productName : null,
-        description: `Actualización masiva de estado de arribo a ${arrivalStatus} para ${itemIds.length} productos.`,
+        productos: affectedItems.map(i => `${i.productName} (Cliente: ${i.campaignOrder.client.name})`),
+        nuevoEstado: itemArrivalStatusTranslations[arrivalStatus] || arrivalStatus,
+        sustituto: substituteData ? {
+          nombre: substituteData.productName,
+          codigo: substituteData.productCode || null,
+          precio: substituteData.catalogPrice,
+        } : null,
+        description: `Actualización masiva de estado de arribo a ${itemArrivalStatusTranslations[arrivalStatus] || arrivalStatus} para los productos: ${affectedItems.map(i => i.productName).join(", ")}.`,
       },
     });
 
@@ -432,7 +510,13 @@ export async function updateItemsArrivalStatusAction(
 /**
  * Transiciona el estado de un pedido completo.
  */
-export async function transitionOrderStatusAction(orderId: number, status: CampaignOrderStatus) {
+export async function transitionOrderStatusAction(
+  orderId: number,
+  status: CampaignOrderStatus,
+  discount?: number,
+  notes?: string | null,
+  paymentDateString?: string | null
+) {
   try {
     const session = await auth();
     if (!session || !session.user) {
@@ -458,14 +542,26 @@ export async function transitionOrderStatusAction(orderId: number, status: Campa
       return { success: false, message: "El pedido no existe." };
     }
 
+    let paymentDate: Date | null = order.paymentDate;
+    if (paymentDateString !== undefined) {
+      if (paymentDateString) {
+        const [year, month, day] = paymentDateString.split("-").map(Number);
+        paymentDate = new Date(Date.UTC(year, month - 1, day));
+      } else {
+        paymentDate = null;
+      }
+    } else if (status === CampaignOrderStatus.DELIVERED && !order.paymentDate) {
+      paymentDate = order.campaign.paymentDate || null;
+    }
+
     const updatedOrder = await prisma.campaignOrder.update({
       where: { id: orderId },
       data: {
         status,
         deliveredAt: status === CampaignOrderStatus.DELIVERED ? new Date() : order.deliveredAt,
-        paymentDate: status === CampaignOrderStatus.DELIVERED && !order.paymentDate
-          ? (order.campaign.paymentDate || null)
-          : order.paymentDate,
+        paymentDate,
+        discount: discount !== undefined ? discount : order.discount,
+        notes: notes !== undefined ? (notes || null) : order.notes,
         updatedById: userId,
       },
     });
@@ -479,7 +575,10 @@ export async function transitionOrderStatusAction(orderId: number, status: Campa
       details: {
         cliente: `${order.client.name} (ID: ${order.client.id})`,
         campaña: `${order.campaign.company.name} - ${order.campaign.number}`,
-        nuevoEstado: status,
+        nuevoEstado: orderStatusTranslations[status] || status,
+        descuento: discount !== undefined ? discount : order.discount,
+        nota: notes !== undefined ? notes : order.notes,
+        fechaPago: paymentDate ? paymentDate.toISOString().split("T")[0] : null,
       },
     });
 

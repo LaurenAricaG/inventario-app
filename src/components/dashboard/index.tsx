@@ -15,7 +15,7 @@ import {
 } from "react-icons/fi";
 import Link from "next/link";
 import FormPayments from "@/components/payments/FormPayments";
-import { formatDateShort, formatDateShortWithTime } from "@/utils/date.utils";
+import { formatDateShortWithTime, formatDateShortUTC } from "@/utils/date.utils";
 import TableDashboard, { PendingDebtor } from "./TableDashboard";
 import Button from "../ui/Button";
 
@@ -186,14 +186,17 @@ export default function Dashboard({
                 {activeCampaigns.map((camp) => {
                   const start = new Date(camp.startDate);
                   const end = new Date(camp.endDate);
-                  const totalDuration = end.getTime() - start.getTime();
-                  const elapsed = today.getTime() - start.getTime();
+                  const startLocal = new Date(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
+                  const endLocal = new Date(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate());
+                  const todayLocal = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                  const totalDuration = endLocal.getTime() - startLocal.getTime();
+                  const elapsed = todayLocal.getTime() - startLocal.getTime();
                   let progressPercent = 0;
                   if (totalDuration > 0) {
                     progressPercent = Math.min(100, Math.max(0, Math.round((elapsed / totalDuration) * 100)));
                   }
-                  const diffTime = end.getTime() - today.getTime();
-                  const remainingDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+                  const diffTime = endLocal.getTime() - todayLocal.getTime();
+                  const remainingDays = Math.max(0, Math.round(diffTime / (1000 * 60 * 60 * 24)));
 
                   return (
                     <div key={camp.id} className="bg-bg-card border border-border-default rounded-2xl p-5 hover:shadow-xs transition-shadow duration-300">
@@ -208,7 +211,7 @@ export default function Dashboard({
                       <div className="mb-4">
                         <div className="flex justify-between items-center mb-1.5">
                           <span className="text-[10px] text-text-tertiary uppercase tracking-wider font-medium">
-                            Progreso
+                            Tiempo transcurrido
                           </span>
                           <span className="text-xs font-semibold text-beauty-600">
                             {progressPercent}%
@@ -226,10 +229,10 @@ export default function Dashboard({
                       <div className="grid grid-cols-2 gap-3">
                         <div className="bg-bg-page rounded-xl p-3 border border-border-soft">
                           <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-medium mb-1">
-                            Recepción
+                            Termina
                           </p>
                           <p suppressHydrationWarning className="text-sm font-semibold text-text-primary">
-                            {formatDateShort(end)}
+                            {formatDateShortUTC(end)}
                           </p>
                         </div>
                         <div className="bg-bg-page rounded-xl p-3 border border-border-soft">

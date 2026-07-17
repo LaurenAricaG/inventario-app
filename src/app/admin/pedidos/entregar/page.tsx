@@ -44,7 +44,7 @@ export default async function EntregarPage(props: EntregarPageProps) {
       client: true,
       campaign: { include: { company: true } },
       items: {
-        include: { brand: true },
+        include: { brand: true, substitute: true },
         orderBy: { productName: "asc" },
       },
     },

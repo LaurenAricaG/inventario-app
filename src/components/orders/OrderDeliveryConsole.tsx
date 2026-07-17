@@ -32,7 +32,9 @@ interface SerializedOrderItem {
   catalogPrice: number;
   quantity: number;
   arrivalStatus: ItemArrivalStatus;
-  substitutePrice: number | null;
+  substitute?: {
+    catalogPrice: number;
+  } | null;
 }
 
 interface SerializedCampaignOrder {
@@ -85,8 +87,9 @@ export default function OrderDeliveryConsole({
       if (item.arrivalStatus === ItemArrivalStatus.MISSING) return sum;
       const price =
         item.arrivalStatus === ItemArrivalStatus.SUBSTITUTED &&
-        item.substitutePrice !== null
-          ? item.substitutePrice
+        item.substitute?.catalogPrice !== undefined &&
+        item.substitute?.catalogPrice !== null
+          ? item.substitute.catalogPrice
           : item.catalogPrice;
       return sum + item.quantity * price;
     }, 0);

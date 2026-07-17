@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { SerializedCatalogPdf } from "@/types/catalogs";
-import Link from "next/link";
 
 interface TableCatalogPdfsProps {
   catalogs: SerializedCatalogPdf[];

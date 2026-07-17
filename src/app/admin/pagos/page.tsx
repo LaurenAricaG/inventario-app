@@ -6,7 +6,9 @@ import { PaymentMethod } from "@/generated/prisma";
 
 interface DBOrderItem {
   arrivalStatus: string;
-  substitutePrice: number | null;
+  substitute?: {
+    catalogPrice: number;
+  } | null;
   catalogPrice: number;
   quantity: number;
 }
@@ -22,8 +24,10 @@ const getOrderTotal = (order: DBOrder) => {
   const subtotal = order.items.reduce((sum, item) => {
     if (item.arrivalStatus === "MISSING") return sum;
     const price =
-      item.arrivalStatus === "SUBSTITUTED" && item.substitutePrice !== null
-        ? item.substitutePrice
+      item.arrivalStatus === "SUBSTITUTED" &&
+      item.substitute?.catalogPrice !== undefined &&
+      item.substitute?.catalogPrice !== null
+        ? item.substitute.catalogPrice
         : item.catalogPrice;
     return sum + item.quantity * price;
   }, 0);
@@ -94,7 +98,9 @@ export default async function PaymentsPage(props: PaymentsPageProps) {
         campaignOrders: {
           where: { deletedAt: null, status: "DELIVERED" },
           include: {
-            items: true,
+            items: {
+              include: { substitute: true },
+            },
           },
         },
         externalDebts: {

@@ -18,7 +18,7 @@ import {
   FiCheck,
 } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
-import { formatDateShort } from "@/utils/date.utils";
+import { formatDateShortUTC } from "@/utils/date.utils";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
@@ -198,7 +198,10 @@ export default function QuickOrderConsole({
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (productName.trim().length >= 2) {
-        const res = await getAutocompleteSuggestionsAction(productName);
+        const res = await getAutocompleteSuggestionsAction(
+          productName,
+          selectedCompanyId ? Number(selectedCompanyId) : undefined,
+        );
         if (res.success && res.suggestions) {
           setProductSuggestions(res.suggestions);
           setShowProductSuggestions(true);
@@ -210,7 +213,7 @@ export default function QuickOrderConsole({
     }, 250);
 
     return () => clearTimeout(timer);
-  }, [productName]);
+  }, [productName, selectedCompanyId]);
 
   // Clientes filtrados
   const filteredClients = localClients.filter((c) =>
@@ -513,7 +516,7 @@ export default function QuickOrderConsole({
                   suppressHydrationWarning
                   className="text-xs text-text-secondary font-medium"
                 >
-                  Cierre: {formatDateShort(selectedCampaign.endDate)}
+                  Cierre: {formatDateShortUTC(selectedCampaign.endDate)}
                 </span>
               )}
             </div>
@@ -548,7 +551,7 @@ export default function QuickOrderConsole({
                     "flex-1 px-4 py-3 rounded-2xl border text-sm bg-bg-card text-text-primary transition-all duration-200 outline-none flex items-center justify-between text-left cursor-pointer select-none",
                     "border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10",
                     isClientDropdownOpen &&
-                      "border-beauty-400 ring-4 ring-beauty-400/10",
+                    "border-beauty-400 ring-4 ring-beauty-400/10",
                   )}
                 >
                   <div className="flex items-center gap-2 truncate min-w-0">

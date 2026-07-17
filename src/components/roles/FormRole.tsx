@@ -241,7 +241,7 @@ export default function FormRole({
 
         {/* Permisos Section Header */}
         <div className="border-t border-border-soft pt-4">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
             <div>
               <h4 className="text-sm font-bold text-text-primary">
                 Asignación de Permisos del Sistema
@@ -250,7 +250,7 @@ export default function FormRole({
                 Marca los accesos que deseas conceder a este perfil
               </p>
             </div>
-            <span className="text-xs font-mono font-bold text-beauty-500 bg-beauty-400/10 px-2.5 py-1 rounded-lg">
+            <span className="self-start sm:self-auto text-xs font-mono font-bold text-beauty-500 bg-beauty-400/10 px-2.5 py-1 rounded-lg">
               Seleccionados: {selectedPermissionIds.length} /{" "}
               {permissionsList.length}
             </span>

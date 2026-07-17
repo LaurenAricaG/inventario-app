@@ -9,9 +9,11 @@ interface PrintItem {
   catalogPrice: number;
   quantity: number;
   arrivalStatus: string;
-  substituteCode: string | null;
-  substituteName: string | null;
-  substitutePrice: number | null;
+  substitute?: {
+    productCode: string | null;
+    productName: string;
+    catalogPrice: number;
+  } | null;
   brand: { name: string };
 }
 
@@ -26,7 +28,6 @@ interface PrintOrder {
 
 const statusTranslations: Record<string, string> = {
   PENDING: "Pendiente",
-  ARRIVED: "Llegado",
   VERIFIED: "Verificado",
   PACKED: "Empacado",
   DELIVERED: "Entregado",
@@ -36,8 +37,6 @@ const statusTranslations: Record<string, string> = {
 const statusBadgeStyles: Record<string, string> = {
   PENDING:
     "background-color: #fefbeb; color: #b45309; border: 1px solid #fde68a;",
-  ARRIVED:
-    "background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd;",
   VERIFIED:
     "background-color: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8;",
   PACKED:
@@ -77,8 +76,10 @@ export function printCampaignReport(
     const sub = order.items.reduce((s, item) => {
       if (item.arrivalStatus === "MISSING") return s;
       const price =
-        item.arrivalStatus === "SUBSTITUTED" && item.substitutePrice !== null
-          ? item.substitutePrice
+        item.arrivalStatus === "SUBSTITUTED" &&
+        item.substitute?.catalogPrice !== undefined &&
+        item.substitute?.catalogPrice !== null
+          ? item.substitute.catalogPrice
           : item.catalogPrice;
       return s + item.quantity * price;
     }, 0);
@@ -91,8 +92,10 @@ export function printCampaignReport(
       const subtotal = order.items.reduce((s, item) => {
         if (item.arrivalStatus === "MISSING") return s;
         const price =
-          item.arrivalStatus === "SUBSTITUTED" && item.substitutePrice !== null
-            ? item.substitutePrice
+          item.arrivalStatus === "SUBSTITUTED" &&
+          item.substitute?.catalogPrice !== undefined &&
+          item.substitute?.catalogPrice !== null
+            ? item.substitute.catalogPrice
             : item.catalogPrice;
         return s + item.quantity * price;
       }, 0);
@@ -106,14 +109,14 @@ export function printCampaignReport(
         .map((item) => {
           const isMissing = item.arrivalStatus === "MISSING";
           const isSub = item.arrivalStatus === "SUBSTITUTED";
-          const code = isSub ? item.substituteCode : item.productCode;
-          const price = isSub ? item.substitutePrice : item.catalogPrice;
+          const code = isSub ? item.substitute?.productCode : item.productCode;
+          const price = isSub ? item.substitute?.catalogPrice : item.catalogPrice;
 
           // Columna PRODUCTO:
           // SUSTITUIDO → nombre sustituto (lo que llegó) + (original, lo que no llegó) en gris
           // FALTÓ      → nombre original tachado con badge rojo
           const nameDisplay = isSub
-            ? `${item.substituteName ?? item.productName}<br/><span style="color:#71717a; font-size:9px; font-style:italic;">(${item.productName})</span>`
+            ? `${item.substitute?.productName ?? item.productName}<br/><span style="color:#71717a; font-size:9px; font-style:italic;">(${item.productName})</span>`
             : `${item.productName} ${isMissing ? '<strong style="display: inline-block; text-decoration: none; color: #ef4444; font-size: 9px; margin-left: 4px; border: 1px solid #fecaca; background: #fef2f2; padding: 1px 4px; border-radius: 4px;">(FALTÓ)</strong>' : ""}`;
 
           return `
@@ -148,8 +151,7 @@ export function printCampaignReport(
       `
           : "";
 
-      const showTotals =
-        order.status === "DELIVERED" || order.status === "CANCELLED";
+      const showTotals = order.status === "DELIVERED";
       const totalsBlock = !showTotals
         ? ""
         : `

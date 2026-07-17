@@ -67,6 +67,7 @@ export default async function FichaClientePage(props: FichaClientePageProps) {
           items: {
             include: {
               brand: true,
+              substitute: true,
             },
           },
         },
@@ -111,8 +112,10 @@ export default async function FichaClientePage(props: FichaClientePageProps) {
         const price =
           item.arrivalStatus === "MISSING"
             ? 0
-            : item.arrivalStatus === "SUBSTITUTED" && item.substitutePrice !== null
-              ? item.substitutePrice
+            : item.arrivalStatus === "SUBSTITUTED" &&
+              item.substitute?.catalogPrice !== undefined &&
+              item.substitute?.catalogPrice !== null
+              ? item.substitute.catalogPrice
               : item.catalogPrice;
         return sum + item.quantity * price;
       }, 0) - order.discount;
@@ -177,8 +180,9 @@ export default async function FichaClientePage(props: FichaClientePageProps) {
             item.arrivalStatus === "MISSING"
               ? 0
               : item.arrivalStatus === "SUBSTITUTED" &&
-                item.substitutePrice !== null
-                ? item.substitutePrice
+                item.substitute?.catalogPrice !== undefined &&
+                item.substitute?.catalogPrice !== null
+                ? item.substitute.catalogPrice
                 : item.catalogPrice;
           return itemSum + item.quantity * price;
         }, 0) - order.discount;
