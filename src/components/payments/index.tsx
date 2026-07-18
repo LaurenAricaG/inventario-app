@@ -86,12 +86,13 @@ export default function Payments({
 
   const handleAnulateConfirm = async () => {
     if (!deleteTargetId) return;
+    const targetId = deleteTargetId;
+    setDeleteTargetId(null);
     setIsDeleting(true);
     try {
-      const res = await deletePaymentAction(deleteTargetId);
+      const res = await deletePaymentAction(targetId);
       if (res.success) {
         toast.success(res.message);
-        setDeleteTargetId(null);
         router.refresh();
       } else {
         toast.error(res.message);

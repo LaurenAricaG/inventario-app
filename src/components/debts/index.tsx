@@ -56,12 +56,13 @@ export default function Debts({
 
   const handleAnulateConfirm = async () => {
     if (!deleteTargetId) return;
+    const targetId = deleteTargetId;
+    setDeleteTargetId(null);
     setIsDeleting(true);
     try {
-      const res = await deleteExternalDebtAction(deleteTargetId);
+      const res = await deleteExternalDebtAction(targetId);
       if (res.success) {
         toast.success(res.message);
-        setDeleteTargetId(null);
         router.refresh();
       } else {
         toast.error(res.message);

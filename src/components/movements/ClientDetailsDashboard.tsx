@@ -110,19 +110,20 @@ export default function ClientDetailsDashboard({
 
   const handleAnulateConfirm = async () => {
     if (!deleteTarget) return;
+    const target = deleteTarget;
+    setDeleteTarget(null);
     setIsDeleting(true);
 
     try {
       let res;
-      if (deleteTarget.type === "PAGO") {
-        res = await deletePaymentAction(deleteTarget.id);
+      if (target.type === "PAGO") {
+        res = await deletePaymentAction(target.id);
       } else {
-        res = await deleteExternalDebtAction(deleteTarget.id);
+        res = await deleteExternalDebtAction(target.id);
       }
 
       if (res.success) {
         toast.success(res.message);
-        setDeleteTarget(null);
         router.refresh();
       } else {
         toast.error(res.message);

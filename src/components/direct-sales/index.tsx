@@ -66,13 +66,14 @@ export default function DirectSales({
 
     try {
       const res = await deleteDirectSaleAction(selectedSale.id);
+      setIsOpenDeleteModal(false);
       if (res.success) {
         toast.success(res.message);
-        setIsOpenDeleteModal(false);
       } else {
         toast.error(res.message);
       }
     } catch (error) {
+      setIsOpenDeleteModal(false);
       toast.error("Ocurrió un error inesperado al anular la venta.");
     } finally {
       setIsSubmitting(false);
