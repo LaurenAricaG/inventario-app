@@ -83,84 +83,84 @@ export default function Sidebar({
       : []),
     ...(userPermissions.includes("companies:read")
       ? [
-        {
-          label: "Empresas",
-          href: "/admin/empresas",
-          icon: HiOutlineSquares2X2,
-        },
-      ]
+          {
+            label: "Empresas",
+            href: "/admin/empresas",
+            icon: HiOutlineSquares2X2,
+          },
+        ]
       : []),
     ...(userPermissions.includes("brands:read")
       ? [
-        {
-          label: "Marcas",
-          href: "/admin/marcas",
-          icon: TbBrandAirtable,
-        },
-      ]
+          {
+            label: "Marcas",
+            href: "/admin/marcas",
+            icon: TbBrandAirtable,
+          },
+        ]
       : []),
     ...(userPermissions.includes("categories:read")
       ? [
-        {
-          label: "Categorías",
-          href: "/admin/categorias",
-          icon: FiTag,
-        },
-      ]
+          {
+            label: "Categorías",
+            href: "/admin/categorias",
+            icon: FiTag,
+          },
+        ]
       : []),
     ...(userPermissions.includes("products:read")
       ? [
-        {
-          label: "Productos",
-          href: "/admin/productos",
-          icon: AiOutlineProduct,
-        },
-      ]
+          {
+            label: "Productos",
+            href: "/admin/productos",
+            icon: AiOutlineProduct,
+          },
+        ]
       : []),
     ...(userPermissions.includes("orders:read")
       ? [
-        {
-          label: "Pedidos Catálogo",
-          href: "/admin/pedidos",
-          icon: FiShoppingBag,
-        },
-      ]
+          {
+            label: "Pedidos Catálogo",
+            href: "/admin/pedidos",
+            icon: FiShoppingBag,
+          },
+        ]
       : []),
     ...(userPermissions.includes("sales:read")
       ? [
-        {
-          label: "Ventas Directas",
-          href: "/admin/ventas",
-          icon: FiDollarSign,
-        },
-      ]
+          {
+            label: "Ventas Directas",
+            href: "/admin/ventas",
+            icon: FiDollarSign,
+          },
+        ]
       : []),
     ...(userPermissions.includes("inventory:read")
       ? [
-        {
-          label: "Inventario (Kardex)",
-          href: "/admin/inventario",
-          icon: FiPackage,
-        },
-      ]
+          {
+            label: "Inventario (Kardex)",
+            href: "/admin/inventario",
+            icon: FiPackage,
+          },
+        ]
       : []),
     ...(userPermissions.includes("campaigns:read")
       ? [
-        {
-          label: "Campañas / PDFs",
-          href: "/admin/campanias",
-          icon: FiCalendar,
-        },
-      ]
+          {
+            label: "Campañas / PDFs",
+            href: "/admin/campanias",
+            icon: FiCalendar,
+          },
+        ]
       : []),
     ...(userPermissions.includes("transactions:read")
       ? [
-        {
-          label: "Movimientos",
-          href: "/admin/movimientos",
-          icon: FiCreditCard,
-        },
-      ]
+          {
+            label: "Movimientos",
+            href: "/admin/movimientos",
+            icon: FiCreditCard,
+          },
+        ]
       : []),
     ...(userPermissions.includes("payments:read")
       ? [{ label: "Pagos", href: "/admin/pagos", icon: FiDollarSign }]
@@ -173,12 +173,12 @@ export default function Sidebar({
       : []),
     ...(userPermissions.includes("config:read")
       ? [
-        {
-          label: "Configuración",
-          href: "/admin/configuracion",
-          icon: FiSettings,
-        },
-      ]
+          {
+            label: "Configuración",
+            href: "/admin/configuracion",
+            icon: FiSettings,
+          },
+        ]
       : []),
   ];
 
@@ -199,7 +199,14 @@ export default function Sidebar({
       {/* Cabecera / Logo (Fijo, no se encoge) */}
       <div className="h-16 flex items-center justify-start px-4 border-b border-border-default transition-colors duration-300 ease-in-out shrink-0 overflow-hidden">
         <div className="flex items-center gap-2 pl-2">
-          <div className="w-8 h-8 rounded-xl bg-beauty-400 flex items-center justify-center text-white font-bold shadow-md shadow-beauty-400/20 shrink-0 overflow-hidden">
+          <div
+            className={cn(
+              "w-9 h-9 rounded-full border border-border-default/40 flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-105 select-none relative shrink-0",
+              systemConfig?.systemLogoUrl
+                ? "shadow-[0_2px_8px_rgba(219,39,119,0.12)]"
+                : "bg-beauty-400 text-white font-extrabold text-base shadow-md shadow-beauty-400/20"
+            )}
+          >
             {systemConfig?.systemLogoUrl ? (
               <img
                 src={systemConfig.systemLogoUrl}
@@ -226,10 +233,11 @@ export default function Sidebar({
                 </span>
               </>
             ) : (
-              <span className="text-beauty-600 dark:text-beauty-400 font-bold">{systemName}</span>
+              <span className="text-beauty-600 dark:text-beauty-400 font-bold">
+                {systemName}
+              </span>
             )}
           </span>
-
         </div>
       </div>
 

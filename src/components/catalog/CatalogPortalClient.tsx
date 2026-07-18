@@ -12,6 +12,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import ProductCard from "./ProductCard";
+import { cn } from "@/utils/cn.utils";
 
 interface CatalogPortalClientProps {
   products: {
@@ -254,7 +255,14 @@ export default function CatalogPortalClient({
       {/* 1. Header / Navbar Público */}
       <header className="sticky top-0 z-40 w-full h-16 bg-bg-page/85 backdrop-blur-md border-b border-border-default transition-all duration-300 flex items-center justify-between px-4 sm:px-8">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full border border-border-default/40 flex items-center justify-center bg-bg-surface overflow-hidden shadow-[0_2px_8px_rgba(219,39,119,0.12)] transition-transform duration-300 hover:scale-105 select-none relative">
+          <div
+            className={cn(
+              "w-10 h-10 rounded-full border border-border-default/40 flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-105 select-none relative shrink-0",
+              systemConfig?.systemLogoUrl
+                ? "shadow-[0_2px_8px_rgba(219,39,119,0.12)]"
+                : "bg-beauty-400 text-white font-extrabold text-lg shadow-md shadow-beauty-400/20"
+            )}
+          >
             {systemConfig?.systemLogoUrl ? (
               <img
                 src={systemConfig.systemLogoUrl}
@@ -262,9 +270,7 @@ export default function CatalogPortalClient({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-beauty-600 font-extrabold text-base">
-                {systemName.charAt(0).toUpperCase()}
-              </span>
+              systemName.charAt(0).toUpperCase()
             )}
           </div>
           <div className="flex items-center">{formattedName}</div>
