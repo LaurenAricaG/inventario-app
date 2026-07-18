@@ -6,7 +6,7 @@ import {
   FiSliders,
   FiX,
   FiRefreshCw,
-  FiFileText
+  FiFileText,
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
@@ -124,7 +124,7 @@ export default function CatalogPortalClient({
     const filteredProducts = products.filter(
       (p) =>
         selectedCompanies.length === 0 ||
-        selectedCompanies.includes(p.brand.company.name)
+        selectedCompanies.includes(p.brand.company.name),
     );
     const names = filteredProducts.map((p) => p.brand.name);
     return Array.from(new Set(names)).sort();
@@ -160,8 +160,10 @@ export default function CatalogPortalClient({
       // Filtro de búsqueda
       const matchesSearch =
         product.name.toLowerCase().includes(search.toLowerCase()) ||
-        (product.code && product.code.toLowerCase().includes(search.toLowerCase())) ||
-        (product.description && product.description.toLowerCase().includes(search.toLowerCase()));
+        (product.code &&
+          product.code.toLowerCase().includes(search.toLowerCase())) ||
+        (product.description &&
+          product.description.toLowerCase().includes(search.toLowerCase()));
 
       // Filtro de Empresa (Company)
       const matchesCompany =
@@ -170,16 +172,19 @@ export default function CatalogPortalClient({
 
       // Filtro de marcas
       const matchesBrand =
-        selectedBrands.length === 0 || selectedBrands.includes(product.brand.name);
+        selectedBrands.length === 0 ||
+        selectedBrands.includes(product.brand.name);
 
       // Filtro de categoría
       const matchesCategory =
-        selectedCategory === "Todas" || product.category.name === selectedCategory;
+        selectedCategory === "Todas" ||
+        product.category.name === selectedCategory;
 
       // Filtro de género
       const matchesGender =
         selectedGenders.length === 0 ||
-        (product.genderSegment && selectedGenders.includes(product.genderSegment.name));
+        (product.genderSegment &&
+          selectedGenders.includes(product.genderSegment.name));
 
       // Filtro de precio
       const matchesPrice = !showPrice || product.price <= maxPrice;
@@ -223,7 +228,7 @@ export default function CatalogPortalClient({
     setSelectedBrands((prev) =>
       prev.includes(brandName)
         ? prev.filter((b) => b !== brandName)
-        : [...prev, brandName]
+        : [...prev, brandName],
     );
   };
 
@@ -231,7 +236,7 @@ export default function CatalogPortalClient({
     setSelectedGenders((prev) =>
       prev.includes(genderName)
         ? prev.filter((g) => g !== genderName)
-        : [...prev, genderName]
+        : [...prev, genderName],
     );
   };
 
@@ -262,9 +267,7 @@ export default function CatalogPortalClient({
               </span>
             )}
           </div>
-          <div className="flex items-center">
-            {formattedName}
-          </div>
+          <div className="flex items-center">{formattedName}</div>
         </div>
 
         {/* Acciones Rápidas */}
@@ -291,7 +294,9 @@ export default function CatalogPortalClient({
           </span>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-text-primary mt-6 mb-4 max-w-2xl leading-tight font-sans">
             Encuentra tus{" "}
-            <span className="text-beauty-600 dark:text-beauty-400">productos favoritos</span>
+            <span className="text-beauty-600 dark:text-beauty-400">
+              productos favoritos
+            </span>
           </h1>
           <p className="text-sm sm:text-base text-text-secondary max-w-xl mx-auto leading-relaxed mb-8">
             Explora el stock actual o solicita tus productos bajo pedido. Haz
@@ -484,7 +489,9 @@ export default function CatalogPortalClient({
             <div className="mb-5">
               <div className="flex justify-between text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wider">
                 <span>Precio Máx.</span>
-                <span className="text-beauty-600 font-bold">S/. {maxPrice}</span>
+                <span className="text-beauty-600 font-bold">
+                  S/. {maxPrice}
+                </span>
               </div>
               <input
                 type="range"
@@ -502,8 +509,6 @@ export default function CatalogPortalClient({
               </div>
             </div>
           )}
-
-
         </aside>
 
         {/* GRID DE PRODUCTOS */}
@@ -585,16 +590,26 @@ export default function CatalogPortalClient({
         <div className="max-w-2xl mx-auto space-y-3">
           <p className="font-semibold text-text-primary">
             {systemName.split(" ").map((word, idx, arr) => (
-              <span key={idx} className={idx === arr.length - 1 ? "text-beauty-600 font-extrabold" : ""}>
-                {word}{idx < arr.length - 1 ? " " : ""}
+              <span
+                key={idx}
+                className={
+                  idx === arr.length - 1 ? "text-beauty-600 font-extrabold" : ""
+                }
+              >
+                {word}
+                {idx < arr.length - 1 ? " " : ""}
               </span>
-            ))} • Catálogo de Exhibición y Consulta
+            ))}{" "}
+            • Catálogo de Exhibición y Consulta
           </p>
           <p className="leading-relaxed">
-            Explora los productos disponibles y realiza tu pedido mediante WhatsApp.
+            Explora los productos disponibles y realiza tu pedido mediante
+            WhatsApp.
           </p>
           <div className="pt-3 text-[10px] text-text-tertiary">
-            © {new Date().getFullYear()} <span className="text-beauty-600 font-bold">Lauren Arica</span>. Todos los derechos reservados.
+            © {new Date().getFullYear()}{" "}
+            <span className="text-beauty-600 font-bold">Lauren Arica</span>.
+            Todos los derechos reservados.
           </div>
         </div>
       </footer>
@@ -753,8 +768,6 @@ export default function CatalogPortalClient({
                   </div>
                 </div>
               )}
-
-
             </div>
 
             {/* Footer del cajón / Acciones */}

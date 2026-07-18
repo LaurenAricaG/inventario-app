@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { FiCheck, FiChevronLeft, FiChevronRight, FiHeart } from "react-icons/fi";
+import {
+  FiCheck,
+  FiChevronLeft,
+  FiChevronRight,
+  FiHeart,
+} from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { cn } from "@/utils/cn.utils";
 
@@ -52,9 +57,10 @@ export default function ProductCard({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Obtener imágenes ordenadas por posición
-  const images = product.images.length > 0
-    ? [...product.images].sort((a, b) => a.position - b.position)
-    : [{ id: 0, url: "/no-image.svg", position: 0, isMain: true }];
+  const images =
+    product.images.length > 0
+      ? [...product.images].sort((a, b) => a.position - b.position)
+      : [{ id: 0, url: "/no-image.svg", position: 0, isMain: true }];
 
   const inStock = product.stock > 0;
 
@@ -73,7 +79,9 @@ export default function ProductCard({
   // Generador de enlace de WhatsApp
   const generateWhatsAppLink = () => {
     const brandTag = product.brand.company.name;
-    const priceText = showPrice ? `S/. ${product.price.toFixed(2)}` : "Consultar precio";
+    const priceText = showPrice
+      ? `S/. ${product.price.toFixed(2)}`
+      : "Consultar precio";
     const text = `¡Hola! Vi tu catálogo web y me interesa consultar por el siguiente producto:
 
 *Producto:* ${product.name}
@@ -88,7 +96,7 @@ export default function ProductCard({
   };
 
   return (
-    <article className="group bg-bg-card border border-border-default/60 hover:border-beauty-300 dark:hover:border-beauty-700/60 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg relative h-full">
+    <article className="group bg-bg-card border-2 border-border-default/60 hover:border-beauty-300 dark:hover:border-beauty-700/60 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg relative h-full">
       {/* Botón Favorito */}
       <button
         onClick={() => onToggleFavorite(product.id)}
@@ -98,13 +106,15 @@ export default function ProductCard({
         <FiHeart
           className={cn(
             "w-4 h-4 transition-transform active:scale-95",
-            isFavorite ? "fill-rose-500 text-rose-500 scale-110" : "text-text-secondary"
+            isFavorite
+              ? "fill-rose-500 text-rose-500 scale-110"
+              : "text-text-secondary",
           )}
         />
       </button>
 
       {/* Contenedor de Imagen con Control Deslizante (Slider) */}
-      <div className="aspect-[4/3] w-full overflow-hidden bg-bg-surface relative border-b border-border-default/40 group-hover:opacity-95 transition-opacity">
+      <div className="aspect-4/3 w-full overflow-hidden bg-bg-surface relative border-b border-border-default/40 group-hover:opacity-95 transition-opacity">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={images[currentImageIndex].url}
@@ -113,7 +123,7 @@ export default function ProductCard({
             "w-full h-full select-none pointer-events-none",
             images[currentImageIndex].url === "/no-image.svg"
               ? "object-contain p-8 opacity-40"
-              : "object-cover"
+              : "object-contain",
           )}
           loading="lazy"
         />
@@ -123,15 +133,17 @@ export default function ProductCard({
           <>
             <button
               onClick={handlePrevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/70 dark:bg-black/40 hover:bg-white dark:hover:bg-black border border-border-default/30 flex items-center justify-center text-text-primary transition-all cursor-pointer opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white dark:bg-bg-card border border-border-strong flex items-center justify-center text-text-primary dark:text-text-primary hover:text-beauty-600 hover:border-beauty-300 dark:hover:text-beauty-400 dark:hover:border-beauty-700 disabled:pointer-events-none cursor-pointer shadow-md transition-all active:scale-90"
               aria-label="Imagen anterior"
+              title="Imagen anterior"
             >
               <FiChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={handleNextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/70 dark:bg-black/40 hover:bg-white dark:hover:bg-black border border-border-default/30 flex items-center justify-center text-text-primary transition-all cursor-pointer opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white dark:bg-bg-card border border-border-strong flex items-center justify-center text-text-primary dark:text-text-primary hover:text-beauty-600 hover:border-beauty-300 dark:hover:text-beauty-400 dark:hover:border-beauty-700 disabled:pointer-events-none cursor-pointer shadow-md transition-all active:scale-90"
               aria-label="Imagen siguiente"
+              title="Imagen siguiente"
             >
               <FiChevronRight className="w-4 h-4" />
             </button>
@@ -148,7 +160,7 @@ export default function ProductCard({
                   "w-1.5 h-1.5 rounded-full transition-all duration-200",
                   idx === currentImageIndex
                     ? "bg-white scale-110"
-                    : "bg-white/40"
+                    : "bg-white/40",
                 )}
               />
             ))}
@@ -161,7 +173,7 @@ export default function ProductCard({
             "absolute bottom-3 left-3 px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-wider border shadow-xs select-none",
             product.brand.company.name.toLowerCase() === "natura"
               ? "bg-orange-50/90 border-orange-200/50 text-orange-700 dark:bg-orange-950/90 dark:border-orange-900/40 dark:text-orange-300"
-              : "bg-purple-50/90 border-purple-200/50 text-purple-700 dark:bg-purple-950/90 dark:border-purple-900/40 dark:text-purple-300"
+              : "bg-purple-50/90 border-purple-200/50 text-purple-700 dark:bg-purple-950/90 dark:border-purple-900/40 dark:text-purple-300",
           )}
         >
           {product.brand.name}
@@ -171,11 +183,17 @@ export default function ProductCard({
       {/* Contenido / Detalles del producto */}
       <div className="p-4 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-1.5">
-          {/* Empresa y Segmento */}
-          <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-text-tertiary font-extrabold">
-            <span>{product.brand.company.name}</span>
+          {/* Empresa, Categoría y Segmento */}
+          <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-text-tertiary font-extrabold gap-2">
+            <div className="flex items-center gap-1.5 truncate">
+              <span>{product.brand.company.name}</span>
+              <span className="text-text-tertiary/50">•</span>
+              <span className="text-beauty-600 dark:text-beauty-400 font-bold truncate">
+                {product.category.name}
+              </span>
+            </div>
             {product.genderSegment && (
-              <span className="bg-bg-surface px-2 py-0.5 rounded-md font-bold text-text-secondary">
+              <span className="bg-bg-surface px-2 py-0.5 rounded-md font-bold text-text-secondary shrink-0">
                 {product.genderSegment.name}
               </span>
             )}
@@ -228,7 +246,7 @@ export default function ProductCard({
                 "inline-flex items-center gap-1 text-[8px] font-extrabold mt-1.5 px-1.5 py-0.5 rounded-md w-fit uppercase select-none",
                 inStock
                   ? "bg-success-bg text-success-text"
-                  : "bg-warning-bg text-warning-text"
+                  : "bg-warning-bg text-warning-text",
               )}
             >
               {inStock && <FiCheck className="w-2 h-2 shrink-0" />}
