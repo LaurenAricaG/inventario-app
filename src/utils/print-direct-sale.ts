@@ -4,6 +4,7 @@ import { formatDateUTC } from "@/utils/date.utils";
 export function printDirectSale(
   sale: SerializedDirectSaleWithRelations,
   systemName: string,
+  systemLogoUrl?: string | null,
 ) {
   if (typeof window === "undefined") return;
 
@@ -58,16 +59,27 @@ export function printDirectSale(
         </div>`
       : "";
 
+  const formatSystemName = (name: string): string => {
+    const words = name.trim().split(/\s+/);
+    if (words.length <= 1) {
+      return `<span style="color: #b53f66; font-weight: 800;">${name}</span>`;
+    }
+    const lastWord = words.pop();
+    const restOfWords = words.join(" ");
+    return `<span style="color: #2c2c2a; font-weight: 800;">${restOfWords}</span> <span style="color: #b53f66; font-weight: 800;">${lastWord}</span>`;
+  };
+
   printDocument.open();
   printDocument.write(`
     <html>
       <head>
         <title>Boleta Directa #${sale.id}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <style>
-          body { font-family: system-ui, -apple-system, sans-serif; padding: 20px; color: #18181b; background-color: #ffffff; }
+          body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; padding: 20px; color: #18181b; background-color: #ffffff; }
           .invoice-box { max-width: 650px; margin: auto; border: 1px solid #e4e4e7; padding: 30px; border-radius: 12px; }
           .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #e4e4e7; padding-bottom: 20px; margin-bottom: 20px; }
-          .logo { font-size: 22px; font-weight: 900; color: #993556; letter-spacing: -0.5px; }
+          .logo { font-size: 24px; font-weight: 800; line-height: 1.1; letter-spacing: -0.5px; margin: 0; }
           .logo-sub { font-size: 8px; color: #71717a; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; font-weight: 700; }
           .boleta-box { border: 2px solid #db2777; border-radius: 10px; padding: 12px; text-align: center; background: #fdf2f8; min-width: 180px; }
           .boleta-title { font-size: 10px; font-weight: 800; color: #db2777; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; }
@@ -91,9 +103,12 @@ export function printDirectSale(
       <body>
         <div class="invoice-box">
           <div class="header">
-            <div>
-              <div class="logo">${systemName}</div>
-              <div class="logo-sub">Control de Ventas</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              ${systemLogoUrl ? `<img src="${systemLogoUrl}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fbcfe8;" />` : ""}
+              <div>
+                <h1 class="logo">${formatSystemName(systemName)}</h1>
+                <h2 class="logo-sub">Control de Ventas</h2>
+              </div>
             </div>
             <div class="boleta-box">
               <div class="boleta-title">Venta Directa</div>

@@ -26,6 +26,7 @@ import { TbBrandAirtable } from "react-icons/tb";
 import { AiOutlineProduct } from "react-icons/ai";
 import type { SystemConfig } from "@/types/models";
 import { useSystemConfig } from "@/context/SystemConfigContext";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -182,9 +183,6 @@ export default function Sidebar({
       : []),
   ];
 
-  const systemName = systemConfig?.systemName || "Inventario";
-  const words = systemName.split(" ");
-
   return (
     <aside
       className={cn(
@@ -198,47 +196,15 @@ export default function Sidebar({
     >
       {/* Cabecera / Logo (Fijo, no se encoge) */}
       <div className="h-16 flex items-center justify-start px-4 border-b border-border-default transition-colors duration-300 ease-in-out shrink-0 overflow-hidden">
-        <div className="flex items-center gap-2 pl-2">
-          <div
-            className={cn(
-              "w-9 h-9 rounded-full border border-border-default/40 flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-105 select-none relative shrink-0",
-              systemConfig?.systemLogoUrl
-                ? "shadow-[0_2px_8px_rgba(219,39,119,0.12)]"
-                : "bg-beauty-400 text-white font-extrabold text-base shadow-md shadow-beauty-400/20"
-            )}
-          >
-            {systemConfig?.systemLogoUrl ? (
-              <img
-                src={systemConfig.systemLogoUrl}
-                alt={systemConfig.systemName || "Logo"}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              systemName.charAt(0).toUpperCase()
-            )}
-          </div>
-          <span
-            className={cn(
-              "font-semibold text-lg tracking-wide text-text-primary transition-all duration-300 ease-in-out whitespace-nowrap overflow-hidden",
-              collapsed
-                ? "md:max-w-0 md:opacity-0 md:pointer-events-none"
-                : "max-w-48 opacity-100",
-            )}
-          >
-            {words.length > 1 ? (
-              <>
-                {words.slice(0, -1).join(" ")}{" "}
-                <span className="text-beauty-600 dark:text-beauty-400 font-bold">
-                  {words.at(-1)}
-                </span>
-              </>
-            ) : (
-              <span className="text-beauty-600 dark:text-beauty-400 font-bold">
-                {systemName}
-              </span>
-            )}
-          </span>
-        </div>
+        <BrandLogo
+          className="pl-2"
+          showText={!collapsed}
+          textClassName={cn(
+            "text-lg transition-all duration-300 ease-in-out",
+            collapsed ? "md:max-w-0 md:opacity-0 md:pointer-events-none" : "max-w-48 opacity-100"
+          )}
+          size="md"
+        />
       </div>
 
       <nav

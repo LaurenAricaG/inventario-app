@@ -58,7 +58,7 @@ export default function Header({
               {userName}
             </p>
             <p className="text-[10px] text-text-secondary">
-              {userRole === "ADMIN" ? "Administradora" : "Vendedora"}
+              {userRole === "ADMIN" ? "Administrador" : "Vendedora"}
             </p>
           </div>
         </div>

@@ -583,6 +583,7 @@ export default function OrdersDashboard({
                       cmp,
                       initialOrders,
                       systemConfig?.systemName ?? "Inventario",
+                      systemConfig?.systemLogoUrl,
                     );
                   }
                 }}
@@ -603,6 +604,7 @@ export default function OrdersDashboard({
                       cmp,
                       initialOrders,
                       systemConfig?.systemName ?? "Inventario",
+                      systemConfig?.systemLogoUrl,
                     );
                   }
                 }}
@@ -623,6 +625,7 @@ export default function OrdersDashboard({
                       cmp,
                       initialOrders,
                       systemConfig?.systemName ?? "Inventario",
+                      systemConfig?.systemLogoUrl,
                     );
                   }
                 }}
@@ -737,6 +740,7 @@ export default function OrdersDashboard({
                                   currentCampaign,
                                   [order],
                                   systemConfig?.systemName ?? "Inventario",
+                                  systemConfig?.systemLogoUrl,
                                 );
                             }}
                             disabled={

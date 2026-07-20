@@ -34,8 +34,19 @@ export function printCampaignSlips(
   campaign: PrintCampaign,
   orders: PrintOrder[],
   systemName: string,
+  systemLogoUrl?: string | null,
 ) {
   if (typeof window === "undefined") return;
+
+  const formatSystemName = (name: string): string => {
+    const words = name.trim().split(/\s+/);
+    if (words.length <= 1) {
+      return `<span style="color: #b53f66; font-weight: 800;">${name}</span>`;
+    }
+    const lastWord = words.pop();
+    const restOfWords = words.join(" ");
+    return `<span style="color: #2c2c2a; font-weight: 800;">${restOfWords}</span> <span style="color: #b53f66; font-weight: 800;">${lastWord}</span>`;
+  };
 
   // Filtrar solo pedidos que han sido Empacados o Entregados
   const targetOrders = orders.filter(
@@ -78,8 +89,8 @@ export function printCampaignSlips(
         if (item.arrivalStatus === "MISSING") return s;
         const price =
           item.arrivalStatus === "SUBSTITUTED" &&
-          item.substitute?.catalogPrice !== undefined &&
-          item.substitute?.catalogPrice !== null
+            item.substitute?.catalogPrice !== undefined &&
+            item.substitute?.catalogPrice !== null
             ? item.substitute.catalogPrice
             : item.catalogPrice;
         return s + item.quantity * price;
@@ -112,9 +123,12 @@ export function printCampaignSlips(
       <div class="slip-card">
         <div class="scissors-icon">✂ Recortar</div>
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div>
-            <span class="logo">${systemName}</span>
-            <div class="meta">Campaña: ${campaign.company.name} - ${campaign.number}</div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            ${systemLogoUrl ? `<img src="${systemLogoUrl}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid #fbcfe8;" />` : ""}
+            <div>
+              <span class="logo">${formatSystemName(systemName)}</span>
+              <div class="meta">Campaña: ${campaign.company.name} - ${campaign.number}</div>
+            </div>
           </div>
         </div>
         
@@ -159,8 +173,9 @@ export function printCampaignSlips(
         
         ${order.notes
           ? `
-          <div class="slip-notes" style="margin-top: 8px; font-size: 8px; color: #4b5563; border-left: 2px solid #be185d; padding-left: 6px; font-style: italic; margin-bottom: 4px; text-align: left;">
-            <strong>Nota:</strong> ${order.notes}
+          <div class="slip-notes" style="margin-top: 8px; padding: 8px 12px; background: #ffffff; border: 1px dashed #fbcfe8; border-radius: 8px; font-size: 8px; color: #4b5563; text-align: left; line-height: 1.4;">
+            <div style="font-weight: bold; text-transform: uppercase; font-size: 7px; letter-spacing: 0.5px; color: #18181b; margin-bottom: 3px;">Nota:</div>
+            ${order.notes}
           </div>
         `
           : ""

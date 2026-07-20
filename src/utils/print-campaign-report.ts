@@ -1,3 +1,5 @@
+import { formatDateUTC } from "@/utils/date.utils";
+
 interface PrintCampaign {
   number: string;
   company: { name: string };
@@ -24,6 +26,7 @@ interface PrintOrder {
   status: string;
   items: PrintItem[];
   notes?: string | null;
+  paymentDate?: Date | string | null;
 }
 
 const statusTranslations: Record<string, string> = {
@@ -51,6 +54,7 @@ export function printCampaignReport(
   campaign: PrintCampaign,
   orders: PrintOrder[],
   systemName: string,
+  systemLogoUrl?: string | null,
 ) {
   if (typeof window === "undefined") return;
 
@@ -77,8 +81,8 @@ export function printCampaignReport(
       if (item.arrivalStatus === "MISSING") return s;
       const price =
         item.arrivalStatus === "SUBSTITUTED" &&
-        item.substitute?.catalogPrice !== undefined &&
-        item.substitute?.catalogPrice !== null
+          item.substitute?.catalogPrice !== undefined &&
+          item.substitute?.catalogPrice !== null
           ? item.substitute.catalogPrice
           : item.catalogPrice;
       return s + item.quantity * price;
@@ -93,8 +97,8 @@ export function printCampaignReport(
         if (item.arrivalStatus === "MISSING") return s;
         const price =
           item.arrivalStatus === "SUBSTITUTED" &&
-          item.substitute?.catalogPrice !== undefined &&
-          item.substitute?.catalogPrice !== null
+            item.substitute?.catalogPrice !== undefined &&
+            item.substitute?.catalogPrice !== null
             ? item.substitute.catalogPrice
             : item.catalogPrice;
         return s + item.quantity * price;
@@ -117,7 +121,7 @@ export function printCampaignReport(
           // FALTÓ      → nombre original tachado con badge rojo
           const nameDisplay = isSub
             ? `${item.substitute?.productName ?? item.productName}<br/><span style="color:#71717a; font-size:9px; font-style:italic;">(${item.productName})</span>`
-            : `${item.productName} ${isMissing ? '<strong style="display: inline-block; text-decoration: none; color: #ef4444; font-size: 9px; margin-left: 4px; border: 1px solid #fecaca; background: #fef2f2; padding: 1px 4px; border-radius: 4px;">(FALTÓ)</strong>' : ""}`;
+            : `${item.productName} ${isMissing ? '<strong style="display: inline-block; text-decoration: none; color: #ef4444; font-size: 6px; margin-left: 4px; border: 1px solid #fecaca; background: #fef2f2; padding: 1px 3px; border-radius: 7px;">FALTÓ</strong>' : ""}`;
 
           return `
         <tr style="${isMissing ? "text-decoration: line-through; color: #a1a1aa;" : ""}">
@@ -144,9 +148,18 @@ export function printCampaignReport(
       const notesBlock =
         order.notes && order.status === "DELIVERED"
           ? `
-        <div style="margin-top: 12px; padding: 10px 14px; bg-color: #fffbeb; background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 8px; font-size: 11px; color: #b45309; font-weight: 500; text-align: left; line-height: 1.4;">
-          <span style="font-weight: bold; text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 2px; letter-spacing: 0.5px;">Mensaje de Pago / Plazo:</span>
+        <div style="margin-top: 12px; padding: 10px 14px; background: #ffffff; border: 1px dashed #fbcfe8; border-radius: 8px; font-size: 11px; color: #4b5563; text-align: left; line-height: 1.5;">
+          <div style="font-weight: bold; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; color: #18181b; margin-bottom: 4px;">Nota:</div>
           ${order.notes}
+        </div>
+      `
+          : "";
+
+      const paymentDateBlock =
+        order.paymentDate && order.status === "DELIVERED"
+          ? `
+        <div style="margin-top: 8px; padding: 10px 14px; background-color: #fdf2f8; border: 1px dashed #fbcfe8; border-left: 4px solid #be185d; border-radius: 8px; font-size: 11px; color: #be185d; font-weight: 800; text-align: left; line-height: 1.4; display: flex; align-items: center; gap: 6px;">
+          <span>Fecha límite de pago: <strong>${formatDateUTC(order.paymentDate)}</strong></span>
         </div>
       `
           : "";
@@ -201,11 +214,23 @@ export function printCampaignReport(
           ${totalsBlock}
           
           ${notesBlock}
+
+          ${paymentDateBlock}
         </div>
       </div>
     `;
     })
     .join("");
+
+  const formatSystemName = (name: string): string => {
+    const words = name.trim().split(/\s+/);
+    if (words.length <= 1) {
+      return `<span style="color: #b53f66; font-weight: 800;">${name}</span>`;
+    }
+    const lastWord = words.pop();
+    const restOfWords = words.join(" ");
+    return `<span style="color: #2c2c2a; font-weight: 800;">${restOfWords}</span> <span style="color: #b53f66; font-weight: 800;">${lastWord}</span>`;
+  };
 
   printDocument.open();
   printDocument.write(`
@@ -241,7 +266,7 @@ export function printCampaignReport(
             margin: 0; 
             font-size: 24px; 
             font-weight: 800; 
-            color: #993556;
+            line-height: 1.1;
             letter-spacing: -0.5px;
           }
           h2 { 
@@ -289,9 +314,12 @@ export function printCampaignReport(
       <body>
         <div class="summary-container">
           <div class="summary-header">
-            <div>
-              <h1>${systemName}</h1>
-              <h2>Reporte de Pedidos por Campaña</h2>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              ${systemLogoUrl ? `<img src="${systemLogoUrl}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fbcfe8;" />` : ""}
+              <div>
+                <h1>${formatSystemName(systemName)}</h1>
+                <h2>Reporte de Pedidos por Campaña</h2>
+              </div>
             </div>
             <div class="header-meta">
               <strong>Campaña:</strong> ${campaign.company.name} - ${campaign.number}<br/>

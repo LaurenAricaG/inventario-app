@@ -5,6 +5,7 @@ import ClientPublicPortal from "@/components/movements/ClientPublicPortal";
 import { MovementItem } from "@/components/movements/MovementHistoryTable";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import { getPublicSystemConfig } from "@/lib/config";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 interface CustomerPageProps {
   params: Promise<{ token: string }>;
@@ -103,8 +104,8 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
           item.arrivalStatus === "MISSING"
             ? 0
             : item.arrivalStatus === "SUBSTITUTED" &&
-              item.substitute?.catalogPrice !== undefined &&
-              item.substitute?.catalogPrice !== null
+                item.substitute?.catalogPrice !== undefined &&
+                item.substitute?.catalogPrice !== null
               ? item.substitute.catalogPrice
               : item.catalogPrice;
         return sum + item.quantity * price;
@@ -170,8 +171,8 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
             item.arrivalStatus === "MISSING"
               ? 0
               : item.arrivalStatus === "SUBSTITUTED" &&
-                item.substitute?.catalogPrice !== undefined &&
-                item.substitute?.catalogPrice !== null
+                  item.substitute?.catalogPrice !== undefined &&
+                  item.substitute?.catalogPrice !== null
                 ? item.substitute.catalogPrice
                 : item.catalogPrice;
           return itemSum + item.quantity * price;
@@ -221,21 +222,11 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Encabezado del Portal Público */}
         <div className="flex justify-between items-center pb-4 border-b border-border-soft select-none">
-          <div className="flex items-center gap-2">
-            {systemConfig?.systemLogoUrl ? (
-              <img
-                src={systemConfig.systemLogoUrl}
-                alt={systemConfig.systemName || "Logo"}
-                className="w-8 h-8 object-contain rounded-lg bg-bg-surface p-0.5 border border-border-soft"
-              />
-            ) : null}
-            <span className="text-lg font-black tracking-tight text-beauty-600 dark:text-beauty-400">
-              {systemConfig?.systemName || "Inventario"}
-            </span>
-            <span className="text-xs font-bold text-text-tertiary">
-              • Portal de Clientes
-            </span>
-          </div>
+          <BrandLogo
+            size="lg"
+            systemName={systemConfig?.systemName}
+            systemLogoUrl={systemConfig?.systemLogoUrl}
+          />
           <ThemeToggle />
         </div>
 

@@ -46,6 +46,7 @@ export function printCampaignProductsReport(
   campaign: PrintCampaign,
   orders: PrintOrder[],
   systemName: string,
+  systemLogoUrl?: string | null,
 ) {
   if (typeof window === "undefined") return;
 
@@ -185,6 +186,16 @@ export function printCampaignProductsReport(
     })
     .join("");
 
+  const formatSystemName = (name: string): string => {
+    const words = name.trim().split(/\s+/);
+    if (words.length <= 1) {
+      return `<span style="color: #b53f66; font-weight: 800;">${name}</span>`;
+    }
+    const lastWord = words.pop();
+    const restOfWords = words.join(" ");
+    return `<span style="color: #2c2c2a; font-weight: 800;">${restOfWords}</span> <span style="color: #b53f66; font-weight: 800;">${lastWord}</span>`;
+  };
+
   printDocument.open();
   printDocument.write(`
     <html>
@@ -219,7 +230,7 @@ export function printCampaignProductsReport(
             margin: 0; 
             font-size: 24px; 
             font-weight: 800; 
-            color: #993556;
+            line-height: 1.1;
             letter-spacing: -0.5px;
           }
           h2 { 
@@ -267,9 +278,12 @@ export function printCampaignProductsReport(
       <body>
         <div class="summary-container">
           <div class="summary-header">
-            <div>
-              <h1>${systemName}</h1>
-              <h2>Reporte de Productos Consolidado</h2>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              ${systemLogoUrl ? `<img src="${systemLogoUrl}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fbcfe8;" />` : ""}
+              <div>
+                <h1>${formatSystemName(systemName)}</h1>
+                <h2>Reporte de Productos Consolidado</h2>
+              </div>
             </div>
             <div class="header-meta">
               <strong>Campaña:</strong> ${campaign.company.name} - ${campaign.number}<br/>

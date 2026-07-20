@@ -13,6 +13,7 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import ProductCard from "./ProductCard";
 import { cn } from "@/utils/cn.utils";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 interface CatalogPortalClientProps {
   products: {
@@ -65,23 +66,7 @@ export default function CatalogPortalClient({
   const showStockCount = systemConfig?.showStockPublic ?? true;
   const showCatalogs = systemConfig?.showCatalogsPublic ?? true;
 
-  const formattedName = useMemo(() => {
-    const parts = systemName.split(" ");
-    if (parts.length > 1) {
-      const last = parts.pop();
-      const first = parts.join(" ");
-      return (
-        <span className="text-base sm:text-lg font-bold text-text-primary tracking-tight">
-          {first} <span className="text-beauty-600 font-extrabold">{last}</span>
-        </span>
-      );
-    }
-    return (
-      <span className="text-base sm:text-lg font-bold text-text-primary tracking-tight">
-        {systemName}
-      </span>
-    );
-  }, [systemName]);
+
 
   // Estados para filtros
   const [search, setSearch] = useState("");
@@ -254,27 +239,11 @@ export default function CatalogPortalClient({
     <div className="min-h-screen bg-bg-page text-text-primary flex flex-col font-sans transition-colors duration-300">
       {/* 1. Header / Navbar Público */}
       <header className="sticky top-0 z-40 w-full h-16 bg-bg-page/85 backdrop-blur-md border-b border-border-default transition-all duration-300 flex items-center justify-between px-4 sm:px-8">
-        <div className="flex items-center gap-3">
-          <div
-            className={cn(
-              "w-10 h-10 rounded-full border border-border-default/40 flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-105 select-none relative shrink-0",
-              systemConfig?.systemLogoUrl
-                ? "shadow-[0_2px_8px_rgba(219,39,119,0.12)]"
-                : "bg-beauty-400 text-white font-extrabold text-lg shadow-md shadow-beauty-400/20"
-            )}
-          >
-            {systemConfig?.systemLogoUrl ? (
-              <img
-                src={systemConfig.systemLogoUrl}
-                alt={systemName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              systemName.charAt(0).toUpperCase()
-            )}
-          </div>
-          <div className="flex items-center">{formattedName}</div>
-        </div>
+        <BrandLogo
+          size="lg"
+          systemName={systemName}
+          systemLogoUrl={systemConfig?.systemLogoUrl}
+        />
 
         {/* Acciones Rápidas */}
         <div className="flex items-center gap-2 sm:gap-4">

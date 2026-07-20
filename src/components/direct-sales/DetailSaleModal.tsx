@@ -7,6 +7,7 @@ import { printDirectSale } from "@/utils/print-direct-sale";
 
 import { useSystemConfig } from "@/context/SystemConfigContext";
 import { formatDateUTC } from "@/utils/date.utils";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 interface DetailSaleModalProps {
   isOpen: boolean;
@@ -50,19 +51,11 @@ export default function DetailSaleModal({
         <div className="max-w-md mx-auto font-sans text-sm text-text-primary space-y-4 p-2 md:p-4 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs">
           {/* Header */}
           <div className="text-center pb-3 border-b border-dashed border-beauty-500/20 flex flex-col items-center">
-            {systemConfig?.systemLogoUrl ? (
-              <img
-                src={systemConfig.systemLogoUrl}
-                alt={systemConfig.systemName || "Logo"}
-                className="w-12 h-12 object-contain mb-2 rounded-xl bg-bg-surface p-0.5 border border-border-soft"
-              />
-            ) : null}
-            <h3 className="text-xl font-black text-beauty-600 dark:text-beauty-400 tracking-widest">
-              {systemConfig?.systemName || "Inventario"}
-            </h3>
-            <p className="text-[10px] text-text-primary font-bold uppercase tracking-widest mt-1">
-              Venta Directa
-            </p>
+            <BrandLogo size="xl" className="flex-col gap-2 mb-2 text-center" logoClassName="mb-1">
+              <p className="text-[10px] text-text-primary font-bold uppercase tracking-widest mt-1">
+                Venta Directa
+              </p>
+            </BrandLogo>
             <div className="text-left mt-4 text-xs text-text-secondary">
               <span className="font-bold text-text-primary">F. Registro:</span>{" "}
               {formatDateUTC(sale.createdAt)}
@@ -165,7 +158,11 @@ export default function DetailSaleModal({
           <Button
             variant="primary"
             onClick={() =>
-              printDirectSale(sale, systemConfig?.systemName ?? "Inventario")
+              printDirectSale(
+                sale,
+                systemConfig?.systemName ?? "Inventario",
+                systemConfig?.systemLogoUrl,
+              )
             }
           >
             Imprimir
@@ -184,23 +181,11 @@ export default function DetailSaleModal({
       <div className="p-4 md:p-6 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs font-sans text-zinc-900 dark:text-zinc-100 space-y-6">
         {/* Cabecera Boleta */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-dashed border-zinc-200 dark:border-zinc-800 pb-5 select-none">
-          <div className="flex items-center gap-3">
-            {systemConfig?.systemLogoUrl ? (
-              <img
-                src={systemConfig.systemLogoUrl}
-                alt={systemConfig.systemName || "Logo"}
-                className="w-12 h-12 object-contain rounded-xl bg-bg-surface p-0.5 border border-border-soft shrink-0"
-              />
-            ) : null}
-            <div>
-              <h3 className="text-xl font-black text-beauty-600 dark:text-beauty-400 tracking-widest">
-                {systemConfig?.systemName || "Inventario"}
-              </h3>
-              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">
-                CONTROL DE VENTAS
-              </p>
-            </div>
-          </div>
+          <BrandLogo size="xl" className="gap-3">
+            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">
+              CONTROL DE VENTAS
+            </p>
+          </BrandLogo>
           <div className="border-2 border-beauty-400 rounded-xl p-3 text-center min-w-45 self-stretch sm:self-auto">
             <span className="text-[10px] font-extrabold text-beauty-600 dark:text-beauty-400 uppercase tracking-widest">
               Venta Directa
