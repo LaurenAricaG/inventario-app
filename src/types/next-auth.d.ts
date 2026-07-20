@@ -18,6 +18,7 @@ declare module "next-auth" {
     username?: string;
     role?: string;
     permissions?: string[];
+    passwordVersion?: string;
   }
 }
 
@@ -27,5 +28,6 @@ declare module "next-auth/jwt" {
     username?: string;
     role?: string;
     permissions?: string[];
+    passwordVersion?: string;
   }
 }

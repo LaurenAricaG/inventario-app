@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { createHash } from "crypto";
 
 export async function verifyUserCredentials(usernameOrEmail: string, passwordField: string) {
   if (!usernameOrEmail || !passwordField) {
@@ -42,6 +43,8 @@ export async function verifyUserCredentials(usernameOrEmail: string, passwordFie
       (rp) => rp.permission.code
     );
 
+    const passwordVersion = createHash("sha256").update(user.passwordHash).digest("hex");
+
     return {
       id: user.id.toString(),
       name: user.name,
@@ -49,6 +52,7 @@ export async function verifyUserCredentials(usernameOrEmail: string, passwordFie
       username: user.username,
       role: user.role.name,
       permissions,
+      passwordVersion,
     };
   } catch (error) {
     console.error("Error in verifyUserCredentials:", error);

@@ -14,6 +14,7 @@ export const authConfig = {
         token.username = user.username;
         token.role = user.role;
         token.permissions = user.permissions;
+        token.passwordVersion = user.passwordVersion;
       }
       return token;
     },
