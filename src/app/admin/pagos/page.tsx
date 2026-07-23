@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import Payments from "@/components/payments";
 import { PaymentMethod } from "@/generated/prisma";
 
+export const metadata = {
+  title: "Pagos",
+};
+
 interface DBOrderItem {
   arrivalStatus: string;
   substitute?: {
@@ -25,8 +29,8 @@ const getOrderTotal = (order: DBOrder) => {
     if (item.arrivalStatus === "MISSING") return sum;
     const price =
       item.arrivalStatus === "SUBSTITUTED" &&
-      item.substitute?.catalogPrice !== undefined &&
-      item.substitute?.catalogPrice !== null
+        item.substitute?.catalogPrice !== undefined &&
+        item.substitute?.catalogPrice !== null
         ? item.substitute.catalogPrice
         : item.catalogPrice;
     return sum + item.quantity * price;
@@ -61,11 +65,11 @@ export default async function PaymentsPage(props: PaymentsPageProps) {
     client: { deletedAt: null },
     ...(search
       ? {
-          OR: [
-            { client: { name: { contains: search, mode: "insensitive" as const } } },
-            { note: { contains: search, mode: "insensitive" as const } },
-          ],
-        }
+        OR: [
+          { client: { name: { contains: search, mode: "insensitive" as const } } },
+          { note: { contains: search, mode: "insensitive" as const } },
+        ],
+      }
       : {}),
     ...(method && Object.values(PaymentMethod).includes(method as any)
       ? { method: method as PaymentMethod }

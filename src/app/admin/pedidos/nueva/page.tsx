@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import QuickOrderConsole from "@/components/orders/QuickOrderConsole";
 
+export const metadata = {
+  title: "Registrar pedido",
+};
+
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

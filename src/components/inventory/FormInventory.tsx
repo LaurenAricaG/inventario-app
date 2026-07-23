@@ -238,7 +238,7 @@ export default function FormInventory({
             type="submit"
             loading={isSubmitting}
           >
-            Guardar Ajuste
+            Guardar
           </Button>
         </div>
       }

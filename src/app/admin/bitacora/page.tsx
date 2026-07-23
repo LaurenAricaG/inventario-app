@@ -1,7 +1,11 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import BitacoraClient from "./BitacoraClient";
+import Logs from "@/components/logs";
+
+export const metadata = {
+  title: "Logs",
+};
 
 interface BitacoraPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -116,11 +120,11 @@ export default async function BitacoraPage(props: BitacoraPageProps) {
     createdAt: log.createdAt.toISOString(),
     user: log.user
       ? {
-          id: log.user.id,
-          name: log.user.name,
-          username: log.user.username,
-          email: log.user.email,
-        }
+        id: log.user.id,
+        name: log.user.name,
+        username: log.user.username,
+        email: log.user.email,
+      }
       : null,
   }));
 
@@ -129,7 +133,7 @@ export default async function BitacoraPage(props: BitacoraPageProps) {
     .filter(Boolean);
 
   return (
-    <BitacoraClient
+    <Logs
       initialLogs={serializedLogs}
       entityOptions={entityOptions}
       overallCount={overallCount}

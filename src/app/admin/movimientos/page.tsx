@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import Movements from "@/components/movements";
 import { SerializedClientBalance } from "@/components/movements/TableMovements";
 
+export const metadata = {
+  title: "Movimientos",
+};
+
 interface DBOrderItem {
   arrivalStatus: string;
   substitute?: {
@@ -25,8 +29,8 @@ const getOrderTotal = (order: DBOrder) => {
     if (item.arrivalStatus === "MISSING") return sum;
     const price =
       item.arrivalStatus === "SUBSTITUTED" &&
-      item.substitute?.catalogPrice !== undefined &&
-      item.substitute?.catalogPrice !== null
+        item.substitute?.catalogPrice !== undefined &&
+        item.substitute?.catalogPrice !== null
         ? item.substitute.catalogPrice
         : item.catalogPrice;
     return sum + item.quantity * price;
@@ -115,8 +119,8 @@ export default async function MovimientosPage(props: MovimientosPageProps) {
     ...baseFilter,
     ...(search
       ? {
-          name: { contains: search, mode: "insensitive" as const },
-        }
+        name: { contains: search, mode: "insensitive" as const },
+      }
       : {}),
   };
 

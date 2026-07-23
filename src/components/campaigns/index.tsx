@@ -313,13 +313,14 @@ export default function Campaigns({
             </div>
             {/* Toggle solo campaña activa (solo en pestaña de catálogos) */}
             {!isCampaignsTab && (
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 onClick={handleToggleOnlyActive}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-3 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer select-none shrink-0",
+                  "px-4 py-3 rounded-xl text-xs font-semibold shrink-0 gap-2",
                   onlyActive
-                    ? "bg-beauty-400/10 border-beauty-400/30 text-beauty-600 dark:text-beauty-400"
+                    ? "bg-beauty-400/10 border-beauty-400/30 text-beauty-600 dark:text-beauty-400 hover:bg-beauty-400/20"
                     : "bg-bg-surface border-border-default text-text-secondary hover:text-text-primary",
                 )}
                 title={onlyActive ? "Mostrando solo campaña activa." : "Mostrando todos los catálogos."}
@@ -328,7 +329,7 @@ export default function Campaigns({
                   ? <FiCheckCircle className="w-3.5 h-3.5" />
                   : <FiCircle className="w-3.5 h-3.5" />}
                 Campaña activa
-              </button>
+              </Button>
             )}
             <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
               Total: {overallCount} {isCampaignsTab ? "campañas" : "catálogos"}{" "}

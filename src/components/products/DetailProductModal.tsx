@@ -185,7 +185,7 @@ export default function DetailProductModal({
                 Descripción del Producto
               </span>
             </div>
-            <div className="text-sm text-text-secondary bg-bg-surface/10 dark:bg-bg-surface/5 border border-border-soft dark:border-border-default/60 border-l-4 border-l-beauty-500 dark:border-l-beauty-400 p-4 rounded-2xl flex-1 overflow-y-auto whitespace-pre-wrap leading-relaxed select-text min-h-21.25">
+            <div className="text-sm text-text-secondary bg-bg-surface/10 dark:bg-bg-surface/5 border border-border-soft dark:border-border-default/60 border-l-4 border-l-beauty-500 dark:border-l-beauty-400 p-4 rounded-2xl flex-1 overflow-y-auto whitespace-pre-wrap leading-relaxed select-text min-h-21.25 outline-none focus:outline-none focus-visible:outline-none">
               {product.description ? (
                 product.description
               ) : (

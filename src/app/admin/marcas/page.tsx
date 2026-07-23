@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Brands from "@/components/brands";
 
+export const metadata = {
+  title: "Marcas",
+};
+
 interface MarcasPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

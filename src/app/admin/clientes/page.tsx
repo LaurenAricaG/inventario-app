@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Clients from "@/components/client";
 
+export const metadata = {
+  title: "Clientes",
+};
+
 interface ClientesPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

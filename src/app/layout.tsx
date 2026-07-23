@@ -12,11 +12,18 @@ const outfit = Outfit({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Catálogo de Productos | Lauren Arica",
-  description:
-    "Explora nuestro catálogo exclusivo de productos Natura y Avon. Filtra por categoría, marca o género y realiza tus consultas de disponibilidad directo por WhatsApp.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getPublicSystemConfig();
+  const companyName = config?.systemName || "Mi empresa";
+
+  return {
+    title: {
+      default: companyName,
+      template: `%s | ${companyName}`,
+    },
+    description: `Explora nuestro catálogo exclusivo de productos. Filtra por categoría, marca o género y realiza tus consultas de disponibilidad directo por WhatsApp con ${companyName}.`,
+  };
+}
 
 const themeScript = `
 (function() {

@@ -944,7 +944,7 @@ export default function QuickOrderConsole({
             className="w-full sm:w-auto gap-2"
           >
             <FiSave className="w-4 h-4 shrink-0" />
-            Guardar Pedidos
+            Guardar
           </Button>
         </div>
       </div>

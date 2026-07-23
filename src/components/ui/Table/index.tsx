@@ -10,7 +10,7 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
     return (
       <div
         className={cn(
-          "overflow-x-auto w-full scrollbar-thin scrollbar-thumb-stone-300 dark:scrollbar-thumb-zinc-700",
+          "overflow-x-auto w-full scrollbar-thin scrollbar-thumb-stone-300 dark:scrollbar-thumb-zinc-700 outline-none focus:outline-none focus-visible:outline-none",
           containerClassName,
         )}
       >

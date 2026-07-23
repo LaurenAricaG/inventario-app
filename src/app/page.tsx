@@ -3,11 +3,6 @@ import CatalogPortalClient from "@/components/catalog/CatalogPortalClient";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Catálogo Público de Productos",
-  description: "Explora nuestro catálogo de productos Natura & Avon, consulta stock y haz tus pedidos directo por WhatsApp.",
-};
-
 export default async function Page() {
   const systemConfig = await prisma.systemConfig.findFirst({
     where: { lock: true },
@@ -59,9 +54,9 @@ export default async function Page() {
     },
     genderSegment: product.genderSegment
       ? {
-          id: product.genderSegment.id,
-          name: product.genderSegment.name,
-        }
+        id: product.genderSegment.id,
+        name: product.genderSegment.name,
+      }
       : null,
     images: product.images.map((img) => ({
       id: img.id,
@@ -73,13 +68,13 @@ export default async function Page() {
 
   const serializedConfig = systemConfig
     ? {
-        systemName: systemConfig.systemName,
-        systemLogoUrl: systemConfig.systemLogoUrl,
-        whatsappNumber: systemConfig.whatsappNumber,
-        showPricePublic: systemConfig.showPricePublic,
-        showStockPublic: systemConfig.showStockPublic,
-        showCatalogsPublic: systemConfig.showCatalogsPublic,
-      }
+      systemName: systemConfig.systemName,
+      systemLogoUrl: systemConfig.systemLogoUrl,
+      whatsappNumber: systemConfig.whatsappNumber,
+      showPricePublic: systemConfig.showPricePublic,
+      showStockPublic: systemConfig.showStockPublic,
+      showCatalogsPublic: systemConfig.showCatalogsPublic,
+    }
     : null;
 
   return (

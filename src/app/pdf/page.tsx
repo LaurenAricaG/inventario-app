@@ -3,10 +3,18 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import { formatDateUTC } from "@/utils/date.utils";
 import { prisma } from "@/lib/prisma";
+import { getPublicSystemConfig } from "@/lib/config";
+
+export const metadata = {
+  title: "Catálogos PDF",
+};
 
 export const revalidate = 0;
 
 export default async function CatalogoPdfPublico() {
+  const systemConfig = await getPublicSystemConfig();
+  const systemName = systemConfig?.systemName || "Mi empresa";
+
   // Obtener todas las campañas activas con sus empresas, marcas y catálogos asociados
   const activeCampaigns = await prisma.campaign.findMany({
     where: {
@@ -109,8 +117,8 @@ export default async function CatalogoPdfPublico() {
                   </span>
                   {campaign.startDate && campaign.endDate && (
                     <span className="text-[11px] text-text-tertiary sm:ml-auto">
-                      Vigencia:{" "}
-                      {formatDateUTC(campaign.startDate)} - {formatDateUTC(campaign.endDate)}
+                      Vigencia: {formatDateUTC(campaign.startDate)} -{" "}
+                      {formatDateUTC(campaign.endDate)}
                     </span>
                   )}
                 </div>
@@ -200,20 +208,32 @@ export default async function CatalogoPdfPublico() {
       </main>
 
       {/* 4. Footer */}
-      <footer className="w-full bg-bg-surface border-t border-border-default mt-16 py-8 px-4 sm:px-8 text-center text-xs text-text-secondary transition-colors duration-300">
-        <div className="max-w-2xl mx-auto space-y-3 select-none">
-          <p className="font-semibold text-text-primary">
-            Lauren Arica • Consultora Autorizada Belcorp, Natura & Avon
+      <footer className="mt-16 py-8 border-t border-border-soft text-center text-xs text-text-tertiary bg-bg-surface/50">
+        <div className="max-w-7xl mx-auto px-4 space-y-1.5 select-none">
+          <p className="font-bold text-text-primary text-sm">
+            {systemName.split(" ").map((word, idx, arr) => (
+              <span
+                key={idx}
+                className={
+                  idx === arr.length - 1
+                    ? "text-beauty-600 dark:text-beauty-400 font-extrabold"
+                    : ""
+                }
+              >
+                {word}
+                {idx < arr.length - 1 ? " " : ""}
+              </span>
+            ))}{" "}
+            • Catálogo de Exhibición y Consulta
           </p>
           <p className="leading-relaxed">
-            Las marcas Ésika, L'Bel, Cyzone, Natura y Avon son marcas
-            registradas de sus respectivos dueños. Este sitio enlaza a sus
-            catálogos virtuales públicos para facilitar la recopilación de
-            pedidos de clientes.
+            Explora los productos disponibles y realiza tu pedido mediante
+            WhatsApp.
           </p>
-          <div className="pt-4 text-[10px] text-text-tertiary">
-            © {new Date().getFullYear()} Lauren Arica. Todos los derechos
-            reservados.
+          <div className="pt-3 text-[10px] text-text-tertiary">
+            © {new Date().getFullYear()}{" "}
+            <span className="text-beauty-600 font-bold">Lauren Arica</span>.
+            Todos los derechos reservados.
           </div>
         </div>
       </footer>

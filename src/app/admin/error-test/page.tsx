@@ -6,7 +6,14 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import ConfirmModal from "@/components/ui/ConfirmModal";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/Table";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/Table";
 import Form, { FormField } from "@/components/ui/Form";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
@@ -35,7 +42,7 @@ const BuggyComponent = ({ name }: { name: string }) => {
 
   if (shouldThrow) {
     throw new Error(
-      `Error simulado en "${name}". Se ha producido una excepción de prueba para verificar este nivel de Error Boundary.`
+      `Error simulado en "${name}". Se ha producido una excepción de prueba para verificar este nivel de Error Boundary.`,
     );
   }
 
@@ -64,8 +71,8 @@ export default function ErrorTestPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formValues, setFormValues] = useState({
-    nombre: "Lauren Arica",
-    correo: "lauren@example.com",
+    nombre: "usuario",
+    correo: "usuario@example.com",
     rol: "admin",
     comentarios: "Esta es una nota de prueba para validar el Textarea.",
     terminos: true,
@@ -101,7 +108,8 @@ export default function ErrorTestPage() {
           Laboratorio de Componentes y Pruebas
         </h2>
         <p className="text-sm text-text-secondary mt-1">
-          Visualiza los nuevos componentes de formulario en acción, prueba el soporte de temas claro/oscuro y simula errores en tiempo real.
+          Visualiza los nuevos componentes de formulario en acción, prueba el
+          soporte de temas claro/oscuro y simula errores en tiempo real.
         </p>
       </div>
 
@@ -113,7 +121,8 @@ export default function ErrorTestPage() {
               Galería de Componentes Reutilizables (Formulario)
             </h3>
             <p className="text-xs text-text-secondary mt-0.5">
-              Interactúa con los controles personalizados e incluso simula estados de error.
+              Interactúa con los controles personalizados e incluso simula
+              estados de error.
             </p>
           </div>
           <div className="flex gap-2">
@@ -149,12 +158,18 @@ export default function ErrorTestPage() {
             <FormField
               label="Nombre del Cliente"
               required
-              error={showValidationErrors ? "El nombre es obligatorio o inválido" : undefined}
+              error={
+                showValidationErrors
+                  ? "El nombre es obligatorio o inválido"
+                  : undefined
+              }
             >
               <Input
-                placeholder="Ej. Lauren Guerrero"
+                placeholder="Ej. Usuario"
                 value={formValues.nombre}
-                onChange={(e) => setFormValues({ ...formValues, nombre: e.target.value })}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, nombre: e.target.value })
+                }
                 icon={<FiUser className="w-4 h-4" />}
               />
             </FormField>
@@ -163,13 +178,19 @@ export default function ErrorTestPage() {
             <FormField
               label="Correo Electrónico"
               required
-              error={showValidationErrors ? "El correo electrónico no tiene formato correcto" : undefined}
+              error={
+                showValidationErrors
+                  ? "El correo electrónico no tiene formato correcto"
+                  : undefined
+              }
             >
               <Input
                 type="email"
-                placeholder="Ej. lauren@example.com"
+                placeholder="Ej. email@example.com"
                 value={formValues.correo}
-                onChange={(e) => setFormValues({ ...formValues, correo: e.target.value })}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, correo: e.target.value })
+                }
                 icon={<FiMail className="w-4 h-4" />}
               />
             </FormField>
@@ -177,11 +198,17 @@ export default function ErrorTestPage() {
             {/* Select Component */}
             <FormField
               label="Rol Asignado"
-              error={showValidationErrors ? "Selecciona una opción permitida" : undefined}
+              error={
+                showValidationErrors
+                  ? "Selecciona una opción permitida"
+                  : undefined
+              }
             >
               <Select
                 value={formValues.rol}
-                onChange={(e) => setFormValues({ ...formValues, rol: e.target.value })}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, rol: e.target.value })
+                }
                 icon={<FiBriefcase className="w-4 h-4" />}
               >
                 <option value="admin">Administrador (ADMIN)</option>
@@ -193,12 +220,18 @@ export default function ErrorTestPage() {
             {/* Checkbox Component */}
             <div className="flex items-center pt-6">
               <FormField
-                error={showValidationErrors ? "Debes aceptar los términos" : undefined}
+                error={
+                  showValidationErrors
+                    ? "Debes aceptar los términos"
+                    : undefined
+                }
               >
                 <Checkbox
                   id="terminos-demo"
                   checked={formValues.terminos}
-                  onChange={(e) => setFormValues({ ...formValues, terminos: e.target.checked })}
+                  onChange={(e) =>
+                    setFormValues({ ...formValues, terminos: e.target.checked })
+                  }
                   label="Acepto los términos y políticas de uso"
                 />
               </FormField>
@@ -208,12 +241,18 @@ export default function ErrorTestPage() {
           {/* Textarea Component */}
           <FormField
             label="Comentarios o Notas"
-            error={showValidationErrors ? "Las notas exceden el límite de caracteres permitido" : undefined}
+            error={
+              showValidationErrors
+                ? "Las notas exceden el límite de caracteres permitido"
+                : undefined
+            }
           >
             <Textarea
               placeholder="Escribe comentarios aquí..."
               value={formValues.comentarios}
-              onChange={(e) => setFormValues({ ...formValues, comentarios: e.target.value })}
+              onChange={(e) =>
+                setFormValues({ ...formValues, comentarios: e.target.value })
+              }
             />
           </FormField>
 
@@ -249,7 +288,8 @@ export default function ErrorTestPage() {
             Laboratorio de Límite de Errores (ErrorBoundary)
           </h3>
           <p className="text-xs text-text-secondary mt-0.5">
-            Usa los botones para simular excepciones en los componentes y observa cómo responde cada variante.
+            Usa los botones para simular excepciones en los componentes y
+            observa cómo responde cada variante.
           </p>
         </div>
 
@@ -294,7 +334,10 @@ export default function ErrorTestPage() {
             </div>
 
             <div className="space-y-4">
-              <ErrorBoundary variant="embedded" title="Historial de Transacciones">
+              <ErrorBoundary
+                variant="embedded"
+                title="Historial de Transacciones"
+              >
                 <BuggyComponent name="Historial de Transacciones" />
               </ErrorBoundary>
             </div>
@@ -332,7 +375,8 @@ export default function ErrorTestPage() {
             Guía de Estilos y Jerarquía de Botones
           </h3>
           <p className="text-xs text-text-secondary mt-0.5">
-            Definición visual de prioridades, colores y hover de los botones para mantener la consistencia en toda la aplicación.
+            Definición visual de prioridades, colores y hover de los botones
+            para mantener la consistencia en toda la aplicación.
           </p>
         </div>
 
@@ -348,187 +392,263 @@ export default function ErrorTestPage() {
             </TableRow>
           </TableHeader>
           <TableBody className="text-text-secondary">
-              {/* Nivel 1 */}
-              <tr>
-                <td className="p-4 font-medium text-text-primary">
-                  <div className="space-y-1">
-                    <span className="px-2 py-0.5 rounded-md bg-beauty-400/10 text-beauty-600 dark:bg-beauty-600/15 dark:text-beauty-400 text-[10px] font-bold uppercase tracking-wider font-sans">Nivel 1: Principal</span>
-                    <p className="text-[11px] text-text-tertiary">Creación, envío final (ej. Guardar, Nuevo Cliente)</p>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <Button variant="primary" className="py-2 text-xs flex items-center gap-1">
-                    <FiPlus className="w-3.5 h-3.5" /> Nuevo Cliente
-                  </Button>
-                </td>
-                <td className="p-4">
-                  <Button variant="primary" className="py-2 text-xs bg-beauty-600 shadow-lg shadow-beauty-500/25 flex items-center gap-1 pointer-events-none">
-                    <FiPlus className="w-3.5 h-3.5" /> Nuevo Cliente
-                  </Button>
-                </td>
-                <td className="p-4">
-                  <Button variant="primary" className="py-2 text-xs flex items-center gap-1" disabled>
-                    <FiPlus className="w-3.5 h-3.5" /> Nuevo Cliente
-                  </Button>
-                </td>
-                <td className="p-4">
-                  <Button variant="primary" className="py-2 text-xs flex items-center gap-1" loading>
-                    Guardar
-                  </Button>
-                </td>
-              </tr>
+            {/* Nivel 1 */}
+            <tr>
+              <td className="p-4 font-medium text-text-primary">
+                <div className="space-y-1">
+                  <span className="px-2 py-0.5 rounded-md bg-beauty-400/10 text-beauty-600 dark:bg-beauty-600/15 dark:text-beauty-400 text-[10px] font-bold uppercase tracking-wider font-sans">
+                    Nivel 1: Principal
+                  </span>
+                  <p className="text-[11px] text-text-tertiary">
+                    Creación, envío final (ej. Guardar, Nuevo Cliente)
+                  </p>
+                </div>
+              </td>
+              <td className="p-4">
+                <Button
+                  variant="primary"
+                  className="py-2 text-xs flex items-center gap-1"
+                >
+                  <FiPlus className="w-3.5 h-3.5" /> Nuevo Cliente
+                </Button>
+              </td>
+              <td className="p-4">
+                <Button
+                  variant="primary"
+                  className="py-2 text-xs bg-beauty-600 shadow-lg shadow-beauty-500/25 flex items-center gap-1 pointer-events-none"
+                >
+                  <FiPlus className="w-3.5 h-3.5" /> Nuevo Cliente
+                </Button>
+              </td>
+              <td className="p-4">
+                <Button
+                  variant="primary"
+                  className="py-2 text-xs flex items-center gap-1"
+                  disabled
+                >
+                  <FiPlus className="w-3.5 h-3.5" /> Nuevo Cliente
+                </Button>
+              </td>
+              <td className="p-4">
+                <Button
+                  variant="primary"
+                  className="py-2 text-xs flex items-center gap-1"
+                  loading
+                >
+                  Guardar
+                </Button>
+              </td>
+            </tr>
 
-              {/* Nivel 2 */}
-              <tr>
-                <td className="p-4 font-medium text-text-primary">
-                  <div className="space-y-1">
-                    <span className="px-2 py-0.5 rounded-md bg-beauty-400/10 text-beauty-600 dark:bg-beauty-600/15 dark:text-beauty-400 text-[10px] font-bold uppercase tracking-wider font-sans">Nivel 2: Secundario</span>
-                    <p className="text-[11px] text-text-tertiary">Modificación de datos (ej. Editar, Actualizar)</p>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <Button className="py-2 text-xs bg-beauty-400/10 text-beauty-600 dark:bg-beauty-400/10 dark:text-beauty-400 font-semibold hover:bg-beauty-400/20 dark:hover:bg-beauty-400/20 flex items-center gap-1 cursor-pointer">
-                    <FiSave className="w-3.5 h-3.5" /> Editar
-                  </Button>
-                </td>
-                <td className="p-4">
-                  <Button className="py-2 text-xs bg-beauty-400/20 text-beauty-600 dark:bg-beauty-400/20 dark:text-beauty-400 font-semibold flex items-center gap-1 pointer-events-none">
-                    <FiSave className="w-3.5 h-3.5" /> Editar
-                  </Button>
-                </td>
-                <td className="p-4">
-                  <Button className="py-2 text-xs bg-beauty-400/5 text-beauty-600/40 dark:bg-beauty-400/5 dark:text-beauty-400/40 font-semibold flex items-center gap-1" disabled>
-                    <FiSave className="w-3.5 h-3.5" /> Editar
-                  </Button>
-                </td>
-                <td className="p-4">
-                  <Button className="py-2 text-xs bg-beauty-400/10 text-beauty-600 dark:bg-beauty-400/10 dark:text-beauty-400 font-semibold flex items-center gap-1" loading>
-                    Editar
-                  </Button>
-                </td>
-              </tr>
+            {/* Nivel 2 */}
+            <tr>
+              <td className="p-4 font-medium text-text-primary">
+                <div className="space-y-1">
+                  <span className="px-2 py-0.5 rounded-md bg-beauty-400/10 text-beauty-600 dark:bg-beauty-600/15 dark:text-beauty-400 text-[10px] font-bold uppercase tracking-wider font-sans">
+                    Nivel 2: Secundario
+                  </span>
+                  <p className="text-[11px] text-text-tertiary">
+                    Modificación de datos (ej. Editar, Actualizar)
+                  </p>
+                </div>
+              </td>
+              <td className="p-4">
+                <Button className="py-2 text-xs bg-beauty-400/10 text-beauty-600 dark:bg-beauty-400/10 dark:text-beauty-400 font-semibold hover:bg-beauty-400/20 dark:hover:bg-beauty-400/20 flex items-center gap-1 cursor-pointer">
+                  <FiSave className="w-3.5 h-3.5" /> Editar
+                </Button>
+              </td>
+              <td className="p-4">
+                <Button className="py-2 text-xs bg-beauty-400/20 text-beauty-600 dark:bg-beauty-400/20 dark:text-beauty-400 font-semibold flex items-center gap-1 pointer-events-none">
+                  <FiSave className="w-3.5 h-3.5" /> Editar
+                </Button>
+              </td>
+              <td className="p-4">
+                <Button
+                  className="py-2 text-xs bg-beauty-400/5 text-beauty-600/40 dark:bg-beauty-400/5 dark:text-beauty-400/40 font-semibold flex items-center gap-1"
+                  disabled
+                >
+                  <FiSave className="w-3.5 h-3.5" /> Editar
+                </Button>
+              </td>
+              <td className="p-4">
+                <Button
+                  className="py-2 text-xs bg-beauty-400/10 text-beauty-600 dark:bg-beauty-400/10 dark:text-beauty-400 font-semibold flex items-center gap-1"
+                  loading
+                >
+                  Editar
+                </Button>
+              </td>
+            </tr>
 
-              {/* Nivel 3 */}
-              <tr>
-                <td className="p-4 font-medium text-text-primary">
-                  <div className="space-y-1">
-                    <span className="px-2 py-0.5 rounded-md bg-border-strong/20 text-text-secondary text-[10px] font-bold uppercase tracking-wider font-sans">Nivel 3: Terciario</span>
-                    <p className="text-[11px] text-text-tertiary">Cancelar, volver, cerrar</p>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <Button variant="outline" className="py-2 text-xs flex items-center gap-1">
-                    <FiX className="w-3.5 h-3.5" /> Cancelar
-                  </Button>
-                </td>
-                <td className="p-4">
-                  <Button variant="outline" className="py-2 text-xs bg-bg-surface flex items-center gap-1 pointer-events-none">
-                    <FiX className="w-3.5 h-3.5" /> Cancelar
-                  </Button>
-                </td>
-                <td className="p-4">
-                  <Button variant="outline" className="py-2 text-xs flex items-center gap-1" disabled>
-                    <FiX className="w-3.5 h-3.5" /> Cancelar
-                  </Button>
-                </td>
-                <td className="p-4">
-                  <Button variant="outline" className="py-2 text-xs flex items-center gap-1" loading>
-                    Cancelar
-                  </Button>
-                </td>
-              </tr>
+            {/* Nivel 3 */}
+            <tr>
+              <td className="p-4 font-medium text-text-primary">
+                <div className="space-y-1">
+                  <span className="px-2 py-0.5 rounded-md bg-border-strong/20 text-text-secondary text-[10px] font-bold uppercase tracking-wider font-sans">
+                    Nivel 3: Terciario
+                  </span>
+                  <p className="text-[11px] text-text-tertiary">
+                    Cancelar, volver, cerrar
+                  </p>
+                </div>
+              </td>
+              <td className="p-4">
+                <Button
+                  variant="outline"
+                  className="py-2 text-xs flex items-center gap-1"
+                >
+                  <FiX className="w-3.5 h-3.5" /> Cancelar
+                </Button>
+              </td>
+              <td className="p-4">
+                <Button
+                  variant="outline"
+                  className="py-2 text-xs bg-bg-surface flex items-center gap-1 pointer-events-none"
+                >
+                  <FiX className="w-3.5 h-3.5" /> Cancelar
+                </Button>
+              </td>
+              <td className="p-4">
+                <Button
+                  variant="outline"
+                  className="py-2 text-xs flex items-center gap-1"
+                  disabled
+                >
+                  <FiX className="w-3.5 h-3.5" /> Cancelar
+                </Button>
+              </td>
+              <td className="p-4">
+                <Button
+                  variant="outline"
+                  className="py-2 text-xs flex items-center gap-1"
+                  loading
+                >
+                  Cancelar
+                </Button>
+              </td>
+            </tr>
 
-              {/* Nivel 4: Editar (Warning) */}
-              <tr>
-                <td className="p-4 font-medium text-text-primary">
-                  <div className="space-y-1">
-                    <span className="px-2 py-0.5 rounded-md bg-warning-bg/30 text-warning-text text-[10px] font-bold uppercase tracking-wider font-sans">Nivel 4: Editar</span>
-                    <p className="text-[11px] text-text-tertiary">Acción de edición en filas</p>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-warning-bg/40 border border-warning-text/15 text-warning-text cursor-pointer focus-visible:outline-none">
-                    <FiEdit2 className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-warning-bg/80 border border-warning-text/30 text-warning-text scale-[1.04] pointer-events-none">
-                    <FiEdit2 className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-warning-bg/10 border border-warning-text/5 text-warning-text/40 opacity-50" disabled>
-                    <FiEdit2 className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-warning-bg/40 border border-warning-text/15 text-warning-text opacity-50" disabled>
-                    <div className="w-3.5 h-3.5 border-2 border-warning-text border-t-transparent rounded-full animate-spin" />
-                  </button>
-                </td>
-              </tr>
+            {/* Nivel 4: Editar (Warning) */}
+            <tr>
+              <td className="p-4 font-medium text-text-primary">
+                <div className="space-y-1">
+                  <span className="px-2 py-0.5 rounded-md bg-warning-bg/30 text-warning-text text-[10px] font-bold uppercase tracking-wider font-sans">
+                    Nivel 4: Editar
+                  </span>
+                  <p className="text-[11px] text-text-tertiary">
+                    Acción de edición en filas
+                  </p>
+                </div>
+              </td>
+              <td className="p-4">
+                <button className="p-2 rounded-xl bg-warning-bg/40 border border-warning-text/15 text-warning-text cursor-pointer focus-visible:outline-none">
+                  <FiEdit2 className="w-3.5 h-3.5" />
+                </button>
+              </td>
+              <td className="p-4">
+                <button className="p-2 rounded-xl bg-warning-bg/80 border border-warning-text/30 text-warning-text scale-[1.04] pointer-events-none">
+                  <FiEdit2 className="w-3.5 h-3.5" />
+                </button>
+              </td>
+              <td className="p-4">
+                <button
+                  className="p-2 rounded-xl bg-warning-bg/10 border border-warning-text/5 text-warning-text/40 opacity-50"
+                  disabled
+                >
+                  <FiEdit2 className="w-3.5 h-3.5" />
+                </button>
+              </td>
+              <td className="p-4">
+                <button
+                  className="p-2 rounded-xl bg-warning-bg/40 border border-warning-text/15 text-warning-text opacity-50"
+                  disabled
+                >
+                  <div className="w-3.5 h-3.5 border-2 border-warning-text border-t-transparent rounded-full animate-spin" />
+                </button>
+              </td>
+            </tr>
 
-              {/* Nivel 5: Eliminar (Danger) */}
-              <tr>
-                <td className="p-4 font-medium text-text-primary">
-                  <div className="space-y-1">
-                    <span className="px-2 py-0.5 rounded-md bg-danger-bg/30 text-danger-text text-[10px] font-bold uppercase tracking-wider font-sans">Nivel 5: Eliminar</span>
-                    <p className="text-[11px] text-text-tertiary">Acción de eliminación o suspensión</p>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text cursor-pointer focus-visible:outline-none">
-                    <FiTrash2 className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-danger-bg/80 border border-danger-text/30 text-danger-text scale-[1.04] pointer-events-none">
-                    <FiTrash2 className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-danger-bg/10 border border-danger-text/5 text-danger-text/40 opacity-50" disabled>
-                    <FiTrash2 className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text opacity-50" disabled>
-                    <div className="w-3.5 h-3.5 border-2 border-danger-text border-t-transparent rounded-full animate-spin" />
-                  </button>
-                </td>
-              </tr>
+            {/* Nivel 5: Eliminar (Danger) */}
+            <tr>
+              <td className="p-4 font-medium text-text-primary">
+                <div className="space-y-1">
+                  <span className="px-2 py-0.5 rounded-md bg-danger-bg/30 text-danger-text text-[10px] font-bold uppercase tracking-wider font-sans">
+                    Nivel 5: Eliminar
+                  </span>
+                  <p className="text-[11px] text-text-tertiary">
+                    Acción de eliminación o suspensión
+                  </p>
+                </div>
+              </td>
+              <td className="p-4">
+                <button className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text cursor-pointer focus-visible:outline-none">
+                  <FiTrash2 className="w-3.5 h-3.5" />
+                </button>
+              </td>
+              <td className="p-4">
+                <button className="p-2 rounded-xl bg-danger-bg/80 border border-danger-text/30 text-danger-text scale-[1.04] pointer-events-none">
+                  <FiTrash2 className="w-3.5 h-3.5" />
+                </button>
+              </td>
+              <td className="p-4">
+                <button
+                  className="p-2 rounded-xl bg-danger-bg/10 border border-danger-text/5 text-danger-text/40 opacity-50"
+                  disabled
+                >
+                  <FiTrash2 className="w-3.5 h-3.5" />
+                </button>
+              </td>
+              <td className="p-4">
+                <button
+                  className="p-2 rounded-xl bg-danger-bg/40 border border-danger-text/15 text-danger-text opacity-50"
+                  disabled
+                >
+                  <div className="w-3.5 h-3.5 border-2 border-danger-text border-t-transparent rounded-full animate-spin" />
+                </button>
+              </td>
+            </tr>
 
-              {/* Nivel 6: Restaurar / Regenerar (Info) */}
-              <tr>
-                <td className="p-4 font-medium text-text-primary">
-                  <div className="space-y-1">
-                    <span className="px-2 py-0.5 rounded-md bg-info-bg/30 text-info-text text-[10px] font-bold uppercase tracking-wider font-sans">Nivel 6: Restaurar</span>
-                    <p className="text-[11px] text-text-tertiary">Acción de restauración o regeneración</p>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-info-bg/45 border border-info-text/15 text-info-text cursor-pointer focus-visible:outline-none">
-                    <FiRefreshCw className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-info-bg/85 border border-info-text/30 text-info-text scale-[1.04] pointer-events-none">
-                    <FiRefreshCw className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-info-bg/10 border border-info-text/5 text-info-text/40 opacity-50" disabled>
-                    <FiRefreshCw className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-                <td className="p-4">
-                  <button className="p-2 rounded-xl bg-info-bg/45 border border-info-text/15 text-info-text opacity-50" disabled>
-                    <FiRefreshCw className="w-3.5 h-3.5 animate-spin" />
-                  </button>
-                </td>
-              </tr>
-            </TableBody>
-          </Table>
+            {/* Nivel 6: Restaurar / Regenerar (Info) */}
+            <tr>
+              <td className="p-4 font-medium text-text-primary">
+                <div className="space-y-1">
+                  <span className="px-2 py-0.5 rounded-md bg-info-bg/30 text-info-text text-[10px] font-bold uppercase tracking-wider font-sans">
+                    Nivel 6: Restaurar
+                  </span>
+                  <p className="text-[11px] text-text-tertiary">
+                    Acción de restauración o regeneración
+                  </p>
+                </div>
+              </td>
+              <td className="p-4">
+                <button className="p-2 rounded-xl bg-info-bg/45 border border-info-text/15 text-info-text cursor-pointer focus-visible:outline-none">
+                  <FiRefreshCw className="w-3.5 h-3.5" />
+                </button>
+              </td>
+              <td className="p-4">
+                <button className="p-2 rounded-xl bg-info-bg/85 border border-info-text/30 text-info-text scale-[1.04] pointer-events-none">
+                  <FiRefreshCw className="w-3.5 h-3.5" />
+                </button>
+              </td>
+              <td className="p-4">
+                <button
+                  className="p-2 rounded-xl bg-info-bg/10 border border-info-text/5 text-info-text/40 opacity-50"
+                  disabled
+                >
+                  <FiRefreshCw className="w-3.5 h-3.5" />
+                </button>
+              </td>
+              <td className="p-4">
+                <button
+                  className="p-2 rounded-xl bg-info-bg/45 border border-info-text/15 text-info-text opacity-50"
+                  disabled
+                >
+                  <FiRefreshCw className="w-3.5 h-3.5 animate-spin" />
+                </button>
+              </td>
+            </tr>
+          </TableBody>
+        </Table>
 
         {/* Fila de Listado de Muestra y Botones de Acción (Editar/Eliminar/Restaurar) */}
         <div className="space-y-3">
@@ -536,7 +656,10 @@ export default function ErrorTestPage() {
             Botones de Acción Semánticos sobre Listas o Filas
           </h4>
           <p className="text-xs text-text-secondary">
-            Simulación de una fila de tabla. Los botones de acción usan colores definidos por defecto y hovers táctiles mejorados: **Lápiz de edición** (Warning), **Basura de eliminación** (Danger) e **Icono de actualización/regeneración** (Info).
+            Simulación de una fila de tabla. Los botones de acción usan colores
+            definidos por defecto y hovers táctiles mejorados: **Lápiz de
+            edición** (Warning), **Basura de eliminación** (Danger) e **Icono de
+            actualización/regeneración** (Info).
           </p>
 
           <div className="flex items-center justify-between p-4 bg-bg-surface/30 border border-border-default/50 rounded-2xl">
@@ -545,8 +668,12 @@ export default function ErrorTestPage() {
                 JP
               </div>
               <div>
-                <p className="text-xs font-semibold text-text-primary">Juan Pérez</p>
-                <p className="text-[10px] text-text-secondary">juan.perez@example.com</p>
+                <p className="text-xs font-semibold text-text-primary">
+                  Juan Pérez
+                </p>
+                <p className="text-[10px] text-text-secondary">
+                  juan.perez@example.com
+                </p>
               </div>
             </div>
 
@@ -607,7 +734,9 @@ export default function ErrorTestPage() {
             <div className="flex gap-3 items-start p-3 bg-info-bg/30 border border-info-text/20 rounded-xl text-info-text">
               <FiInfo className="w-4 h-4 mt-0.5 shrink-0" />
               <p className="text-xs leading-relaxed">
-                Este formulario está alojado dentro del componente <strong>Modal</strong> reutilizable. Al hacer clic en "Guardar Datos" se disparará el submit nativo.
+                Este formulario está alojado dentro del componente{" "}
+                <strong>Modal</strong> reutilizable. Al hacer clic en "Guardar
+                Datos" se disparará el submit nativo.
               </p>
             </div>
 
@@ -636,7 +765,11 @@ export default function ErrorTestPage() {
             </FormField>
 
             <FormField>
-              <Checkbox id="modal-check" label="Activar notificaciones semanales" defaultChecked />
+              <Checkbox
+                id="modal-check"
+                label="Activar notificaciones semanales"
+                defaultChecked
+              />
             </FormField>
           </div>
         </Form>

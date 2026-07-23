@@ -2,6 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import Dashboard from "@/components/dashboard";
 
+export const metadata = {
+  title: "Inicio",
+};
+
 interface DBOrderItem {
   arrivalStatus: string;
   substitute?: {
@@ -23,8 +27,8 @@ const getOrderTotal = (order: DBOrder) => {
     if (item.arrivalStatus === "MISSING") return sum;
     const price =
       item.arrivalStatus === "SUBSTITUTED" &&
-      item.substitute?.catalogPrice !== undefined &&
-      item.substitute?.catalogPrice !== null
+        item.substitute?.catalogPrice !== undefined &&
+        item.substitute?.catalogPrice !== null
         ? item.substitute.catalogPrice
         : item.catalogPrice;
     return sum + item.quantity * price;
@@ -45,28 +49,28 @@ export default async function DashboardPage() {
   const campaignsToUse = activeCampaigns.length > 0
     ? activeCampaigns
     : await prisma.campaign.findMany({
-        where: { deletedAt: null },
-        include: { company: true },
-        orderBy: { endDate: "desc" },
-        take: 2,
-      });
+      where: { deletedAt: null },
+      include: { company: true },
+      orderBy: { endDate: "desc" },
+      take: 2,
+    });
 
   const activeCampaignIds = campaignsToUse.map((c) => c.id);
 
   // 2. Fetch campaign orders (to compute campaign sales)
   const campaignOrders = activeCampaignIds.length > 0
     ? await prisma.campaignOrder.findMany({
-        where: {
-          campaignId: { in: activeCampaignIds },
-          deletedAt: null,
+      where: {
+        campaignId: { in: activeCampaignIds },
+        deletedAt: null,
+      },
+      include: {
+        items: {
+          include: { substitute: true },
         },
-        include: {
-          items: {
-            include: { substitute: true },
-          },
-          campaign: { include: { company: true } },
-        },
-      })
+        campaign: { include: { company: true } },
+      },
+    })
     : [];
 
   const nonCancelledOrders = campaignOrders.filter((o) => o.status !== "CANCELLED");
@@ -116,11 +120,11 @@ export default async function DashboardPage() {
 
   const allDebtorsList = clients.map((client) => {
     const deliveredOrders = client.campaignOrders.filter((o) => o.status === "DELIVERED");
-    
+
     const totalSales =
       client.directSales.reduce((sum, s) => sum + s.total, 0) +
       deliveredOrders.reduce((sum, o) => sum + getOrderTotal(o), 0);
-      
+
     const totalDebts = client.externalDebts.reduce((sum, d) => sum + d.amount, 0);
     const totalPayments = client.payments.reduce((sum, p) => sum + p.amount, 0);
     const debt = totalSales + totalDebts - totalPayments;
@@ -161,10 +165,10 @@ export default async function DashboardPage() {
     let isOverdue = false;
     if (debt > 0.01) {
       const hasOverdueOrder = deliveredOrders.some((order) => {
-        const orderDueDate = order.paymentDate 
-          ? new Date(order.paymentDate) 
-          : order.campaign.paymentDate 
-            ? new Date(order.campaign.paymentDate) 
+        const orderDueDate = order.paymentDate
+          ? new Date(order.paymentDate)
+          : order.campaign.paymentDate
+            ? new Date(order.campaign.paymentDate)
             : null;
         return orderDueDate ? orderDueDate < today : false;
       });
@@ -188,11 +192,11 @@ export default async function DashboardPage() {
   // Compute full clients list with balances for FormPayments searchable dropdown
   const clientsList = clients.map((client) => {
     const deliveredOrders = client.campaignOrders.filter((o) => o.status === "DELIVERED");
-    
+
     const totalSales =
       client.directSales.reduce((sum, s) => sum + s.total, 0) +
       deliveredOrders.reduce((sum, o) => sum + getOrderTotal(o), 0);
-      
+
     const totalDebts = client.externalDebts.reduce((sum, d) => sum + d.amount, 0);
     const totalPayments = client.payments.reduce((sum, p) => sum + p.amount, 0);
     const balance = totalSales + totalDebts - totalPayments;
@@ -276,7 +280,7 @@ export default async function DashboardPage() {
     {
       title: "Ventas de campaña",
       value: `S/. ${campaignSalesTotal.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      description: campaignsToUse.length > 0 
+      description: campaignsToUse.length > 0
         ? `Campaña ${campaignsToUse[0].number} (${campaignsToUse[0].company.name})`
         : "Sin campaña activa",
       iconKey: "trending-up",

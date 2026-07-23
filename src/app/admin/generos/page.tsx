@@ -3,6 +3,10 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Genders from "@/components/genders";
 
+export const metadata = {
+  title: "Géneros",
+};
+
 interface GenerosPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -29,8 +33,8 @@ export default async function GenerosPage(props: GenerosPageProps) {
     deletedAt: null,
     ...(search
       ? {
-          name: { contains: search, mode: "insensitive" as const },
-        }
+        name: { contains: search, mode: "insensitive" as const },
+      }
       : {}),
   };
 

@@ -89,8 +89,8 @@ export function printCampaignSlips(
         if (item.arrivalStatus === "MISSING") return s;
         const price =
           item.arrivalStatus === "SUBSTITUTED" &&
-            item.substitute?.catalogPrice !== undefined &&
-            item.substitute?.catalogPrice !== null
+          item.substitute?.catalogPrice !== undefined &&
+          item.substitute?.catalogPrice !== null
             ? item.substitute.catalogPrice
             : item.catalogPrice;
         return s + item.quantity * price;
@@ -104,7 +104,9 @@ export function printCampaignSlips(
         .map((item) => {
           const isSub = item.arrivalStatus === "SUBSTITUTED";
           const name = isSub ? item.substitute?.productName : item.productName;
-          const price = isSub ? item.substitute?.catalogPrice : item.catalogPrice;
+          const price = isSub
+            ? item.substitute?.catalogPrice
+            : item.catalogPrice;
 
           return `
           <tr>
@@ -155,15 +157,16 @@ export function printCampaignSlips(
               <span style="font-family: monospace;">S/ ${subtotal.toFixed(2)}</span>
             </div>
 
-            ${order.discount > 0
-          ? `
+            ${
+              order.discount > 0
+                ? `
               <div class="total-row" style="color: #ef4444;">
                 <span>Descuento:</span>
                 <span style="font-family: monospace;">-S/ ${order.discount.toFixed(2)}</span>
               </div>
             `
-          : ""
-        }
+                : ""
+            }
             <div class="total-row" style="font-weight: 800; color: #be185d; font-size: 11px; margin-top: 2px; border-top: 1px solid #fbcfe8; padding-top: 2px;">
               <span>Total Neto:</span>
               <span style="font-family: monospace;">S/ ${total.toFixed(2)}</span>
@@ -171,23 +174,25 @@ export function printCampaignSlips(
           </div>
         </div>
         
-        ${order.notes
-          ? `
+        ${
+          order.notes
+            ? `
           <div class="slip-notes" style="margin-top: 8px; padding: 8px 12px; background: #ffffff; border: 1px dashed #fbcfe8; border-radius: 8px; font-size: 8px; color: #4b5563; text-align: left; line-height: 1.4;">
             <div style="font-weight: bold; text-transform: uppercase; font-size: 7px; letter-spacing: 0.5px; color: #18181b; margin-bottom: 3px;">Nota:</div>
             ${order.notes}
           </div>
         `
-          : ""
+            : ""
         }
         
-        ${order.paymentDate
-          ? `
+        ${
+          order.paymentDate
+            ? `
           <div class="payment-date-info">
             Fecha límite de pago: <strong>${formatDateUTC(order.paymentDate)}</strong>
           </div>
         `
-          : ""
+            : ""
         }
         
         <div class="thanks-msg">¡Gracias por tu preferencia!</div>
@@ -200,7 +205,7 @@ export function printCampaignSlips(
   printDocument.write(`
     <html>
       <head>
-        <title>Fichas de Pedidos - Lauren Arica</title>
+        <title>${systemName}</title>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <style>
           body { 

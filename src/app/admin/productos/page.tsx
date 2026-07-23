@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import Brands from "@/components/brands";
 import Products from "@/components/products";
 
+export const metadata = {
+  title: "Productos",
+};
+
 interface ProductosPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

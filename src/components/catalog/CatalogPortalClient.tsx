@@ -12,7 +12,6 @@ import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import ProductCard from "./ProductCard";
-import { cn } from "@/utils/cn.utils";
 import BrandLogo from "@/components/ui/BrandLogo";
 
 interface CatalogPortalClientProps {
@@ -61,12 +60,10 @@ export default function CatalogPortalClient({
   systemConfig,
 }: CatalogPortalClientProps) {
   const whatsappNumber = systemConfig?.whatsappNumber || "51987654321";
-  const systemName = systemConfig?.systemName || "Inventario";
+  const systemName = systemConfig?.systemName || "Mi empresa";
   const showPrice = systemConfig?.showPricePublic ?? true;
   const showStockCount = systemConfig?.showStockPublic ?? true;
   const showCatalogs = systemConfig?.showCatalogsPublic ?? true;
-
-
 
   // Estados para filtros
   const [search, setSearch] = useState("");
@@ -316,8 +313,8 @@ export default function CatalogPortalClient({
             selectedCategory !== "Todas" ||
             selectedGenders.length > 0 ||
             maxPrice < absMaxPrice) && (
-              <span className="w-2 h-2 rounded-full bg-beauty-600 animate-pulse" />
-            )}
+            <span className="w-2 h-2 rounded-full bg-beauty-600 animate-pulse" />
+          )}
         </button>
       </div>
 
@@ -422,10 +419,11 @@ export default function CatalogPortalClient({
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-all cursor-pointer ${selectedCategory === cat
-                      ? "bg-beauty-100 text-beauty-900 font-bold dark:bg-beauty-950 dark:text-beauty-100"
-                      : "text-text-secondary hover:bg-bg-surface hover:text-text-primary"
-                      }`}
+                    className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-all cursor-pointer ${
+                      selectedCategory === cat
+                        ? "bg-beauty-100 text-beauty-900 font-bold dark:bg-beauty-950 dark:text-beauty-100"
+                        : "text-text-secondary hover:bg-bg-surface hover:text-text-primary"
+                    }`}
                   >
                     {cat}
                   </button>
@@ -495,10 +493,11 @@ export default function CatalogPortalClient({
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs rounded-full border transition-all cursor-pointer ${selectedCategory === cat
-                    ? "bg-beauty-600 border-beauty-600 text-white font-semibold"
-                    : "bg-bg-card border-border-default text-text-secondary hover:text-text-primary"
-                    }`}
+                  className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs rounded-full border transition-all cursor-pointer ${
+                    selectedCategory === cat
+                      ? "bg-beauty-600 border-beauty-600 text-white font-semibold"
+                      : "bg-bg-card border-border-default text-text-secondary hover:text-text-primary"
+                  }`}
                 >
                   {cat}
                 </button>
@@ -630,10 +629,11 @@ export default function CatalogPortalClient({
                         <button
                           key={company}
                           onClick={() => handleCompanyChange(company)}
-                          className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${active
-                            ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
-                            : "bg-bg-surface border-border-default text-text-secondary"
-                            }`}
+                          className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
+                            active
+                              ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
+                              : "bg-bg-surface border-border-default text-text-secondary"
+                          }`}
                         >
                           {company}
                         </button>
@@ -656,10 +656,11 @@ export default function CatalogPortalClient({
                         <button
                           key={brand}
                           onClick={() => handleBrandChange(brand)}
-                          className={`px-3 py-1.5 text-[11px] font-semibold rounded-xl border transition-all cursor-pointer ${active
-                            ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
-                            : "bg-bg-surface border-border-default text-text-secondary"
-                            }`}
+                          className={`px-3 py-1.5 text-[11px] font-semibold rounded-xl border transition-all cursor-pointer ${
+                            active
+                              ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
+                              : "bg-bg-surface border-border-default text-text-secondary"
+                          }`}
                         >
                           {brand}
                         </button>
@@ -680,10 +681,11 @@ export default function CatalogPortalClient({
                       <button
                         key={cat}
                         onClick={() => setSelectedCategory(cat)}
-                        className={`text-center text-xs py-2 rounded-xl transition-all cursor-pointer ${selectedCategory === cat
-                          ? "bg-beauty-100 text-beauty-900 font-bold dark:bg-beauty-950 dark:text-beauty-100 border border-beauty-200/50"
-                          : "bg-bg-surface text-text-secondary hover:text-text-primary border border-transparent"
-                          }`}
+                        className={`text-center text-xs py-2 rounded-xl transition-all cursor-pointer ${
+                          selectedCategory === cat
+                            ? "bg-beauty-100 text-beauty-900 font-bold dark:bg-beauty-950 dark:text-beauty-100 border border-beauty-200/50"
+                            : "bg-bg-surface text-text-secondary hover:text-text-primary border border-transparent"
+                        }`}
                       >
                         {cat}
                       </button>
@@ -705,10 +707,11 @@ export default function CatalogPortalClient({
                         <button
                           key={gender}
                           onClick={() => handleGenderChange(gender)}
-                          className={`text-center text-xs py-2 rounded-xl border transition-all cursor-pointer ${active
-                            ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
-                            : "bg-bg-surface border-border-default text-text-secondary"
-                            }`}
+                          className={`text-center text-xs py-2 rounded-xl border transition-all cursor-pointer ${
+                            active
+                              ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
+                              : "bg-bg-surface border-border-default text-text-secondary"
+                          }`}
                         >
                           {gender}
                         </button>

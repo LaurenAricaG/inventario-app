@@ -186,7 +186,7 @@ export default function OrdersDashboard({
         const minFormatted = `${dd}/${mm}/${yyyy}`;
 
         setPaymentDateError(
-          `La fecha debe ser a partir de 5 días más que el fin de campaña (${minFormatted}).`
+          `La fecha debe ser a partir de 5 días más que el fin de campaña (${minFormatted}).`,
         );
         return;
       }
@@ -228,10 +228,7 @@ export default function OrdersDashboard({
 
   const isVerificationFinished =
     hasOrders &&
-    initialOrders.every(
-      (o) =>
-        o.status !== CampaignOrderStatus.PENDING,
-    );
+    initialOrders.every((o) => o.status !== CampaignOrderStatus.PENDING);
 
   const hasPaymentDate = !!currentCampaign?.paymentDate;
 
@@ -328,8 +325,8 @@ export default function OrdersDashboard({
       if (item.arrivalStatus === "MISSING") return sum;
       const price =
         item.arrivalStatus === "SUBSTITUTED" &&
-          item.substitute?.catalogPrice !== undefined &&
-          item.substitute?.catalogPrice !== null
+        item.substitute?.catalogPrice !== undefined &&
+        item.substitute?.catalogPrice !== null
           ? item.substitute.catalogPrice
           : item.catalogPrice;
       return sum + item.quantity * price;
@@ -388,10 +385,7 @@ export default function OrdersDashboard({
       <PageHeader
         title="Pedidos de Catálogo"
         subtitle="Gestión completa de pedidos por campaña, recepción de cajas y despacho."
-        breadcrumbs={[
-          { label: "admin", href: "/admin" },
-          { label: "pedidos" },
-        ]}
+        breadcrumbs={[{ label: "admin", href: "/admin" }, { label: "pedidos" }]}
         action={
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative w-40">
@@ -590,7 +584,7 @@ export default function OrdersDashboard({
                     printCampaignReport(
                       cmp,
                       initialOrders,
-                      systemConfig?.systemName ?? "Inventario",
+                      systemConfig?.systemName ?? "Mi empresa",
                       systemConfig?.systemLogoUrl,
                     );
                   }
@@ -611,7 +605,7 @@ export default function OrdersDashboard({
                     printCampaignProductsReport(
                       cmp,
                       initialOrders,
-                      systemConfig?.systemName ?? "Inventario",
+                      systemConfig?.systemName ?? "Mi empresa",
                       systemConfig?.systemLogoUrl,
                     );
                   }
@@ -632,7 +626,7 @@ export default function OrdersDashboard({
                     printCampaignSlips(
                       cmp,
                       initialOrders,
-                      systemConfig?.systemName ?? "Inventario",
+                      systemConfig?.systemName ?? "Mi empresa",
                       systemConfig?.systemLogoUrl,
                     );
                   }
@@ -731,7 +725,7 @@ export default function OrdersDashboard({
                               printCampaignSlips(
                                 currentCampaign,
                                 [order],
-                                systemConfig?.systemName ?? "Inventario",
+                                systemConfig?.systemName ?? "Mi empresa",
                                 systemConfig?.systemLogoUrl,
                               );
                           }}
@@ -821,7 +815,11 @@ export default function OrdersDashboard({
               pedidos entregados heredarán esta fecha automáticamente si no se
               define una específica para el cliente.
             </p>
-            <FormField label="Fecha de Pago de Campaña" required error={paymentDateError || undefined}>
+            <FormField
+              label="Fecha de Pago de Campaña"
+              required
+              error={paymentDateError || undefined}
+            >
               <Input
                 type="date"
                 value={campaignPaymentDateVal}

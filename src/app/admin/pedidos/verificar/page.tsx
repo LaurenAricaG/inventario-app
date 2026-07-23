@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import OrderVerificationConsole from "@/components/orders/OrderVerificationConsole";
 
+export const metadata = {
+  title: "Verificar pedidos",
+};
+
 interface VerificarPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

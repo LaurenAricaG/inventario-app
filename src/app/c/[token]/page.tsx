@@ -7,6 +7,10 @@ import ThemeToggle from "@/components/theme/ThemeToggle";
 import { getPublicSystemConfig } from "@/lib/config";
 import BrandLogo from "@/components/ui/BrandLogo";
 
+export const metadata = {
+  title: "Estado de cuenta",
+};
+
 interface CustomerPageProps {
   params: Promise<{ token: string }>;
   searchParams: Promise<{ page?: string }>;
@@ -104,8 +108,8 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
           item.arrivalStatus === "MISSING"
             ? 0
             : item.arrivalStatus === "SUBSTITUTED" &&
-                item.substitute?.catalogPrice !== undefined &&
-                item.substitute?.catalogPrice !== null
+              item.substitute?.catalogPrice !== undefined &&
+              item.substitute?.catalogPrice !== null
               ? item.substitute.catalogPrice
               : item.catalogPrice;
         return sum + item.quantity * price;
@@ -171,8 +175,8 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
             item.arrivalStatus === "MISSING"
               ? 0
               : item.arrivalStatus === "SUBSTITUTED" &&
-                  item.substitute?.catalogPrice !== undefined &&
-                  item.substitute?.catalogPrice !== null
+                item.substitute?.catalogPrice !== undefined &&
+                item.substitute?.catalogPrice !== null
                 ? item.substitute.catalogPrice
                 : item.catalogPrice;
           return itemSum + item.quantity * price;

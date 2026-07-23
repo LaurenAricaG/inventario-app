@@ -2,6 +2,10 @@ import { Suspense } from "react";
 import LoginForm from "@/components/auth/LoginForm";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 
+export const metadata = {
+  title: "Iniciar sesión",
+};
+
 export default function LoginPage() {
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-bg-page px-4 overflow-hidden">

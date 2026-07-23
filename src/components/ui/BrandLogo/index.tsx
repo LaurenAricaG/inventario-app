@@ -46,8 +46,9 @@ export default function BrandLogo({
 }: BrandLogoProps) {
   const contextConfig = useSystemConfig();
 
-  const systemName = customName || contextConfig?.systemName || "Inventario";
-  const systemLogoUrl = customLogoUrl !== undefined ? customLogoUrl : contextConfig?.systemLogoUrl;
+  const systemName = customName || contextConfig?.systemName || "Mi empresa";
+  const systemLogoUrl =
+    customLogoUrl !== undefined ? customLogoUrl : contextConfig?.systemLogoUrl;
 
   const words = systemName.split(" ");
   const currentSize = sizeMappers[size];
@@ -62,7 +63,7 @@ export default function BrandLogo({
             ? "shadow-[0_2px_8px_rgba(219,39,119,0.12)]"
             : "bg-beauty-400 text-white font-extrabold shadow-md shadow-beauty-400/20",
           currentSize.logo,
-          logoClassName
+          logoClassName,
         )}
       >
         {systemLogoUrl ? (
@@ -78,12 +79,21 @@ export default function BrandLogo({
 
       {/* Nombre de la empresa con formato del sidebar */}
       {showText && (
-        <div className="flex flex-col items-start leading-none gap-0.5">
+        <div
+          className={cn(
+            "flex flex-col leading-none gap-0.5",
+            className?.includes("flex-col") ||
+              className?.includes("items-center") ||
+              className?.includes("text-center")
+              ? "items-center text-center"
+              : "items-start",
+          )}
+        >
           <span
             className={cn(
               "font-semibold tracking-wide text-text-primary whitespace-nowrap overflow-hidden transition-colors duration-300 ease-in-out",
               currentSize.text,
-              textClassName
+              textClassName,
             )}
           >
             {words.length > 1 ? (

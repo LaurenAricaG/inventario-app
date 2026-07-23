@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { FiSettings, FiGlobe, FiBriefcase } from "react-icons/fi";
+import { FiSettings, FiGlobe, FiBriefcase, FiImage } from "react-icons/fi";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
 import Input from "@/components/ui/Input";
@@ -11,6 +11,7 @@ import ImageUpload from "@/components/ui/ImageUpload";
 import { updateSystemConfigAction } from "@/lib/config";
 import { systemConfigSchema } from "@/lib/config/schema";
 import { cn } from "@/utils/cn.utils";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface SystemConfigProps {
   initialConfig: {
@@ -93,7 +94,9 @@ export default function SystemConfig({
         fieldErrors[path] = issue.message;
       });
       setErrors(fieldErrors);
-      toast.error("Por favor completa los datos de configuración correctamente.");
+      toast.error(
+        "Por favor completa los datos de configuración correctamente.",
+      );
       return;
     }
 
@@ -116,7 +119,9 @@ export default function SystemConfig({
 
         if (!uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          throw new Error(uploadData.error || "Error al subir el logo del sistema.");
+          throw new Error(
+            uploadData.error || "Error al subir el logo del sistema.",
+          );
         }
 
         const uploadData = await uploadResponse.json();
@@ -135,7 +140,10 @@ export default function SystemConfig({
         toast.error(res.message);
       }
     } catch (error: any) {
-      toast.error(error.message || "Ocurrió un error inesperado al guardar la configuración.");
+      toast.error(
+        error.message ||
+          "Ocurrió un error inesperado al guardar la configuración.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -143,48 +151,45 @@ export default function SystemConfig({
 
   return (
     <div className="space-y-6">
-      {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2">
-            <FiSettings className="w-6 h-6 text-beauty-500" />
-            Configuración General
-          </h2>
-          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
-            Administración de los datos de la empresa y opciones de visibilidad del catálogo público.
-          </p>
-        </div>
-
-        {/* Toggle Switch para Modo Edición */}
-        {canSave && (
-          <div className="flex items-center gap-3 select-none bg-bg-surface border border-border-default/60 rounded-2xl py-2 px-4 shadow-2xs self-start sm:self-auto shrink-0">
-            <span className="text-sm font-semibold text-text-secondary">
-              Modo Edición
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                if (isEditing) {
-                  handleCancel();
-                } else {
-                  setIsEditing(true);
-                }
-              }}
-              className={cn(
-                "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-beauty-500/25",
-                isEditing ? "bg-beauty-500" : "bg-border-strong/60"
-              )}
-            >
-              <span
+      {/* PageHeader Estandarizado con Breadcrumbs */}
+      <PageHeader
+        title="Configuración General"
+        subtitle="Administración de los datos de la empresa y opciones de visibilidad del catálogo público"
+        breadcrumbs={[
+          { label: "admin", href: "/admin" },
+          { label: "configuración" },
+        ]}
+        action={
+          canSave ? (
+            <div className="flex items-center gap-3 select-none bg-bg-surface border border-border-default/60 rounded-2xl py-2 px-4 shadow-2xs self-start sm:self-auto shrink-0">
+              <span className="text-sm font-semibold text-text-secondary">
+                Modo Edición
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  if (isEditing) {
+                    handleCancel();
+                  } else {
+                    setIsEditing(true);
+                  }
+                }}
                 className={cn(
-                  "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out",
-                  isEditing ? "translate-x-5" : "translate-x-0"
+                  "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 focus-visible:ring-offset-2 ring-offset-bg-surface",
+                  isEditing ? "bg-beauty-400" : "bg-border-strong/60",
                 )}
-              />
-            </button>
-          </div>
-        )}
-      </div>
+              >
+                <span
+                  className={cn(
+                    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out",
+                    isEditing ? "translate-x-5" : "translate-x-0",
+                  )}
+                />
+              </button>
+            </div>
+          ) : undefined
+        }
+      />
 
       <Form onSubmit={handleSubmit} noValidate className="space-y-6">
         {/* Sección: Datos de la Empresa */}
@@ -202,11 +207,12 @@ export default function SystemConfig({
               <FormField label="Nombre de la Empresa">
                 <Input
                   type="text"
-                  placeholder="Ej. Lauren Arica, Natura Shop, etc."
+                  placeholder="Ej. Belcorp, Avon, Natura, etc."
                   value={systemNameInput}
                   onChange={(e) => {
                     setSystemNameInput(e.target.value);
-                    if (e.target.value.trim()) setErrors((prev) => ({ ...prev, systemName: "" }));
+                    if (e.target.value.trim())
+                      setErrors((prev) => ({ ...prev, systemName: "" }));
                   }}
                   error={errors.systemName}
                   disabled={isSubmitting || !isEditing || !canEdit}
@@ -221,7 +227,8 @@ export default function SystemConfig({
                   value={whatsappNumberInput}
                   onChange={(e) => {
                     setWhatsappNumberInput(e.target.value);
-                    if (e.target.value.trim()) setErrors((prev) => ({ ...prev, whatsappNumber: "" }));
+                    if (e.target.value.trim())
+                      setErrors((prev) => ({ ...prev, whatsappNumber: "" }));
                   }}
                   error={errors.whatsappNumber}
                   disabled={isSubmitting || !isEditing || !canEdit}
@@ -230,18 +237,37 @@ export default function SystemConfig({
             </div>
 
             {/* Logo del Sistema */}
-            <FormField label="Logo de la Empresa / Marca">
-              <ImageUpload
-                value={logoUrlInput}
-                onChange={(val, file) => {
-                  setLogoUrlInput(val);
-                  setLocalFile(file || null);
-                  setErrors((prev) => ({ ...prev, systemLogoUrl: "" }));
-                }}
-                disabled={isSubmitting || !isEditing || !canEdit}
-                error={errors.systemLogoUrl}
-                previewAlt="Logo del sistema"
-              />
+            <FormField label="Logo de la Empresa">
+              {isEditing ? (
+                <ImageUpload
+                  value={logoUrlInput}
+                  onChange={(val, file) => {
+                    setLogoUrlInput(val);
+                    setLocalFile(file || null);
+                    setErrors((prev) => ({ ...prev, systemLogoUrl: "" }));
+                  }}
+                  disabled={isSubmitting || !canEdit}
+                  error={errors.systemLogoUrl}
+                  previewAlt="Logo del sistema"
+                />
+              ) : (
+                <div className="w-full h-35 border border-border-default/80 rounded-2xl bg-bg-surface flex items-center justify-center p-4 shadow-2xs">
+                  {logoUrlInput && logoUrlInput !== "pending-local-file" ? (
+                    <img
+                      src={logoUrlInput}
+                      alt="Logo de la empresa"
+                      className="max-h-full max-w-full object-contain rounded-2xl"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-text-tertiary gap-2 select-none">
+                      <FiImage className="w-8 h-8 opacity-40" />
+                      <span className="text-xs font-medium">
+                        Sin logo registrado
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
             </FormField>
           </div>
         </div>
@@ -303,7 +329,7 @@ export default function SystemConfig({
               loading={isSubmitting}
               className="px-6 py-2.5 rounded-xl font-semibold shadow-sm"
             >
-              Guardar Configuración
+              Guardar Cambios
             </Button>
           </div>
         )}

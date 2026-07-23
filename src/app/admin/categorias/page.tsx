@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Categories from "@/components/categories";
 
+export const metadata = {
+  title: "Categorias",
+};
+
 interface CategoriasPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -29,8 +33,8 @@ export default async function CategoriasPage(props: CategoriasPageProps) {
     deletedAt: null,
     ...(search
       ? {
-          name: { contains: search, mode: "insensitive" as const },
-        }
+        name: { contains: search, mode: "insensitive" as const },
+      }
       : {}),
   };
 

@@ -137,7 +137,7 @@ export default function TableDirectSales({
                         onClick={() =>
                           generatePdfDirectSale(
                             sale,
-                            systemConfig?.systemName ?? "Inventario",
+                            systemConfig?.systemName ?? "Mi empresa",
                           )
                         }
                         variant="secondary"

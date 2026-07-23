@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import OrderPackingConsole from "@/components/orders/OrderPackingConsole";
 
+export const metadata = {
+  title: "Empacar pedidos",
+};
+
 interface EmpacadoPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

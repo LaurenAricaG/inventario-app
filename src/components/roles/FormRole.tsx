@@ -192,6 +192,7 @@ export default function FormRole({
           </Button>
         </div>
       }
+      footerClassName="mt-4"
     >
       <Form
         id="role-form"
@@ -263,7 +264,7 @@ export default function FormRole({
           )}
 
           {/* 3-Column Categories Grid Container */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[55vh] ">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[55vh]">
             {Object.keys(groupedPermissions).map((prefix) => {
               const perms = groupedPermissions[prefix] || [];
               const categoryTitle =
@@ -277,7 +278,7 @@ export default function FormRole({
               return (
                 <div
                   key={prefix}
-                  className="bg-bg-card border border-border-default/80 hover:border-beauty-200/50 dark:hover:border-beauty-800/80 rounded-2xl p-4 flex flex-col space-y-4 hover:shadow-xs transition-all duration-200"
+                  className="bg-bg-card border border-border-default hover:border-beauty-400/50 dark:hover:border-beauty-400/30 rounded-2xl p-4 flex flex-col space-y-4 hover:shadow-xs transition-all duration-200"
                 >
                   {/* Category Header */}
                   <div className="flex items-center justify-between border-b border-border-soft pb-2.5">

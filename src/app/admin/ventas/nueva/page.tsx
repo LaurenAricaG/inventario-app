@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import FormDirectSale from "@/components/direct-sales/FormDirectSale";
 
+export const metadata = {
+  title: "Nueva venta",
+};
+
 export default async function NuevaVentaPage() {
   const session = await auth();
   const permissions = session?.user?.permissions ?? [];

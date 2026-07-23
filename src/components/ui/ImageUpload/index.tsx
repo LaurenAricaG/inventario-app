@@ -38,16 +38,12 @@ export default function ImageUpload({
     localPreviewUrlRef.current = localPreviewUrl;
   }, [localPreviewUrl]);
 
-  // Sync tab based on initial value type (http vs local/base64 file)
+  // Sync initial tab based on value type on mount
   useEffect(() => {
-    if (value) {
-      if (value.startsWith("http")) {
-        setUploadTab("url");
-      } else {
-        setUploadTab("file");
-      }
+    if (value && value.startsWith("http")) {
+      setUploadTab("url");
     }
-  }, [value]);
+  }, []);
 
   // Clean up local preview when value changes externally from pending-local-file
   useEffect(() => {
@@ -104,15 +100,15 @@ export default function ImageUpload({
   return (
     <div className="space-y-4">
       {/* Segmented Control / Tabs */}
-      <div className="flex p-1 bg-bg-surface rounded-xl border border-border-default/50 max-w-60 mx-auto select-none">
+      <div className="flex p-1 bg-bg-surface rounded-xl border border-border-default/50 max-w-60 mx-auto select-none gap-1">
         <button
           type="button"
           disabled={disabled}
           onClick={() => setUploadTab("file")}
           className={cn(
-            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400",
             uploadTab === "file"
-              ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
+              ? "bg-bg-card text-beauty-600 dark:text-beauty-400 font-bold shadow-xs border border-beauty-400/30"
               : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
@@ -123,9 +119,9 @@ export default function ImageUpload({
           disabled={disabled}
           onClick={() => setUploadTab("url")}
           className={cn(
-            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400",
             uploadTab === "url"
-              ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
+              ? "bg-bg-card text-beauty-600 dark:text-beauty-400 font-bold shadow-xs border border-beauty-400/30"
               : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
@@ -219,7 +215,7 @@ export default function ImageUpload({
             <Input
               type="text"
               placeholder={urlPlaceholder}
-              value={isUrlValue ? value : ""}
+              value={value === "pending-local-file" ? "" : value}
               onChange={(e) => onChange(e.target.value)}
               disabled={disabled}
               icon={<FiLink className="w-4.5 h-4.5 text-text-tertiary" />}

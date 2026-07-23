@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Roles from "@/components/roles";
 
+export const metadata = {
+  title: "Roles",
+};
+
 interface RolesPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -28,8 +32,8 @@ export default async function RolesPage(props: RolesPageProps) {
     deletedAt: null,
     ...(search
       ? {
-          name: { contains: search, mode: "insensitive" as const },
-        }
+        name: { contains: search, mode: "insensitive" as const },
+      }
       : {}),
   };
 

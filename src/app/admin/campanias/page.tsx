@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Campaigns from "@/components/campaigns";
 
+export const metadata = {
+  title: "Campañas - PDF",
+};
+
 interface CampaniasPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -93,11 +97,11 @@ export default async function CampaniasPage(props: CampaniasPageProps) {
       deletedAt: null,
       ...(search
         ? {
-            OR: [
-              { number: { contains: search, mode: "insensitive" as const } },
-              { company: { name: { contains: search, mode: "insensitive" as const } } },
-            ],
-          }
+          OR: [
+            { number: { contains: search, mode: "insensitive" as const } },
+            { company: { name: { contains: search, mode: "insensitive" as const } } },
+          ],
+        }
         : {}),
     };
 
@@ -142,12 +146,12 @@ export default async function CampaniasPage(props: CampaniasPageProps) {
       ...(onlyActive ? { campaign: { isActive: true } } : {}),
       ...(search
         ? {
-            OR: [
-              { title: { contains: search, mode: "insensitive" as const } },
-              { brand: { name: { contains: search, mode: "insensitive" as const } } },
-              { campaign: { number: { contains: search, mode: "insensitive" as const } } },
-            ],
-          }
+          OR: [
+            { title: { contains: search, mode: "insensitive" as const } },
+            { brand: { name: { contains: search, mode: "insensitive" as const } } },
+            { campaign: { number: { contains: search, mode: "insensitive" as const } } },
+          ],
+        }
         : {}),
     };
 
@@ -211,7 +215,7 @@ export default async function CampaniasPage(props: CampaniasPageProps) {
       search={search}
       onlyActive={onlyActive}
       permissions={permissions}
-      
+
       // Catálogos PDF específicos
       catalogPdfs={JSON.parse(JSON.stringify(catalogs))}
       overallCatalogsCount={overallCatalogsCount}

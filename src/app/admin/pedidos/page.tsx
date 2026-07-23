@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import OrdersDashboard from "@/components/orders/OrdersDashboard";
 
+export const metadata = {
+  title: "Pedidos",
+};
+
 interface PedidosPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

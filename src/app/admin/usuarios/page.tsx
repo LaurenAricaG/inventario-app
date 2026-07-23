@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Users from "@/components/users";
 
+export const metadata = {
+  title: "Usuarios",
+};
+
 interface UsuariosPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -30,12 +34,12 @@ export default async function UsuariosPage(props: UsuariosPageProps) {
     ...(status === "suspended" ? { deletedAt: { not: null } } : {}),
     ...(search
       ? {
-          OR: [
-            { name: { contains: search, mode: "insensitive" as const } },
-            { username: { contains: search, mode: "insensitive" as const } },
-            { email: { contains: search, mode: "insensitive" as const } },
-          ],
-        }
+        OR: [
+          { name: { contains: search, mode: "insensitive" as const } },
+          { username: { contains: search, mode: "insensitive" as const } },
+          { email: { contains: search, mode: "insensitive" as const } },
+        ],
+      }
       : {}),
   };
 

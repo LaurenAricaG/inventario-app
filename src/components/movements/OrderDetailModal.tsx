@@ -4,6 +4,14 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { CampaignOrderWithRelations } from "@/types/models";
 import BrandLogo from "@/components/ui/BrandLogo";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/Table";
 
 import { useSystemConfig } from "@/context/SystemConfigContext";
 import { formatDateTime, formatDateUTC } from "@/utils/date.utils";
@@ -60,8 +68,8 @@ export default function OrderDetailModal({
     if (item.arrivalStatus === "MISSING") return sum;
     const price =
       item.arrivalStatus === "SUBSTITUTED" &&
-      item.substitute?.catalogPrice !== undefined &&
-      item.substitute?.catalogPrice !== null
+        item.substitute?.catalogPrice !== undefined &&
+        item.substitute?.catalogPrice !== null
         ? item.substitute.catalogPrice
         : item.catalogPrice;
     return sum + item.quantity * price;
@@ -95,18 +103,18 @@ export default function OrderDetailModal({
           </Button>
         }
       >
-        <div className="max-w-md mx-auto font-sans text-sm text-text-primary space-y-4 p-2 md:p-4 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs">
+        <div className="max-w-md mx-auto font-sans text-sm text-text-primary space-y-4 p-2 md:p-4 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs outline-none focus:outline-none focus-visible:outline-none">
           {/* Header */}
           <div className="text-center pb-3 border-b border-dashed border-beauty-500/20 flex flex-col items-center">
-            <BrandLogo size="xl" className="flex-col gap-2 mb-2 text-center" logoClassName="mb-1">
-              <p className="text-[10px] text-text-primary font-bold uppercase tracking-widest mt-4 text-center">
+            <BrandLogo size="xl" className="flex-col gap-2 text-center">
+              <p className="text-[10px] text-text-secondary font-bold uppercase tracking-widest mt-2 text-center">
                 {(order.campaign as any).company?.name ||
                   order.items[0]?.brand.name ||
                   ""}{" "}
                 - Campaña {order.campaign.number}
               </p>
             </BrandLogo>
-            <div className="text-left mt-4 text-xs text-text-secondary space-y-1">
+            <div className="text-center mt-2 text-xs text-text-secondary">
               <div>
                 <span className="font-bold text-text-primary">
                   F. Registro:
@@ -118,25 +126,25 @@ export default function OrderDetailModal({
 
           {/* Items Table */}
           <div className="py-2">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-bg-surface text-text-secondary font-bold uppercase text-[10px] tracking-wider border-y border-dashed border-beauty-500/20">
-                  <th className="py-2.5 px-2">PROD.</th>
-                  <th className="py-2.5 px-2 text-center w-12">CANT.</th>
-                  <th className="py-2.5 px-2 text-right w-20">P. UNIT</th>
-                  <th className="py-2.5 px-2 text-right w-20">TOTAL</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-dashed divide-beauty-500/10">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>PROD.</TableHead>
+                  <TableHead className="text-center w-12">CANT.</TableHead>
+                  <TableHead className="text-right w-20">P. UNIT</TableHead>
+                  <TableHead className="text-right w-20">SUBTOTAL</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {activeItems.length === 0 ? (
-                  <tr>
-                    <td
+                  <TableRow>
+                    <TableCell
                       colSpan={4}
                       className="py-4 text-center text-text-tertiary"
                     >
                       No hay productos registrados (o están en estado Faltante).
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ) : (
                   activeItems.map((item) => {
                     const isSubstituted = item.arrivalStatus === "SUBSTITUTED";
@@ -146,36 +154,36 @@ export default function OrderDetailModal({
                       : item.productName;
                     const displayPrice =
                       isSubstituted &&
-                      item.substitute?.catalogPrice !== undefined &&
-                      item.substitute?.catalogPrice !== null
+                        item.substitute?.catalogPrice !== undefined &&
+                        item.substitute?.catalogPrice !== null
                         ? item.substitute.catalogPrice
                         : item.catalogPrice;
 
                     return (
-                      <tr key={item.id}>
-                        <td className="py-3 px-2">
+                      <TableRow key={item.id}>
+                        <TableCell>
                           <span className="font-bold text-text-primary block leading-tight">
                             {displayName}
                           </span>
                           <span className="text-[10px] text-text-tertiary mt-0.5 block">
                             Marca: {item.brand.name}
                           </span>
-                        </td>
-                        <td className="py-3 px-2 text-center font-mono font-bold text-text-secondary">
+                        </TableCell>
+                        <TableCell className="text-center font-mono font-bold text-text-secondary">
                           {item.quantity}
-                        </td>
-                        <td className="py-3 px-2 text-right font-mono text-text-secondary">
+                        </TableCell>
+                        <TableCell className="text-right font-mono text-text-secondary">
                           {displayPrice.toFixed(2)}
-                        </td>
-                        <td className="py-3 px-2 text-right font-mono font-bold text-text-primary">
+                        </TableCell>
+                        <TableCell className="text-right font-mono font-bold text-text-primary">
                           {(item.quantity * displayPrice).toFixed(2)}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
 
           {/* Totales */}
@@ -249,7 +257,7 @@ export default function OrderDetailModal({
         </Button>
       }
     >
-      <div className="p-4 md:p-6 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs font-sans text-zinc-900 dark:text-zinc-100 space-y-6">
+      <div className="p-4 md:p-6 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs font-sans text-zinc-900 dark:text-zinc-100 space-y-6 outline-none focus:outline-none focus-visible:outline-none">
         {/* Cabecera */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-dashed border-zinc-200 dark:border-zinc-800 pb-5 select-none">
           <BrandLogo size="xl" className="gap-3">
@@ -286,9 +294,8 @@ export default function OrderDetailModal({
                 Estado:
               </span>
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
-                  statusColors[order.status]
-                }`}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColors[order.status]
+                  }`}
               >
                 {statusTranslations[order.status] || order.status}
               </span>
@@ -310,90 +317,84 @@ export default function OrderDetailModal({
         <hr className="border-t border-dashed border-zinc-200 dark:border-zinc-800" />
 
         {/* Productos Table */}
-        <div className="overflow-x-auto select-none">
-          <table className="w-full text-left text-xs sm:text-sm border-collapse">
-            <thead>
-              <tr className="bg-zinc-50 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 font-bold uppercase text-[10px] tracking-wider border-b-2 border-dashed border-zinc-200 dark:border-zinc-800">
-                <th className="py-2.5 px-3 w-28">Cód. Prod</th>
-                <th className="py-2.5 px-3">Prod.</th>
-                <th className="py-2.5 px-3 text-center w-20">Cant.</th>
-                <th className="py-2.5 px-3 text-center w-28">Estado</th>
-                <th className="py-2.5 px-3 text-right w-28">Precio</th>
-                <th className="py-2.5 px-3 text-right w-28">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-dashed divide-zinc-200 dark:divide-zinc-800">
-              {order.items.map((item) => {
-                const isSubstituted = item.arrivalStatus === "SUBSTITUTED";
-                const displayCode = isSubstituted
-                  ? item.substitute?.productCode
-                  : item.productCode;
-                const displayPrice =
-                  isSubstituted &&
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-28">Cód.</TableHead>
+              <TableHead>Prod.</TableHead>
+              <TableHead className="text-center w-20">Cant.</TableHead>
+              <TableHead className="text-center w-28">Estado</TableHead>
+              <TableHead className="text-right w-28">Precio</TableHead>
+              <TableHead className="text-right w-28">Subtotal</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {order.items.map((item) => {
+              const isSubstituted = item.arrivalStatus === "SUBSTITUTED";
+              const displayCode = isSubstituted
+                ? item.substitute?.productCode
+                : item.productCode;
+              const displayPrice =
+                isSubstituted &&
                   item.substitute?.catalogPrice !== undefined &&
                   item.substitute?.catalogPrice !== null
-                    ? item.substitute.catalogPrice
-                    : item.catalogPrice;
+                  ? item.substitute.catalogPrice
+                  : item.catalogPrice;
 
-                // Vista sistema: sustituto arriba + (original que no llegó) abajo
-                const nameNode = isSubstituted ? (
-                  <>
-                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                      {item.substitute?.productName ?? item.productName}
-                    </span>
-                    <span className="text-[10px] text-text-tertiary italic mt-0.5 block">
-                      ({item.productName})
-                    </span>
-                  </>
-                ) : (
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    {item.productName}
+              // Vista sistema: sustituto arriba + (original que no llegó) abajo
+              const nameNode = isSubstituted ? (
+                <>
+                  <span className="font-semibold text-text-primary">
+                    {item.substitute?.productName ?? item.productName}
                   </span>
-                );
+                  <span className="text-[10px] text-text-tertiary italic mt-0.5 block">
+                    ({item.productName})
+                  </span>
+                </>
+              ) : (
+                <span className="font-semibold text-text-primary">
+                  {item.productName}
+                </span>
+              );
 
-                return (
-                  <tr
-                    key={item.id}
-                    className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30"
-                  >
-                    <td className="py-3 px-3 font-mono text-zinc-500 dark:text-zinc-400 text-xs">
-                      {displayCode || "-"}
-                    </td>
-                    <td className="py-3 px-3">
-                      <div className="flex flex-col">
-                        {nameNode}
-                        <span className="text-[10px] text-text-tertiary mt-0.5">
-                          Marca: {item.brand.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-3 text-center font-mono font-medium text-zinc-900 dark:text-zinc-100">
-                      {item.quantity}
-                    </td>
-                    <td className="py-3 px-3 text-center">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
-                          itemStatusColors[item.arrivalStatus]
-                        }`}
-                      >
-                        {itemStatusTranslations[item.arrivalStatus] ||
-                          item.arrivalStatus}
+              return (
+                <TableRow key={item.id}>
+                  <TableCell className="font-mono text-text-tertiary text-xs">
+                    {displayCode || "-"}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      {nameNode}
+                      <span className="text-[10px] text-text-tertiary mt-0.5">
+                        Marca: {item.brand.name}
                       </span>
-                    </td>
-                    <td className="py-3 px-3 text-right font-mono text-zinc-500 dark:text-zinc-400">
-                      {displayPrice.toFixed(2)}
-                    </td>
-                    <td className="py-3 px-3 text-right font-mono font-bold text-zinc-900 dark:text-zinc-100">
-                      {item.arrivalStatus === "MISSING"
-                        ? "0.00"
-                        : (item.quantity * displayPrice).toFixed(2)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center font-mono font-medium text-text-primary">
+                    {item.quantity}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${itemStatusColors[item.arrivalStatus]
+                        }`}
+                    >
+                      {itemStatusTranslations[item.arrivalStatus] ||
+                        item.arrivalStatus}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-text-secondary">
+                    {displayPrice.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-right font-mono font-bold text-text-primary">
+                    {item.arrivalStatus === "MISSING"
+                      ? "0.00"
+                      : (item.quantity * displayPrice).toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
 
         {/* Separador */}
         <hr className="border-t border-dashed border-zinc-200 dark:border-zinc-800" />
@@ -426,8 +427,8 @@ export default function OrderDetailModal({
                     {order.status === "CANCELLED"
                       ? "0.00"
                       : (
-                          order.total || calculatedSubtotal - order.discount
-                        ).toFixed(2)}
+                        order.total || calculatedSubtotal - order.discount
+                      ).toFixed(2)}
                   </span>
                 </div>
               </div>

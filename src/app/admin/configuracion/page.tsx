@@ -4,8 +4,7 @@ import { getSystemConfigAction } from "@/lib/config";
 import SystemConfig from "@/components/config";
 
 export const metadata = {
-  title: "Configuración del Sistema",
-  description: "Administración general de la empresa y portal público.",
+  title: "Configuración",
 };
 
 export default async function ConfiguracionPage() {

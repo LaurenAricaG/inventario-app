@@ -45,8 +45,7 @@ export default function PdfUpload({
         setUploadTab("url");
         setFileName("");
       } else {
-        setUploadTab("file");
-        // Si es archivo local pendiente, mantenemos el nombre guardado en estado
+        // Only update file name info without switching tab if user selected url
         if (value === "pending-local-file") {
           // No sobreescribir el nombre local
         } else if (value.startsWith("data:application/pdf")) {
@@ -90,15 +89,15 @@ export default function PdfUpload({
   return (
     <div className="space-y-4">
       {/* Segmented Control / Tabs */}
-      <div className="flex p-1 bg-bg-surface rounded-xl border border-border-default/50 max-w-60 mx-auto select-none">
+      <div className="flex p-1 bg-bg-surface rounded-xl border border-border-default/50 max-w-60 mx-auto select-none gap-1">
         <button
           type="button"
           disabled={disabled}
           onClick={() => setUploadTab("file")}
           className={cn(
-            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400",
             uploadTab === "file"
-              ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
+              ? "bg-bg-card text-beauty-600 dark:text-beauty-400 font-bold shadow-xs border border-beauty-400/30"
               : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
@@ -109,9 +108,9 @@ export default function PdfUpload({
           disabled={disabled}
           onClick={() => setUploadTab("url")}
           className={cn(
-            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400",
             uploadTab === "url"
-              ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
+              ? "bg-bg-card text-beauty-600 dark:text-beauty-400 font-bold shadow-xs border border-beauty-400/30"
               : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
@@ -213,7 +212,7 @@ export default function PdfUpload({
             <Input
               type="text"
               placeholder={urlPlaceholder}
-              value={isUrlValue ? value : ""}
+              value={value === "pending-local-file" ? "" : value}
               onChange={(e) => onChange(e.target.value)}
               disabled={disabled}
               icon={<FiLink className="w-4.5 h-4.5 text-text-tertiary" />}

@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import OrderDeliveryConsole from "@/components/orders/OrderDeliveryConsole";
 
+export const metadata = {
+  title: "Entregar pedidos",
+};
+
 interface EntregarPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

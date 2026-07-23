@@ -9,9 +9,11 @@ import {
   FiStar,
   FiArrowLeft,
   FiArrowRight,
+  FiCheck,
 } from "react-icons/fi";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import { cn } from "@/utils/cn.utils";
 
 export interface UploadedImage {
@@ -202,15 +204,15 @@ export default function MultiImageUpload({
   return (
     <div className="space-y-4">
       {/* Upload Toggle tabs */}
-      <div className="flex p-1 bg-bg-surface rounded-xl border border-border-default/50 max-w-60 select-none">
+      <div className="flex p-1 bg-bg-surface rounded-xl border border-border-default/50 max-w-60 select-none gap-1">
         <button
           type="button"
           disabled={disabled}
           onClick={() => setUploadTab("file")}
           className={cn(
-            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400",
             uploadTab === "file"
-              ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
+              ? "bg-bg-card text-beauty-600 dark:text-beauty-400 font-bold shadow-xs border border-beauty-400/30"
               : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
@@ -221,9 +223,9 @@ export default function MultiImageUpload({
           disabled={disabled}
           onClick={() => setUploadTab("url")}
           className={cn(
-            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+            "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400",
             uploadTab === "url"
-              ? "bg-bg-card text-text-accent shadow-xs border border-border-soft"
+              ? "bg-bg-card text-beauty-600 dark:text-beauty-400 font-bold shadow-xs border border-beauty-400/30"
               : "border border-transparent text-text-secondary hover:text-text-primary",
           )}
         >
@@ -234,64 +236,70 @@ export default function MultiImageUpload({
       {/* Upload Zone */}
       {uploadTab === "file"
         ? value.length < maxImages && (
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              className={cn(
-                "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border-strong hover:border-beauty-500 rounded-2xl bg-bg-surface hover:bg-beauty-50/10 dark:hover:bg-beauty-950/5 cursor-pointer text-center transition-all duration-300 select-none group",
-                isDragging && "border-beauty-600 bg-beauty-50/20",
-                disabled && "opacity-50 cursor-not-allowed pointer-events-none",
-              )}
-            >
-              <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
-                <div className="p-2.5 bg-bg-card border border-border-soft rounded-xl shadow-xs text-text-secondary group-hover:scale-[1.05] group-hover:text-text-accent transition-all duration-300 mb-2">
-                  <FiUploadCloud className="w-5 h-5" />
-                </div>
-                <span className="text-xs font-bold text-text-primary">
-                  Arrastra aquí tus imágenes o haz clic para seleccionar
-                </span>
-                <span className="text-[10px] text-text-secondary mt-1">
-                  Límite: {value.length}/{maxImages} imágenes. Formatos PNG,
-                  JPG, WEBP (máx {maxSizeInMB}MB)
-                </span>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                  disabled={disabled || value.length >= maxImages}
-                />
-              </label>
-            </div>
-          )
-        : value.length < maxImages && (
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <Input
-                  type="text"
-                  placeholder="https://ejemplo.com/imagen.png"
-                  value={urlInput}
-                  onChange={(e) => setUrlInput(e.target.value)}
-                  disabled={disabled}
-                  icon={<FiLink className="w-4 h-4 text-text-tertiary" />}
-                  className="text-xs h-10"
-                />
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={cn(
+              "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border-strong hover:border-beauty-500 rounded-2xl bg-bg-surface hover:bg-beauty-50/10 dark:hover:bg-beauty-950/5 cursor-pointer text-center transition-all duration-300 select-none group",
+              isDragging && "border-beauty-600 bg-beauty-50/20",
+              disabled && "opacity-50 cursor-not-allowed pointer-events-none",
+            )}
+          >
+            <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
+              <div className="p-2.5 bg-bg-card border border-border-soft rounded-xl shadow-xs text-text-secondary group-hover:scale-[1.05] group-hover:text-text-accent transition-all duration-300 mb-2">
+                <FiUploadCloud className="w-5 h-5" />
               </div>
-              <Button
-                type="button"
-                onClick={handleAddUrl}
-                disabled={
-                  disabled || !urlInput.trim() || value.length >= maxImages
-                }
-                variant="outline"
-                className="px-4 border-border-strong text-text-primary hover:bg-bg-surface"
-              >
-                Agregar
-              </Button>
+              <span className="text-xs font-bold text-text-primary">
+                Arrastra aquí tus imágenes o haz clic para seleccionar
+              </span>
+              <span className="text-[10px] text-text-secondary mt-1">
+                Límite: {value.length}/{maxImages} imágenes. Formatos PNG,
+                JPG, WEBP (máx {maxSizeInMB}MB)
+              </span>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+                disabled={disabled || value.length >= maxImages}
+              />
+            </label>
+          </div>
+        )
+        : value.length < maxImages && (
+          <div className="flex gap-2 items-center">
+            <div className="flex-1">
+              <Input
+                type="text"
+                placeholder="https://ejemplo.com/imagen.png"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddUrl();
+                  }
+                }}
+                disabled={disabled}
+                icon={<FiLink className="w-4 h-4 text-text-tertiary" />}
+                className="text-xs h-10"
+              />
             </div>
-          )}
+            <ButtonIcon
+              icon={FiCheck}
+              onClick={handleAddUrl}
+              disabled={
+                disabled || !urlInput.trim() || value.length >= maxImages
+              }
+              variant="beauty"
+              title="Agregar imagen por URL"
+              className="h-10 w-10 flex items-center justify-center shrink-0"
+              iconClassName="w-4.5 h-4.5"
+            />
+          </div>
+        )}
 
       {/* Grid of Images / Previews */}
       {value.length > 0 && (

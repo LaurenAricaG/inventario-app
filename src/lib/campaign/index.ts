@@ -345,6 +345,10 @@ export async function updateCampaignAction(
       });
 
       await deleteCloudinaryPdfsForCampaigns(toDeactivate.map((c) => c.id));
+    } else if (existingCampaign.isActive && !validIsActive) {
+      // Si la campaña estaba activa y se desactiva manualmente,
+      // eliminamos sus PDFs de Cloudinary
+      await deleteCloudinaryPdfsForCampaigns([id]);
     }
 
     const updated = await prisma.campaign.update({

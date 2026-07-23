@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import DirectSales from "@/components/direct-sales";
 
+export const metadata = {
+  title: "Ventas",
+};
+
 interface VentasPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -28,10 +32,10 @@ export default async function VentasPage(props: VentasPageProps) {
     deletedAt: null,
     ...(search
       ? {
-          client: {
-            name: { contains: search, mode: "insensitive" as const },
-          },
-        }
+        client: {
+          name: { contains: search, mode: "insensitive" as const },
+        },
+      }
       : {}),
   };
 

@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Debts from "@/components/debts";
 
+export const metadata = {
+  title: "Deudas",
+};
+
 interface DebtsPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -28,12 +32,12 @@ export default async function DebtsPage(props: DebtsPageProps) {
     client: { deletedAt: null },
     ...(search
       ? {
-          OR: [
-            { client: { name: { contains: search, mode: "insensitive" as const } } },
-            { reason: { contains: search, mode: "insensitive" as const } },
-            { notes: { contains: search, mode: "insensitive" as const } },
-          ],
-        }
+        OR: [
+          { client: { name: { contains: search, mode: "insensitive" as const } } },
+          { reason: { contains: search, mode: "insensitive" as const } },
+          { notes: { contains: search, mode: "insensitive" as const } },
+        ],
+      }
       : {}),
   };
 

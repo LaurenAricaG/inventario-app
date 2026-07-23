@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Companies from "@/components/companies";
 
+export const metadata = {
+  title: "Empresas",
+};
+
 interface EmpresasPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -29,8 +33,8 @@ export default async function EmpresasPage(props: EmpresasPageProps) {
     deletedAt: null,
     ...(search
       ? {
-          name: { contains: search, mode: "insensitive" as const },
-        }
+        name: { contains: search, mode: "insensitive" as const },
+      }
       : {}),
   };
 

@@ -9,6 +9,7 @@ import Card from "@/components/ui/Card";
 import Label from "@/components/ui/Label";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -76,12 +77,14 @@ export default function LoginForm() {
       <div className="absolute -top-16 -right-16 w-32 h-32 bg-beauty-400/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-beauty-200/20 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold tracking-tight text-text-primary mb-2">
-          Lauren Arica
-        </h2>
-        <p className="text-sm text-text-secondary">
-          Ingresa tus credenciales para acceder al inventario
+      <div className="flex flex-col items-center text-center mb-8">
+        <BrandLogo
+          size="xl"
+          className="flex-col gap-3 text-center"
+          textClassName="text-2xl font-bold"
+        />
+        <p className="text-sm text-text-secondary mt-2">
+          Ingresa tus credenciales para acceder al sistema
         </p>
       </div>
 
@@ -94,7 +97,7 @@ export default function LoginForm() {
             id="usernameOrEmail"
             name="usernameOrEmail"
             type="text"
-            placeholder="lauren o lauren@example.com"
+            placeholder="user o user@example.com"
             value={usernameOrEmail}
             onChange={(e) => {
               setUsernameOrEmail(e.target.value);

@@ -5,6 +5,10 @@ import { PaymentMethod } from "@/generated/prisma";
 import ClientDetailsDashboard from "@/components/movements/ClientDetailsDashboard";
 import { MovementItem } from "@/components/movements/MovementHistoryTable";
 
+export const metadata = {
+  title: "Ficha cliente",
+};
+
 interface FichaClientePageProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ page?: string }>;

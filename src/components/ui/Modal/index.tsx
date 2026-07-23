@@ -12,6 +12,9 @@ interface ModalProps {
   footer?: ReactNode;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  headerClassName?: string;
+  bodyClassName?: string;
+  footerClassName?: string;
   initialFocusRef?: React.RefObject<HTMLElement | null>;
 }
 
@@ -23,6 +26,9 @@ export default function Modal({
   footer,
   size = "md",
   className,
+  headerClassName,
+  bodyClassName,
+  footerClassName,
   initialFocusRef,
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -111,13 +117,18 @@ export default function Modal({
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}
         className={cn(
-          "relative w-full bg-bg-card border border-border-default/80 rounded-3xl shadow-xl z-10 flex flex-col max-h-[90vh] scale-100 opacity-100 transition-all duration-300 animate-in fade-in zoom-in-95",
+          "relative w-full bg-bg-card border border-border-default/80 rounded-3xl shadow-xl z-10 flex flex-col max-h-[90vh] scale-100 opacity-100 transition-all duration-300 animate-in fade-in zoom-in-95 outline-none focus:outline-none focus-visible:outline-none",
           sizes[size],
           className,
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-border-soft dark:border-border-default bg-bg-surface/15 dark:bg-bg-surface/30 rounded-t-3xl select-none">
+        <div
+          className={cn(
+            "flex items-center justify-between px-6 py-5 border-b border-border-soft dark:border-border-default bg-bg-surface/15 dark:bg-bg-surface/30 rounded-t-3xl select-none",
+            headerClassName,
+          )}
+        >
           {title ? (
             <h3 className="text-base font-bold text-text-primary">{title}</h3>
           ) : (
@@ -134,13 +145,23 @@ export default function Modal({
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto min-h-0 flex-1 text-sm text-text-secondary leading-relaxed scrollbar-thin scrollbar-thumb-stone-300 dark:scrollbar-thumb-zinc-700">
+        <div
+          className={cn(
+            "p-6 overflow-y-auto min-h-0 flex-1 text-sm text-text-secondary leading-relaxed scrollbar-thin scrollbar-thumb-stone-300 dark:scrollbar-thumb-zinc-700 outline-none focus:outline-none focus-visible:outline-none",
+            bodyClassName,
+          )}
+        >
           {children}
         </div>
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-5 border-t border-border-soft dark:border-border-default bg-bg-surface/15 dark:bg-bg-surface/30 rounded-b-3xl shrink-0">
+          <div
+            className={cn(
+              "flex items-center justify-end gap-3 px-6 py-5 border-t border-border-soft dark:border-border-default bg-bg-surface/15 dark:bg-bg-surface/30 rounded-b-3xl shrink-0",
+              footerClassName,
+            )}
+          >
             {footer}
           </div>
         )}

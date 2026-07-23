@@ -175,7 +175,7 @@ export default function FormPayments({
             loading={isSubmitting}
             disabled={isFieldsDisabled}
           >
-            Registrar Pago
+            Guardar
           </Button>
         </div>
       }

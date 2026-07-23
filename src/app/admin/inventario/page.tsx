@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Inventory from "@/components/inventory";
 
+export const metadata = {
+  title: "Inventario",
+};
+
 interface InventarioPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -30,11 +34,11 @@ export default async function InventarioPage(props: InventarioPageProps) {
       deletedAt: null,
       ...(search
         ? {
-            OR: [
-              { name: { contains: search, mode: "insensitive" as const } },
-              { code: { contains: search, mode: "insensitive" as const } },
-            ],
-          }
+          OR: [
+            { name: { contains: search, mode: "insensitive" as const } },
+            { code: { contains: search, mode: "insensitive" as const } },
+          ],
+        }
         : {}),
     },
     ...(typeFilter === "INPUT" || typeFilter === "OUTPUT"
