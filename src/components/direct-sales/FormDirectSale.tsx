@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   FiPlus,
+  FiMinus,
   FiTrash2,
   FiArrowLeft,
   FiShoppingBag,
@@ -18,6 +19,7 @@ import {
 } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
 import Button from "@/components/ui/Button";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import Form, { FormField } from "@/components/ui/Form";
 import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
@@ -91,10 +93,13 @@ export default function FormDirectSale({
   const [newClientPhone, setNewClientPhone] = useState("");
   const [newClientAddress, setNewClientAddress] = useState("");
   const [isCreatingClient, setIsCreatingClient] = useState(false);
-  const [newClientNameError, setNewClientNameError] = useState<string | null>(null);
+  const [newClientNameError, setNewClientNameError] = useState<string | null>(
+    null,
+  );
 
   // Compute selected client object
-  const selectedClient = localClients.find((c) => c.id === Number(clientId)) || null;
+  const selectedClient =
+    localClients.find((c) => c.id === Number(clientId)) || null;
 
   // Filter clients based on client search query inside the dropdown
   const filteredClients = localClients.filter((c) =>
@@ -409,7 +414,7 @@ export default function FormDirectSale({
                         "w-full px-4 py-3 rounded-2xl border text-sm bg-bg-card text-text-primary transition-all duration-200 outline-none flex items-center justify-between text-left cursor-pointer select-none",
                         "border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10",
                         isDropdownOpen &&
-                          "border-beauty-400 ring-4 ring-beauty-400/10",
+                        "border-beauty-400 ring-4 ring-beauty-400/10",
                       )}
                     >
                       <div className="flex items-center gap-2 truncate min-w-0">
@@ -637,7 +642,7 @@ export default function FormDirectSale({
                       (sum, item) => sum + item.quantity,
                       0,
                     );
-                    return `${totalQty} ${totalQty === 1 ? "unidad total" : "unidades totales"}`;
+                    return `${totalQty} ${totalQty === 1 ? "ud." : "uds."}`;
                   })()}
                 </span>
               </div>
@@ -702,32 +707,30 @@ export default function FormDirectSale({
 
                           {/* Quantity +/- Controls */}
                           <td className="py-4">
-                            <div className="flex items-center justify-center gap-1 bg-bg-surface border border-border-default/50 rounded-xl p-1 w-28 mx-auto select-none">
-                              <button
-                                type="button"
+                            <div className="flex items-center justify-center gap-1 bg-bg-surface border border-border-default/50 dark:border-white/10 rounded-xl p-1 w-28 mx-auto select-none">
+                              <ButtonIcon
+                                icon={FiMinus}
+                                variant="secondary"
                                 onClick={() =>
                                   handleAdjustQuantity(item.productId, -1)
                                 }
                                 disabled={item.quantity <= 1}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-beauty-400/10 text-text-secondary hover:text-beauty-600 disabled:opacity-35 disabled:hover:bg-transparent transition-all cursor-pointer select-none font-bold text-sm"
-                                title="Reducir 1"
-                              >
-                                -
-                              </button>
+                                className="p-1.5 rounded-lg hover:scale-[1] active:scale-[1]"
+                                title="Reducir"
+                              />
                               <span className="font-mono font-bold text-xs flex-1 text-center text-text-primary">
                                 {item.quantity}
                               </span>
-                              <button
-                                type="button"
+                              <ButtonIcon
+                                icon={FiPlus}
+                                variant="secondary"
                                 onClick={() =>
                                   handleAdjustQuantity(item.productId, 1)
                                 }
                                 disabled={item.quantity >= item.maxStock}
-                                className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-beauty-400/10 text-text-secondary hover:text-beauty-600 disabled:opacity-35 disabled:hover:bg-transparent transition-all cursor-pointer select-none font-bold text-sm"
-                                title="Incrementar 1"
-                              >
-                                +
-                              </button>
+                                className="p-1.5 rounded-lg hover:scale-[1] active:scale-[1]"
+                                title="Aumentar"
+                              />
                             </div>
                           </td>
 
@@ -743,14 +746,12 @@ export default function FormDirectSale({
 
                           {/* Delete Item */}
                           <td className="py-4 text-center">
-                            <button
-                              type="button"
+                            <ButtonIcon
+                              icon={FiTrash2}
+                              variant="danger"
                               onClick={() => handleRemoveItem(item.productId)}
-                              className="p-2 rounded-xl text-danger-text bg-danger-bg/20 border border-danger-text/10 hover:bg-danger-bg/40 hover:border-danger-text/20 hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer"
                               title="Quitar de la venta"
-                            >
-                              <FiTrash2 className="w-3.5 h-3.5" />
-                            </button>
+                            />
                           </td>
                         </tr>
                       ))}
@@ -782,9 +783,9 @@ export default function FormDirectSale({
                         "w-full px-4 py-3 rounded-2xl border text-sm bg-bg-card text-text-primary transition-all duration-200 outline-none flex items-center justify-between text-left cursor-pointer select-none",
                         "border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10",
                         isClientDropdownOpen &&
-                          "border-beauty-400 ring-4 ring-beauty-400/10",
+                        "border-beauty-400 ring-4 ring-beauty-400/10",
                         errors.clientId &&
-                          "border-danger-text focus:border-danger-text focus:ring-danger-text/10",
+                        "border-danger-text focus:border-danger-text focus:ring-danger-text/10",
                       )}
                     >
                       <div className="flex items-center gap-2 truncate min-w-0">
@@ -999,7 +1000,11 @@ export default function FormDirectSale({
           onSubmit={handleCreateClientQuick}
           className="space-y-4"
         >
-          <FormField label="Nombre Completo" required error={newClientNameError || undefined}>
+          <FormField
+            label="Nombre Completo"
+            required
+            error={newClientNameError || undefined}
+          >
             <Input
               value={newClientName}
               onChange={(e) => {

@@ -26,17 +26,17 @@ interface ButtonIconProps {
 
 const variantStyles: Record<ButtonIconVariant, string> = {
   beauty:
-    "border-border-default/60 bg-bg-card hover:bg-beauty-400/10 text-text-secondary hover:text-beauty-500 hover:border-beauty-400/20 focus-visible:ring-beauty-400/20",
+    "border-beauty-400/30 bg-beauty-400/5 hover:bg-beauty-400/10 text-beauty-400 hover:border-beauty-400/45 focus-visible:ring-beauty-400/35",
   secondary:
-    "border-border-default/40 bg-bg-card hover:bg-bg-surface text-text-secondary hover:text-text-primary focus-visible:ring-beauty-400",
+    "border-text-secondary/30 dark:border-white/15 bg-bg-card dark:bg-white/10 hover:bg-bg-surface dark:hover:bg-white/20 text-text-secondary dark:text-text-primary hover:text-text-primary focus-visible:ring-text-secondary/30 dark:focus-visible:ring-white/30",
   success:
-    "bg-success-bg/45 border-success-text/15 text-success-text hover:bg-success-bg/85 hover:border-success-text/30 focus-visible:ring-success-text/20",
+    "bg-success-bg/45 border-success-text/15 text-success-text hover:bg-success-bg/85 hover:border-success-text/30 focus-visible:ring-success-text/35",
   warning:
-    "bg-warning-bg/40 border-warning-text/15 text-warning-text hover:bg-warning-bg/80 hover:border-warning-text/30 focus-visible:ring-warning-text/20",
+    "bg-warning-bg/40 border-warning-text/15 text-warning-text hover:bg-warning-bg/80 hover:border-warning-text/30 focus-visible:ring-warning-text/35",
   danger:
-    "bg-danger-bg/40 border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 focus-visible:ring-danger-text/20",
+    "bg-danger-bg/40 border-danger-text/15 text-danger-text hover:bg-danger-bg/80 hover:border-danger-text/30 focus-visible:ring-danger-text/35",
   info:
-    "bg-info-bg/45 border-info-text/15 text-info-text hover:bg-info-bg/85 hover:border-info-text/30 focus-visible:ring-info-text/20",
+    "bg-info-bg/45 border-info-text/15 text-info-text hover:bg-info-bg/85 hover:border-info-text/30 focus-visible:ring-info-text/35",
 };
 
 export default function ButtonIcon({
@@ -54,19 +54,21 @@ export default function ButtonIcon({
 }: ButtonIconProps) {
   const commonClasses = cn(
     "p-2 rounded-xl border hover:scale-[1.04] active:scale-[0.96] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2",
-    // Adjust size slightly for secondary variant (similar to CopyButton style)
-    variant === "secondary" && "p-1.5 rounded-lg",
     variantStyles[variant],
-    className
+    className,
   );
 
   const iconElement = (
-    <Icon className={cn("w-3.5 h-3.5", loading && "animate-spin", iconClassName)} />
+    <Icon
+      className={cn("w-3.5 h-3.5", loading && "animate-spin", iconClassName)}
+    />
   );
 
   if (href) {
     // If it's a Link, cast the onClick to the Anchor event handler
-    const anchorOnClick = onClick as React.MouseEventHandler<HTMLAnchorElement> | undefined;
+    const anchorOnClick = onClick as
+      | React.MouseEventHandler<HTMLAnchorElement>
+      | undefined;
 
     return (
       <Link
@@ -84,7 +86,9 @@ export default function ButtonIcon({
   }
 
   // Otherwise it's a standard button
-  const buttonOnClick = onClick as React.MouseEventHandler<HTMLButtonElement> | undefined;
+  const buttonOnClick = onClick as
+    | React.MouseEventHandler<HTMLButtonElement>
+    | undefined;
 
   return (
     <button

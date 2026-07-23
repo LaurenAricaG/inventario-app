@@ -1,6 +1,6 @@
 "use client";
 
-import { FiEye } from "react-icons/fi";
+import { FiExternalLink } from "react-icons/fi";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
   Table,
@@ -124,7 +124,7 @@ export default function TableMovements({
                     <ButtonIcon
                       href={`/admin/movimientos/${client.id}`}
                       variant="beauty"
-                      icon={FiEye}
+                      icon={FiExternalLink}
                       title="Ver movimientos y saldos"
                     />
                   </div>

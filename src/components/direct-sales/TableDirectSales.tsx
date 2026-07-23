@@ -39,7 +39,6 @@ export default function TableDirectSales({
   onDelete,
   onView,
 }: TableDirectSalesProps) {
-
   const systemConfig = useSystemConfig();
 
   return (
@@ -90,7 +89,9 @@ export default function TableDirectSales({
                   <TableCell className="hidden md:table-cell">
                     <div className="flex items-center gap-1.5 text-text-secondary text-xs sm:text-sm">
                       <FiCalendar className="w-3.5 h-3.5 text-text-tertiary" />
-                      <span suppressHydrationWarning>{formatDateLocal(sale.createdAt)}</span>
+                      <span suppressHydrationWarning>
+                        {formatDateLocal(sale.createdAt)}
+                      </span>
                     </div>
                   </TableCell>
 
@@ -128,7 +129,7 @@ export default function TableDirectSales({
                     <div className="flex items-center justify-center gap-2">
                       <ButtonIcon
                         onClick={() => onView(sale)}
-                        variant="beauty"
+                        variant="info"
                         icon={FiEye}
                         title="Ver detalle de la venta"
                       />
@@ -139,7 +140,7 @@ export default function TableDirectSales({
                             systemConfig?.systemName ?? "Inventario",
                           )
                         }
-                        variant="beauty"
+                        variant="secondary"
                         icon={FiFileText}
                         title="Descargar boleta de venta (PDF)"
                       />

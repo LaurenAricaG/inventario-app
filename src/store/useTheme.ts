@@ -10,7 +10,7 @@ interface ThemeState {
 const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: "dark",
+      theme: "light",
 
       toggleTheme: () =>
         set((state) => ({
@@ -20,7 +20,7 @@ const useThemeStore = create<ThemeState>()(
       setTheme: (theme) => set({ theme }),
     }),
     {
-      name: "lauren-theme-storage",
+      name: "sistema--theme-storage",
     },
   ),
 );

@@ -235,7 +235,7 @@ export default function ClientPublicPortal({
                               setSelectedSale(m.raw);
                             else setSelectedOrder(m.raw);
                           }}
-                          variant="beauty"
+                          variant="info"
                           icon={FiEye}
                           title="Ver detalles"
                         />

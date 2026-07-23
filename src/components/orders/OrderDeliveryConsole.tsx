@@ -9,12 +9,9 @@ import {
   FiUser,
   FiTruck,
   FiCheckCircle,
-  FiRotateCcw,
   FiAlertCircle,
-  FiDollarSign,
   FiCalendar,
 } from "react-icons/fi";
-import { cn } from "@/utils/cn.utils";
 import Button from "@/components/ui/Button";
 import PageHeader from "@/components/ui/PageHeader";
 import { transitionOrderStatusAction } from "@/lib/campaign-order/index";
@@ -87,8 +84,8 @@ export default function OrderDeliveryConsole({
       if (item.arrivalStatus === ItemArrivalStatus.MISSING) return sum;
       const price =
         item.arrivalStatus === ItemArrivalStatus.SUBSTITUTED &&
-        item.substitute?.catalogPrice !== undefined &&
-        item.substitute?.catalogPrice !== null
+          item.substitute?.catalogPrice !== undefined &&
+          item.substitute?.catalogPrice !== null
           ? item.substitute.catalogPrice
           : item.catalogPrice;
       return sum + item.quantity * price;

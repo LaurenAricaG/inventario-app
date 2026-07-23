@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import { Toaster } from "sonner";
-import Script from "next/script";
 import { getPublicSystemConfig } from "@/lib/config";
 import { SystemConfigProvider } from "@/context/SystemConfigContext";
 import "../styles/globals.css";
@@ -22,16 +21,12 @@ export const metadata: Metadata = {
 const themeScript = `
 (function() {
   try {
-    var stored = localStorage.getItem('lauren-theme-storage');
-    var theme;
+    var stored = localStorage.getItem('sistema--theme-storage');
     if (stored) {
-      theme = JSON.parse(stored)?.state?.theme;
-    }
-    if (!theme) {
-      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+      var parsed = JSON.parse(stored);
+      if (parsed && parsed.state && parsed.state.theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
     }
   } catch (e) {}
 })();
@@ -47,11 +42,10 @@ export default async function RootLayout({
 
   return (
     <html lang="es" className={`${outfit.variable}`} suppressHydrationWarning>
-      <head />
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="font-sans antialiased">
-        <Script id="theme-init" strategy="beforeInteractive">
-          {themeScript}
-        </Script>
         <SystemConfigProvider value={systemConfig}>
           <ThemeProvider>
             {children}

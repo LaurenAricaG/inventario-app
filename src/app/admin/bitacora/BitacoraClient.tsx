@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { FiEye, FiClock, FiSearch, FiCopy, FiCheck } from "react-icons/fi";
+import { FiEye, FiClock, FiSearch, FiCopy, FiCheck, FiFilter } from "react-icons/fi";
 import { toast } from "sonner";
 import { formatDateTimeWithSeconds } from "@/utils/date.utils";
 import { LuHistory } from "react-icons/lu";
@@ -171,14 +171,15 @@ export default function BitacoraClient({
               <SearchInput placeholder="Buscar por usuario o entidad..." />
             </div>
 
-            {/* Selectores de Filtros */}
-            <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto lg:ml-auto">
+            {/* Selectores de Filtros al costado del buscador */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
               {/* Filtro Acción */}
-              <div className="w-36 select-none">
+              <div className="w-full sm:w-44 select-none">
                 <Select
                   value={actionFilter}
                   onChange={handleActionChange}
                   placeholder="Acción (Todas)"
+                  icon={<FiFilter className="w-4 h-4" />}
                 >
                   <option value="ALL">Acción (Todas)</option>
                   <option value="CREATE">CREATE</option>
@@ -188,7 +189,7 @@ export default function BitacoraClient({
               </div>
 
               {/* Filtro Entidad */}
-              <div className="w-44 select-none">
+              <div className="w-full sm:w-48 select-none">
                 <Select
                   value={entityFilter}
                   onChange={handleEntityChange}
@@ -202,6 +203,10 @@ export default function BitacoraClient({
                   ))}
                 </Select>
               </div>
+            </div>
+
+            <div className="text-xs text-text-secondary lg:ml-auto select-none font-medium">
+              Total: {totalItems} registros encontrados
             </div>
           </div>
 
@@ -300,7 +305,7 @@ export default function BitacoraClient({
                           <div className="flex justify-center">
                             <ButtonIcon
                               onClick={() => handleOpenDetails(log)}
-                              variant="beauty"
+                              variant="info"
                               icon={FiEye}
                               title="Ver Detalles del Registro"
                             />

@@ -192,12 +192,13 @@ export default function ClientDetailsDashboard({
             </span>
             <div className="flex items-center gap-2">
               <ButtonIcon
-                href={`https://api.whatsapp.com/send?${cleanPhone
-                  ? `phone=${cleanPhone.startsWith("51") ? cleanPhone : "51" + cleanPhone}&`
-                  : ""
-                  }text=${encodeURIComponent(
-                    `Hola ${client.name}, te comparto el enlace para que puedas ver el estado de tu cuenta de pedidos y pagos: ${origin}/c/${client.shareToken}`,
-                  )}`}
+                href={`https://api.whatsapp.com/send?${
+                  cleanPhone
+                    ? `phone=${cleanPhone.startsWith("51") ? cleanPhone : "51" + cleanPhone}&`
+                    : ""
+                }text=${encodeURIComponent(
+                  `Hola ${client.name}, te comparto el enlace para que puedas ver el estado de tu cuenta de pedidos y pagos: ${origin}/c/${client.shareToken}`,
+                )}`}
                 target="_blank"
                 variant="success"
                 icon={FaWhatsapp}
@@ -267,16 +268,18 @@ export default function ClientDetailsDashboard({
             className={cn(
               "border p-6 rounded-3xl shadow-sm flex flex-col justify-between transition-all duration-300 relative overflow-hidden",
               summary.balance > 0.01
-                ? "bg-gradient-to-br from-red-500/10 to-rose-500/5 border-red-500/20 dark:from-red-950/20 dark:to-zinc-950"
-                : "bg-gradient-to-br from-green-500/10 to-emerald-500/5 border-green-500/20 dark:from-green-950/20 dark:to-zinc-950",
+                ? "bg-linear-to-br from-red-500/10 to-rose-500/5 border-red-500/20 dark:from-red-950/20 dark:to-zinc-950"
+                : "bg-linear-to-br from-green-500/10 to-emerald-500/5 border-green-500/20 dark:from-green-950/20 dark:to-zinc-950",
             )}
           >
             {/* Icono decorativo de fondo */}
             <div className="absolute right-4 top-4 opacity-10 dark:opacity-20 pointer-events-none">
-              <FiDollarSign className={cn(
-                "w-12 h-12",
-                summary.balance > 0.01 ? "text-red-500" : "text-green-500"
-              )} />
+              <FiDollarSign
+                className={cn(
+                  "w-12 h-12",
+                  summary.balance > 0.01 ? "text-red-500" : "text-green-500",
+                )}
+              />
             </div>
 
             <span className="text-[10px] text-text-tertiary font-extrabold uppercase tracking-wider block">

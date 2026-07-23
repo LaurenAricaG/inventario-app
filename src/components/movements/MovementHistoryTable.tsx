@@ -190,7 +190,7 @@ export default function MovementHistoryTable({
                       {movement.type === "VENTA_DIRECTA" && (
                         <ButtonIcon
                           onClick={() => onViewDirectSale(movement.raw)}
-                          variant="beauty"
+                          variant="info"
                           icon={FiEye}
                           title="Ver boleta de venta"
                         />
@@ -198,7 +198,7 @@ export default function MovementHistoryTable({
                       {movement.type === "PEDIDO_CATALOGO" && (
                         <ButtonIcon
                           onClick={() => onViewCampaignOrder(movement.raw)}
-                          variant="beauty"
+                          variant="info"
                           icon={FiEye}
                           title="Ver detalles del pedido"
                         />

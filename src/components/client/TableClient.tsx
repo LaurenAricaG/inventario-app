@@ -1,6 +1,12 @@
 "use client";
 
-import { FiEdit2, FiTrash2, FiPhone, FiMapPin, FiExternalLink } from "react-icons/fi";
+import {
+  FiEdit2,
+  FiTrash2,
+  FiPhone,
+  FiMapPin,
+  FiExternalLink,
+} from "react-icons/fi";
 import Link from "next/link";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import CopyButton from "@/components/ui/CopyButton";
@@ -99,11 +105,12 @@ export default function TableClient({
                         {initials}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-text-primary truncate leading-snug hover:text-beauty-500 hover:underline">
-                          <Link href={`/admin/movimientos/${client.id}?source=clientes`}>
-                            {client.name}
-                          </Link>
-                        </p>
+                        <Link
+                          href={`/admin/movimientos/${client.id}?source=clientes`}
+                          className="text-sm font-semibold text-text-primary hover:text-beauty-500 transition-colors focus-visible:outline-none focus-visible:text-beauty-500 truncate block leading-snug"
+                        >
+                          {client.name}
+                        </Link>
                         <p className="text-xs text-text-secondary flex items-center gap-1 mt-0.5">
                           <FiPhone className="w-3.5 h-3.5 shrink-0" />
                           <span>{client.phone || "Sin teléfono"}</span>
@@ -113,7 +120,7 @@ export default function TableClient({
                   </TableCell>
 
                   {/* Dirección */}
-                  <TableCell className="text-xs text-text-secondary hidden md:table-cell max-w-[220px] truncate">
+                  <TableCell className="text-xs text-text-secondary hidden md:table-cell max-w-55 truncate">
                     <div className="flex items-center gap-1.5">
                       <FiMapPin className="w-3.5 h-3.5 shrink-0 text-text-tertiary" />
                       <span className="truncate" title={client.address || ""}>

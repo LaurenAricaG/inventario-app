@@ -23,6 +23,14 @@ import Select from "@/components/ui/Select";
 import SearchInput from "@/components/ui/SearchInput";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import PageHeader from "@/components/ui/PageHeader";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/Table";
 import OrderDetailModal from "@/components/movements/OrderDetailModal";
 import Modal from "@/components/ui/Modal";
 import Form, { FormField } from "@/components/ui/Form";
@@ -639,139 +647,122 @@ export default function OrdersDashboard({
         </div>
 
         {/* Tabla */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="border-b border-border-soft bg-bg-surface select-none">
-                <th className="px-6 py-3 font-semibold text-text-secondary text-xs uppercase tracking-wider">
-                  Cliente
-                </th>
-                <th className="px-6 py-3 font-semibold text-text-secondary text-xs text-center uppercase tracking-wider">
-                  Estado
-                </th>
-                <th className="px-6 py-3 font-semibold text-text-secondary text-xs text-center uppercase tracking-wider">
-                  Productos
-                </th>
-                <th className="px-6 py-3 font-semibold text-text-secondary text-xs text-right uppercase tracking-wider">
-                  Descuento
-                </th>
-                <th className="px-6 py-3 font-semibold text-text-secondary text-xs text-right uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-6 py-3 font-semibold text-text-secondary text-xs text-center uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-soft bg-bg-card">
-              {initialOrders.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-10 text-center text-text-tertiary"
-                  >
-                    No se encontraron pedidos registrados para esta campaña.
-                  </td>
-                </tr>
-              ) : (
-                initialOrders.map((order) => {
-                  const calculatedTotal = getOrderTotal(order);
-                  return (
-                    <tr
-                      key={order.id}
-                      className="hover:bg-bg-surface/50 transition-colors duration-150"
-                    >
-                      <td className="px-6 py-4 font-bold text-text-primary whitespace-nowrap">
-                        <div>
-                          <span className="block">{order.client.name}</span>
-                          {order.paymentDate ? (
-                            <span className="text-[10px] text-beauty-500 font-bold block mt-0.5 select-none">
-                              Límite Pago: {formatDateUTC(order.paymentDate)}
-                            </span>
-                          ) : (
-                            <>
-                              {order.status === "CANCELLED" ? (
-                                <span className="text-[10px] text-beauty-500 font-bold block mt-0.5 select-none">
-                                  Cancelado
-                                </span>
-                              ) : (
-                                <span className="text-[10px] text-text-tertiary italic font-medium block mt-0.5 select-none">
-                                  Sin fecha de pago
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColors[order.status]}`}
-                        >
-                          {statusTranslations[order.status]}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center whitespace-nowrap font-medium text-text-secondary">
-                        {order.items.reduce(
-                          (sum, item) => sum + item.quantity,
-                          0,
-                        )}{" "}
-                        u.
-                      </td>
-                      <td className="px-6 py-4 text-right whitespace-nowrap font-mono text-text-secondary">
-                        S/ {order.discount.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 text-right whitespace-nowrap font-mono font-bold text-text-primary">
-                        S/ {calculatedTotal.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center justify-center gap-2">
-                          <ButtonIcon
-                            onClick={() => setSelectedOrder(order)}
-                            variant="beauty"
-                            icon={FiEye}
-                            title="Ver Detalle de la Ficha"
-                          />
-                          <ButtonIcon
-                            onClick={() => {
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Cliente</TableHead>
+              <TableHead className="text-center">Estado</TableHead>
+              <TableHead className="text-center">Productos</TableHead>
+              <TableHead className="text-right">Descuento</TableHead>
+              <TableHead className="text-right">Total</TableHead>
+              <TableHead className="text-center">Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {initialOrders.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="py-10 text-center text-text-tertiary"
+                >
+                  No se encontraron pedidos registrados para esta campaña.
+                </TableCell>
+              </TableRow>
+            ) : (
+              initialOrders.map((order) => {
+                const calculatedTotal = getOrderTotal(order);
+                return (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-bold whitespace-nowrap">
+                      <div>
+                        <span className="block">{order.client.name}</span>
+                        {order.paymentDate ? (
+                          <span className="text-[10px] text-beauty-500 font-bold block mt-0.5 select-none">
+                            Límite Pago: {formatDateUTC(order.paymentDate)}
+                          </span>
+                        ) : (
+                          <>
+                            {order.status === "CANCELLED" ? (
+                              <span className="text-[10px] text-beauty-500 font-bold block mt-0.5 select-none">
+                                Cancelado
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-text-tertiary italic font-medium block mt-0.5 select-none">
+                                Sin fecha de pago
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-center">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColors[order.status]}`}
+                      >
+                        {statusTranslations[order.status]}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center whitespace-nowrap font-medium text-text-secondary">
+                      {order.items.reduce(
+                        (sum, item) => sum + item.quantity,
+                        0,
+                      )}{" "}
+                      u.
+                    </TableCell>
+                    <TableCell className="text-right whitespace-nowrap font-mono text-text-secondary">
+                      S/ {order.discount.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-right whitespace-nowrap font-mono font-bold text-text-primary">
+                      S/ {calculatedTotal.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <div className="flex items-center justify-center gap-2">
+                        <ButtonIcon
+                          onClick={() => setSelectedOrder(order)}
+                          variant="info"
+                          icon={FiEye}
+                          title="Ver Detalle de la Ficha"
+                        />
+                        <ButtonIcon
+                          onClick={() => {
+                            currentCampaign &&
+                              (order.status === "PACKED" ||
+                                order.status === "DELIVERED") &&
+                              printCampaignSlips(
+                                currentCampaign,
+                                [order],
+                                systemConfig?.systemName ?? "Inventario",
+                                systemConfig?.systemLogoUrl,
+                              );
+                          }}
+                          disabled={
+                            !(
                               currentCampaign &&
-                                (order.status === "PACKED" ||
-                                  order.status === "DELIVERED") &&
-                                printCampaignSlips(
-                                  currentCampaign,
-                                  [order],
-                                  systemConfig?.systemName ?? "Inventario",
-                                  systemConfig?.systemLogoUrl,
-                                );
-                            }}
-                            disabled={
-                              !(
-                                currentCampaign &&
-                                (order.status === "PACKED" ||
-                                  order.status === "DELIVERED")
-                              )
-                            }
-                            variant="beauty"
-                            icon={FiScissors}
-                            iconClassName="text-beauty-500"
-                            title={
-                              !(
-                                currentCampaign &&
-                                (order.status === "PACKED" ||
-                                  order.status === "DELIVERED")
-                              )
-                                ? "Impresión deshabilitada para este estado"
-                                : "Imprimir Ficha Individual"
-                            }
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                              (order.status === "PACKED" ||
+                                order.status === "DELIVERED")
+                            )
+                          }
+                          variant="beauty"
+                          icon={FiScissors}
+                          iconClassName="text-beauty-500"
+                          title={
+                            !(
+                              currentCampaign &&
+                              (order.status === "PACKED" ||
+                                order.status === "DELIVERED")
+                            )
+                              ? "Impresión deshabilitada para este estado"
+                              : "Imprimir Ficha Individual"
+                          }
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
       </div>
 
       {/* Modal de Detalles del Pedido */}

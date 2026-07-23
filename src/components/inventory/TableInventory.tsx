@@ -188,7 +188,7 @@ export default function TableInventory({
                 <TableCell className="text-center">
                   <ButtonIcon
                     onClick={() => setActiveDetail(movement)}
-                    variant="beauty"
+                    variant="info"
                     icon={FiEye}
                     title="Ver detalle del movimiento"
                   />

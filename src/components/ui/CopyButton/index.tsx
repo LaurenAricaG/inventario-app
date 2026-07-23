@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FiCopy, FiCheck } from "react-icons/fi";
 import { toast } from "sonner";
 import ButtonIcon from "../ButtonIcon";
+import { cn } from "@/utils/cn.utils";
 
 interface CopyButtonProps {
   text: string;
@@ -43,7 +44,7 @@ export default function CopyButton({
       icon={copied ? FiCheck : FiCopy}
       iconClassName={copied ? "text-success-text" : undefined}
       title={tooltip}
-      className={className}
+      className={cn({ className }, "p-2 rounded-xl")}
     />
   );
 }

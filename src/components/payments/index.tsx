@@ -134,16 +134,12 @@ export default function Payments({
           <div className="flex-1 max-w-md">
             <SearchInput placeholder="Buscar por cliente o nota..." />
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center md:ml-auto">
-            <div className="flex items-center gap-2 select-none text-xs">
-              <FiFilter className="w-3.5 h-3.5 text-text-tertiary shrink-0" />
-              <span className="font-semibold text-text-secondary">Método:</span>
-            </div>
+          <div className="w-full md:w-52 shrink-0 select-none">
             <Select
               value={selectedMethod || "ALL"}
               onChange={handleMethodChange}
               disabled={isPending}
-              className="w-full sm:w-48 text-xs font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
+              icon={<FiFilter className="w-4 h-4" />}
             >
               <option value="ALL">Todos los métodos</option>
               {Object.keys(methodTranslations).map((key) => (
@@ -152,9 +148,9 @@ export default function Payments({
                 </option>
               ))}
             </Select>
-            <div className="text-xs text-text-secondary select-none font-medium sm:ml-4 flex items-center shrink-0">
-              Total: {totalItems} pagos
-            </div>
+          </div>
+          <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
+            Total: {totalItems} pagos encontrados
           </div>
         </div>
 

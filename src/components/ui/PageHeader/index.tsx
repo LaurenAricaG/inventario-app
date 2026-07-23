@@ -23,22 +23,31 @@ export default function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none", className)}>
+    <div
+      className={cn(
+        "flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none",
+        className,
+      )}
+    >
       <div className="space-y-1">
         {breadcrumbs && breadcrumbs.length > 0 && (
           <nav className="flex items-center gap-1.5 text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-3">
             {breadcrumbs.map((item, idx) => (
               <React.Fragment key={idx}>
-                {idx > 0 && <span className="text-[9px] text-text-tertiary/40">/</span>}
+                {idx > 0 && (
+                  <span className="text-[9px] text-text-tertiary/40">/</span>
+                )}
                 {item.href ? (
                   <Link
                     href={item.href}
-                    className="hover:text-beauty-500 transition-colors"
+                    className="px-1 py-0.5 rounded-md hover:text-beauty-500 transition-colors outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 focus-visible:text-beauty-400"
                   >
                     {item.label}
                   </Link>
                 ) : (
-                  <span className="text-text-secondary font-semibold">{item.label}</span>
+                  <span className="text-text-secondary font-semibold">
+                    {item.label}
+                  </span>
                 )}
               </React.Fragment>
             ))}
@@ -48,9 +57,7 @@ export default function PageHeader({
           {title}
         </h1>
         {subtitle && (
-          <p className="text-xs sm:text-sm text-text-secondary">
-            {subtitle}
-          </p>
+          <p className="text-xs sm:text-sm text-text-secondary">{subtitle}</p>
         )}
       </div>
       {action && (

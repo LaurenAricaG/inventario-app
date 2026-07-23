@@ -101,7 +101,7 @@ export default function TableCatalogPdfs({
                         <ButtonIcon
                           href={catalog.pdfUrl}
                           target="_blank"
-                          variant="info"
+                          variant="secondary"
                           icon={FiFileText}
                           title="Ver documento"
                         />

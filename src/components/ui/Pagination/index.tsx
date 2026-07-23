@@ -100,7 +100,7 @@ export default function Pagination({
 
   const handlePageClick = (
     e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
-    page: number
+    page: number,
   ) => {
     if (onPageChange) {
       e.preventDefault();
@@ -110,12 +110,18 @@ export default function Pagination({
 
   // Shared button styles (for active, standard, and hover states)
   const btnClass = cn(
-    "flex items-center justify-center w-9 h-9 rounded-xl border select-none text-xs font-semibold transition-all duration-250 ease-in-out cursor-pointer",
-    "border-border-default/60 bg-bg-card text-text-secondary hover:bg-beauty-400/10 hover:text-beauty-600 dark:hover:bg-beauty-600/15 dark:hover:text-beauty-400 hover:border-beauty-400/30",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400/30 focus-visible:ring-offset-2"
+    "flex items-center justify-center w-9 h-9 rounded-xl border select-none text-xs font-semibold transition-all duration-200 cursor-pointer",
+    "border-border-default/80 dark:border-white/15 bg-bg-card dark:bg-white/5 text-text-secondary dark:text-text-primary",
+    "hover:bg-beauty-400/10 hover:text-beauty-600 hover:border-beauty-400/40 dark:hover:bg-beauty-400/15 dark:hover:text-beauty-400 dark:hover:border-beauty-400/40",
+    "outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-beauty-400 focus-visible:ring-offset-bg-card dark:focus-visible:ring-offset-bg-page",
   );
 
-  const renderButton = (page: number, content: React.ReactNode, label: string, disabled: boolean) => {
+  const renderButton = (
+    page: number,
+    content: React.ReactNode,
+    label: string,
+    disabled: boolean,
+  ) => {
     const isActive = page === currentPage;
 
     if (isActive) {
@@ -123,8 +129,9 @@ export default function Pagination({
         <button
           type="button"
           className={cn(
-            "flex items-center justify-center w-9 h-9 rounded-xl border select-none text-xs font-bold transition-all duration-200 pointer-events-none",
-            "bg-beauty-400 border-beauty-400 text-white shadow-sm shadow-beauty-400/20"
+            "flex items-center justify-center w-9 h-9 rounded-xl border select-none text-xs font-bold transition-all duration-200 cursor-default",
+            "bg-beauty-400 border-beauty-400 text-white shadow-sm shadow-beauty-400/20",
+            "outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-beauty-500 dark:focus-visible:ring-beauty-400 focus-visible:ring-offset-bg-card dark:focus-visible:ring-offset-bg-page",
           )}
           aria-current="page"
           aria-label={label}
@@ -141,7 +148,7 @@ export default function Pagination({
           disabled
           className={cn(
             "flex items-center justify-center w-9 h-9 rounded-xl border select-none text-xs font-semibold transition-all duration-200",
-            "border-border-default/30 bg-bg-surface/30 text-text-tertiary/40 cursor-not-allowed"
+            "border-border-default/40 dark:border-white/10 bg-bg-surface/50 dark:bg-white/2 text-text-tertiary/40 dark:text-white/20 cursor-not-allowed outline-none",
           )}
           aria-label={label}
         >
@@ -164,11 +171,7 @@ export default function Pagination({
     }
 
     return (
-      <Link
-        href={createPageURL(page)}
-        className={btnClass}
-        aria-label={label}
-      >
+      <Link href={createPageURL(page)} className={btnClass} aria-label={label}>
         {content}
       </Link>
     );
@@ -178,18 +181,33 @@ export default function Pagination({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-6 border-t border-border-soft w-full">
       {/* Informative Label */}
       <div className="text-xs text-text-secondary text-center sm:text-left select-none">
-        Mostrando <span className="font-semibold text-text-primary">{startItem}</span> a{" "}
+        Mostrando{" "}
+        <span className="font-semibold text-text-primary">{startItem}</span> a{" "}
         <span className="font-semibold text-text-primary">{endItem}</span> de{" "}
-        <span className="font-semibold text-text-primary">{totalItems}</span> resultados
+        <span className="font-semibold text-text-primary">{totalItems}</span>{" "}
+        resultados
       </div>
 
       {/* Desktop / Tablet Pagination Controls */}
-      <nav className="hidden md:flex items-center gap-1.5" aria-label="Paginación de resultados">
+      <nav
+        className="hidden md:flex items-center gap-1.5"
+        aria-label="Paginación de resultados"
+      >
         {/* First Page */}
-        {renderButton(1, <FiChevronsLeft className="w-4 h-4" />, "Primera página", currentPage === 1)}
+        {renderButton(
+          1,
+          <FiChevronsLeft className="w-4 h-4" />,
+          "Primera página",
+          currentPage === 1,
+        )}
 
         {/* Previous Page */}
-        {renderButton(currentPage - 1, <FiChevronLeft className="w-4 h-4" />, "Página anterior", currentPage === 1)}
+        {renderButton(
+          currentPage - 1,
+          <FiChevronLeft className="w-4 h-4" />,
+          "Página anterior",
+          currentPage === 1,
+        )}
 
         {/* Page Numbers */}
         {pageNumbers.map((page, index) => {
@@ -207,7 +225,12 @@ export default function Pagination({
           const pageNum = page as number;
           return (
             <span key={`page-${pageNum}`}>
-              {renderButton(pageNum, pageNum.toString(), `Ir a página ${pageNum}`, false)}
+              {renderButton(
+                pageNum,
+                pageNum.toString(),
+                `Ir a página ${pageNum}`,
+                false,
+              )}
             </span>
           );
         })}
@@ -217,7 +240,7 @@ export default function Pagination({
           currentPage + 1,
           <FiChevronRight className="w-4 h-4" />,
           "Página siguiente",
-          currentPage === totalPages
+          currentPage === totalPages,
         )}
 
         {/* Last Page */}
@@ -225,14 +248,27 @@ export default function Pagination({
           totalPages,
           <FiChevronsRight className="w-4 h-4" />,
           "Última página",
-          currentPage === totalPages
+          currentPage === totalPages,
         )}
       </nav>
 
       {/* Mobile Pagination Controls (Compact Design) */}
-      <nav className="flex md:hidden items-center gap-2" aria-label="Paginación de resultados móvil">
-        {renderButton(1, <FiChevronsLeft className="w-3.5 h-3.5" />, "Primera página", currentPage === 1)}
-        {renderButton(currentPage - 1, <FiChevronLeft className="w-3.5 h-3.5" />, "Página anterior", currentPage === 1)}
+      <nav
+        className="flex md:hidden items-center gap-2"
+        aria-label="Paginación de resultados móvil"
+      >
+        {renderButton(
+          1,
+          <FiChevronsLeft className="w-3.5 h-3.5" />,
+          "Primera página",
+          currentPage === 1,
+        )}
+        {renderButton(
+          currentPage - 1,
+          <FiChevronLeft className="w-3.5 h-3.5" />,
+          "Página anterior",
+          currentPage === 1,
+        )}
 
         <span className="text-xs font-semibold text-text-primary px-3 py-1.5 bg-bg-surface rounded-xl border border-border-default/30 select-none">
           {currentPage} de {totalPages}
@@ -242,13 +278,13 @@ export default function Pagination({
           currentPage + 1,
           <FiChevronRight className="w-3.5 h-3.5" />,
           "Página siguiente",
-          currentPage === totalPages
+          currentPage === totalPages,
         )}
         {renderButton(
           totalPages,
           <FiChevronsRight className="w-3.5 h-3.5" />,
           "Última página",
-          currentPage === totalPages
+          currentPage === totalPages,
         )}
       </nav>
     </div>

@@ -287,7 +287,7 @@ export default function FormRole({
                     <button
                       type="button"
                       onClick={() => handleToggleCategory(prefix)}
-                      className="text-[10px] font-semibold text-beauty-500 hover:text-beauty-600 dark:text-beauty-400 dark:hover:text-beauty-300 hover:underline select-none cursor-pointer"
+                      className="text-[10px] font-semibold text-beauty-500 hover:text-beauty-600 dark:text-beauty-400 dark:hover:text-beauty-300 px-1.5 py-0.5 rounded-md transition-colors select-none cursor-pointer outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
                     >
                       {allSelected ? "Quitar todos" : "Seleccionar todos"}
                     </button>
