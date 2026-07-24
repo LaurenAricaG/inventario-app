@@ -1,4 +1,5 @@
 import Skeleton from "@/components/ui/Skeleton";
+import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
 import {
   Table,
   TableHeader,
@@ -13,11 +14,8 @@ export default function MovimientosDetalleLoading() {
 
   return (
     <div className="space-y-6">
-      {/* Retorno y Título */}
-      <div className="flex items-center gap-3">
-        <Skeleton className="w-10 h-10 rounded-xl" />
-        <Skeleton className="h-6 w-56" />
-      </div>
+      {/* Page Header Skeleton */}
+      <PageHeaderSkeleton hasAction={true} />
 
       {/* Top Grid: Datos del Cliente + Resumen Consolidado */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

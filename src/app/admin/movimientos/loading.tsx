@@ -1,4 +1,5 @@
 import Skeleton from "@/components/ui/Skeleton";
+import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
 import {
   Table,
   TableHeader,
@@ -14,17 +15,15 @@ export default function MovimientosLoading() {
   return (
     <div className="space-y-6">
       {/* Skeleton del encabezado de página */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <Skeleton className="h-8 w-60" />
-          <Skeleton className="h-4 w-80 mt-2" />
-        </div>
-      </div>
+      <PageHeaderSkeleton hasAction={false} />
 
       {/* Skeleton de las Tarjetas de Resumen Consolidado */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {Array.from({ length: 3 }).map((_, idx) => (
-          <div key={idx} className="p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-4">
+          <div
+            key={idx}
+            className="p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-4"
+          >
             <Skeleton className="w-12 h-12 rounded-2xl shrink-0" />
             <div className="space-y-2">
               <Skeleton className="h-3 w-24" />

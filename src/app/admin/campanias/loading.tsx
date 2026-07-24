@@ -1,4 +1,5 @@
 import Skeleton from "@/components/ui/Skeleton";
+import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
 import {
   Table,
   TableHeader,
@@ -14,13 +15,7 @@ export default function CampaniasLoading() {
   return (
     <div className="space-y-6">
       {/* Page Header Skeleton */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <Skeleton className="h-8 w-36" />
-          <Skeleton className="h-4 w-64 mt-2" />
-        </div>
-        <Skeleton className="h-10 w-36 rounded-xl self-start sm:self-auto" />
-      </div>
+      <PageHeaderSkeleton hasAction={true} />
 
       {/* Selector de Pestañas (Tabs) Skeleton */}
       <div className="flex items-center p-1 rounded-xl bg-bg-surface border border-border-default/50 self-start select-none w-full sm:w-auto gap-1">

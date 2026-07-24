@@ -46,7 +46,8 @@ export default function Users({
 
   const canCreate = permissions.includes("users:create");
   const canUpdate = permissions.includes("users:update");
-  const canDelete = permissions.includes("users:delete") || permissions.includes("users:toggle-status");
+  const canDelete = permissions.includes("users:delete");
+  const canRestore = permissions.includes("users:restore");
 
   // Modals state
   const [isOpenFormModal, setIsOpenFormModal] = useState(false);
@@ -215,6 +216,7 @@ export default function Users({
                   itemsPerPage={itemsPerPage}
                   canUpdate={canUpdate}
                   canDelete={canDelete}
+                  canRestore={canRestore}
                   onEdit={handleOpenForm}
                   onDelete={handleOpenDelete}
                   onReactivate={handleOpenReactivate}

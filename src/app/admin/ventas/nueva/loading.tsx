@@ -1,13 +1,11 @@
 import Skeleton from "@/components/ui/Skeleton";
+import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
 
 export default function NuevaVentaLoading() {
   return (
     <div className="space-y-6">
-      {/* Header and Back Button Skeleton */}
-      <div>
-        <Skeleton className="h-4 w-28 mb-2 rounded-md" />
-        <Skeleton className="h-8 w-64 rounded-md" />
-      </div>
+      {/* Header Skeleton */}
+      <PageHeaderSkeleton hasAction={false} />
 
       {/* Two Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

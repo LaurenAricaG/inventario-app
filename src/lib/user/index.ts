@@ -275,7 +275,7 @@ export async function deleteUserAction(id: number) {
     }
     const permissions = session.user.permissions ?? [];
 
-    if (!permissions.includes("users:delete") && !permissions.includes("users:toggle-status")) {
+    if (!permissions.includes("users:delete")) {
       return {
         success: false,
         message: "No autorizado. No tienes permiso para suspender usuarios.",
@@ -332,7 +332,7 @@ export async function reactivateUserAction(id: number) {
     }
     const permissions = session.user.permissions ?? [];
 
-    if (!permissions.includes("users:delete") && !permissions.includes("users:toggle-status")) {
+    if (!permissions.includes("users:restore")) {
       return {
         success: false,
         message: "No autorizado. No tienes permiso para reactivar usuarios.",

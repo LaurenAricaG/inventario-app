@@ -24,7 +24,6 @@ import {
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { TbBrandAirtable } from "react-icons/tb";
 import { AiOutlineProduct } from "react-icons/ai";
-import type { SystemConfig } from "@/types/models";
 import { useSystemConfig } from "@/context/SystemConfigContext";
 import BrandLogo from "@/components/ui/BrandLogo";
 
@@ -65,8 +64,6 @@ export default function Sidebar({
   }, [collapsed]);
 
   const isVisuallyCollapsed = collapsed && !isMobile;
-
-  const systemConfig = useSystemConfig();
 
   const navItems = [
     { label: "Inicio", href: "/admin", icon: FiHome },
@@ -201,7 +198,9 @@ export default function Sidebar({
           showText={!collapsed}
           textClassName={cn(
             "text-lg transition-all duration-300 ease-in-out",
-            collapsed ? "md:max-w-0 md:opacity-0 md:pointer-events-none" : "max-w-48 opacity-100"
+            collapsed
+              ? "md:max-w-0 md:opacity-0 md:pointer-events-none"
+              : "max-w-48 opacity-100",
           )}
           size="md"
         />

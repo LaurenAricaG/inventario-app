@@ -253,3 +253,52 @@ export async function deleteClientAction(id: number) {
     };
   }
 }
+
+export async function regenerateClientShareToken(clientId: number) {
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      return {
+        success: false,
+        message: "No autenticado. Por favor inicia sesión.",
+      };
+    }
+    const permissions = session.user.permissions ?? [];
+
+    if (!permissions.includes("clients:update")) {
+      return {
+        success: false,
+        message:
+          "No autorizado. No tienes permiso para editar este cliente.",
+      };
+    }
+
+    const { randomBytes } = await import("crypto");
+    const newToken = "c" + randomBytes(12).toString("hex");
+
+    await prisma.client.update({
+      where: { id: clientId },
+      data: { shareToken: newToken },
+    });
+
+    await logActivity({
+      userId: Number(session.user.id),
+      action: "UPDATE",
+      entity: "Client",
+      entityId: clientId,
+      details: { action: "REGENERATE_SHARE_TOKEN" },
+    });
+
+    revalidatePath("/admin/clientes");
+    return {
+      success: true,
+      message: "Enlace del cliente regenerado con éxito.",
+    };
+  } catch (error: any) {
+    console.error("Error al regenerar enlace del cliente:", error);
+    return {
+      success: false,
+      message: `No se pudo regenerar el enlace: ${error.message || error}`,
+    };
+  }
+}

@@ -217,8 +217,7 @@ export default function FormRole({
               error={errors.name}
               disabled={
                 isSubmitting ||
-                (!!role &&
-                  ["ADMIN", "SELLER"].includes(role.name.toUpperCase()))
+                (!!role && role.name.toUpperCase() === "ADMIN")
               }
             />
           </FormField>

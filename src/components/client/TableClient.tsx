@@ -28,7 +28,6 @@ interface TableClientProps {
   itemsPerPage: number;
   canUpdate: boolean;
   canDelete: boolean;
-  isAdmin: boolean;
   onEdit: (client: SerializedClient) => void;
   onDelete: (client: SerializedClient) => void;
 }
@@ -58,7 +57,6 @@ export default function TableClient({
   itemsPerPage,
   canUpdate,
   canDelete,
-  isAdmin,
   onEdit,
   onDelete,
 }: TableClientProps) {
@@ -137,7 +135,7 @@ export default function TableClient({
                         isLink={true}
                         tooltip="Copiar enlace de estado de cuenta"
                       />
-                      {isAdmin && (
+                      {canUpdate && (
                         <RegenerateTokenButton
                           clientId={client.id}
                           clientName={client.name}

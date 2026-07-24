@@ -19,7 +19,7 @@ export default async function DashboardLayout({
     redirect("/login");
   }
   const userName = session?.user?.name ?? "Usuario";
-  const userRole = session?.user?.role ?? "SELLER";
+  const userRole = session?.user?.role ?? "Rol";
   const userPermissions = session?.user?.permissions ?? [];
 
   return (

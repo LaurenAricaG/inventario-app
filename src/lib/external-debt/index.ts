@@ -97,10 +97,9 @@ export async function deleteExternalDebtAction(id: number) {
       };
     }
 
-    const isAdmin = session.user.role === "ADMIN";
     const permissions = session.user.permissions ?? [];
 
-    if (!isAdmin && !permissions.includes("debts:create")) {
+    if (!permissions.includes("debts:create")) {
       return {
         success: false,
         message: "No autorizado. No tienes permiso para anular deudas externas.",

@@ -1,4 +1,5 @@
 import Skeleton from "@/components/ui/Skeleton";
+import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
 import {
   Table,
   TableHeader,
@@ -13,11 +14,8 @@ export default function BitacoraLoading() {
 
   return (
     <div className="space-y-6">
-      {/* Skeleton del encabezado */}
-      <div>
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-80 mt-2" />
-      </div>
+      {/* Page Header Skeleton */}
+      <PageHeaderSkeleton hasAction={false} />
 
       {/* Skeleton de la tarjeta principal */}
       <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">

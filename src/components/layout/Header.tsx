@@ -15,8 +15,8 @@ interface HeaderProps {
 export default function Header({
   collapsed,
   onToggle,
-  userName = "Lauren Arica",
-  userRole = "SELLER",
+  userName = "Usuario",
+  userRole = "Rol",
 }: HeaderProps) {
   const [greeting, setGreeting] = useState("¡Hola!");
 
@@ -57,8 +57,8 @@ export default function Header({
             <p className="text-xs font-semibold text-text-primary">
               {userName}
             </p>
-            <p className="text-[10px] text-text-secondary">
-              {userRole === "ADMIN" ? "Administrador" : "Vendedora"}
+            <p className="text-[10px] text-text-secondary capitalize">
+              {userRole || "Rol"}
             </p>
           </div>
         </div>

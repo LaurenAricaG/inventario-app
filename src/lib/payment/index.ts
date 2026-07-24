@@ -112,11 +112,9 @@ export async function deletePaymentAction(id: number) {
       };
     }
 
-    const isAdmin = session.user.role === "ADMIN";
     const permissions = session.user.permissions ?? [];
 
-    // Permitir anular si es admin o si tiene permisos de creación de pagos (como revertir una acción propia)
-    if (!isAdmin && !permissions.includes("payments:create")) {
+    if (!permissions.includes("payments:create")) {
       return {
         success: false,
         message: "No autorizado. No tienes permiso para anular pagos.",

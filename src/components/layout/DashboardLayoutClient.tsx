@@ -17,8 +17,8 @@ interface DashboardLayoutClientProps {
 
 export default function DashboardLayoutClient({
   initialCollapsed,
-  userName = "Eva's Shop",
-  userRole = "SELLER",
+  userName = "Usuario",
+  userRole = "Rol",
   userPermissions = [],
   children,
 }: DashboardLayoutClientProps) {

@@ -8,7 +8,6 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 import Pagination from "@/components/ui/Pagination";
 import SearchInput from "@/components/ui/SearchInput";
 import { deleteClientAction } from "@/lib/client";
-import { seedMockDataAction } from "@/app/admin/actions";
 import { SerializedClient } from "@/types/client";
 import TableClient from "./TableClient";
 import FormClient from "./FormClient";
@@ -38,14 +37,14 @@ export default function Clients({
   const canCreate = permissions.includes("clients:create");
   const canUpdate = permissions.includes("clients:update");
   const canDelete = permissions.includes("clients:delete");
-  const isAdmin = permissions.includes("users:toggle-status") || permissions.includes("users:delete"); // or another proxy check for ADMIN, let's check admin status from roles or users page permissions
 
   // Modals state
   const [isOpenFormModal, setIsOpenFormModal] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<SerializedClient | null>(
+    null,
+  );
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<SerializedClient | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSeeding, setIsSeeding] = useState(false);
 
   const handleOpenForm = (client: SerializedClient | null = null) => {
     setSelectedClient(client);
@@ -76,36 +75,11 @@ export default function Clients({
     }
   };
 
-  const handleSeedMockData = async () => {
-    setIsSeeding(true);
-    const promise = seedMockDataAction();
-
-    toast.promise(promise, {
-      loading: "Generando datos de prueba...",
-      success: (res) => {
-        if (res.success) {
-          return res.message;
-        } else {
-          throw new Error(res.message);
-        }
-      },
-      error: (err) => err.message || "Error al generar datos de prueba.",
-    });
-
-    try {
-      await promise;
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsSeeding(false);
-    }
-  };
-
   return (
     <div className="space-y-6">
       <PageHeader
         title="Clientes"
-        subtitle="Listado y control de clientes de Natura y Avon"
+        subtitle="Listado y control de clientes"
         breadcrumbs={[
           { label: "admin", href: "/admin" },
           { label: "clientes" },
@@ -134,29 +108,20 @@ export default function Clients({
           <h3 className="text-lg font-bold text-text-primary mb-2">
             No hay clientes registrados
           </h3>
-          <p className="text-xs text-text-secondary mb-8 leading-relaxed max-w-sm">
-            Para ver la paginación y el listado de clientes, puedes generar registros simulados de prueba con un solo clic o crear un cliente nuevo.
+          <p className="text-xs text-text-secondary mb-6 leading-relaxed max-w-sm">
+            Comienza registrando a tus clientes para llevar el control de sus
+            compras y pedidos.
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+          {canCreate && (
             <Button
-              onClick={handleSeedMockData}
-              loading={isSeeding}
               variant="primary"
-              className="w-full sm:w-auto"
+              onClick={() => handleOpenForm(null)}
+              className="px-5 py-2.5"
             >
-              Generar datos de prueba
+              <FiPlus className="w-4 h-4 mr-2" />
+              Nuevo cliente
             </Button>
-            {canCreate && (
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto border-border-strong hover:bg-bg-surface text-text-primary"
-                onClick={() => handleOpenForm(null)}
-              >
-                <FiPlus className="w-4 h-4 mr-2" />
-                Nuevo cliente
-              </Button>
-            )}
-          </div>
+          )}
         </div>
       ) : (
         /* Tabla de registros */
@@ -181,7 +146,8 @@ export default function Clients({
                 No se encontraron clientes
               </h3>
               <p className="text-xs text-text-secondary max-w-xs leading-relaxed">
-                No hay resultados para "{search}". Intenta con otros términos de búsqueda.
+                No hay resultados para "{search}". Intenta con otros términos de
+                búsqueda.
               </p>
             </div>
           ) : (
@@ -194,7 +160,6 @@ export default function Clients({
                   itemsPerPage={itemsPerPage}
                   canUpdate={canUpdate}
                   canDelete={canDelete}
-                  isAdmin={isAdmin}
                   onEdit={handleOpenForm}
                   onDelete={handleOpenDelete}
                 />

@@ -1,19 +1,10 @@
+import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
+
 export default function PedidosLoading() {
   return (
     <div className="space-y-6">
-      {/* Botón Volver y Encabezado */}
-      <div className="flex flex-wrap items-center justify-between gap-6">
-        <div>
-          <div className="h-8 w-48 bg-border-strong/40 rounded-lg animate-pulse" />
-          <div className="h-4 w-72 bg-border-soft/60 rounded-lg mt-2 animate-pulse" />
-        </div>
-
-        {/* Selección de Empresa y Campaña */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="h-10 w-40 bg-border-strong/20 rounded-xl animate-pulse" />
-          <div className="h-10 w-44 bg-border-strong/20 rounded-xl animate-pulse" />
-        </div>
-      </div>
+      {/* Page Header Skeleton */}
+      <PageHeaderSkeleton hasAction={true} />
 
       {/* Botones de Flujo de Campaña */}
       <div className="flex flex-wrap items-center gap-3">

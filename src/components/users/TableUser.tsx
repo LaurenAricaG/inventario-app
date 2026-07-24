@@ -21,6 +21,7 @@ interface TableUserProps {
   itemsPerPage: number;
   canUpdate: boolean;
   canDelete: boolean;
+  canRestore: boolean;
   onEdit: (user: SerializedUserWithRole) => void;
   onDelete: (user: SerializedUserWithRole) => void;
   onReactivate?: (user: SerializedUserWithRole) => void;
@@ -52,6 +53,7 @@ export default function TableUser({
   itemsPerPage,
   canUpdate,
   canDelete,
+  canRestore,
   onEdit,
   onDelete,
   onReactivate,
@@ -174,15 +176,17 @@ export default function TableUser({
                           title="Editar Usuario"
                         />
                       )}
-                      {canDelete && (
-                        isSuspended ? (
+                      {isSuspended ? (
+                        canRestore && (
                           <ButtonIcon
                             onClick={() => onReactivate && onReactivate(user)}
                             variant="success"
                             icon={FiUserCheck}
                             title="Reactivar Usuario"
                           />
-                        ) : (
+                        )
+                      ) : (
+                        canDelete && (
                           <ButtonIcon
                             onClick={() => onDelete(user)}
                             variant="danger"

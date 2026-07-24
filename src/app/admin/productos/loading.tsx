@@ -1,4 +1,5 @@
 import Skeleton from "@/components/ui/Skeleton";
+import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
 import {
   Table,
   TableBody,
@@ -14,14 +15,8 @@ export default function ProductosLoading() {
 
   return (
     <div className="space-y-6">
-      {/* Cabecera / Header Skeleton */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-2">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-4 w-72" />
-        </div>
-        <Skeleton className="h-10 w-36 rounded-xl self-start sm:self-auto shrink-0" />
-      </div>
+      {/* Page Header Skeleton */}
+      <PageHeaderSkeleton hasAction={true} />
 
       {/* Contenedor Principal de la Tabla */}
       <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">

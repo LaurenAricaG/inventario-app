@@ -1,4 +1,5 @@
 import Skeleton from "@/components/ui/Skeleton";
+import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
 import {
   Table,
   TableHeader,
@@ -13,14 +14,8 @@ export default function DeudasLoading() {
 
   return (
     <div className="space-y-6">
-      {/* Skeleton del encabezado de página */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <Skeleton className="h-8 w-56" />
-          <Skeleton className="h-4 w-80 mt-2" />
-        </div>
-        <Skeleton className="h-10 w-36 rounded-xl self-start sm:self-auto" />
-      </div>
+      {/* Page Header Skeleton */}
+      <PageHeaderSkeleton hasAction={true} />
 
       {/* Skeleton de la tarjeta de contenido principal */}
       <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">

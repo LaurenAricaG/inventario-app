@@ -1,17 +1,11 @@
 import Skeleton from "@/components/ui/Skeleton";
+import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
 
 export default function ConfiguracionLoading() {
   return (
     <div className="space-y-6">
       {/* Cabecera del Módulo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-2">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-4 w-96" />
-        </div>
-        {/* Toggle switch skeleton */}
-        <Skeleton className="h-10 w-36 rounded-2xl self-start sm:self-auto shrink-0" />
-      </div>
+      <PageHeaderSkeleton hasAction={true} />
 
       <div className="space-y-6">
         {/* Sección: Datos de la Empresa Skeleton */}

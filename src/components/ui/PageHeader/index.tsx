@@ -2,6 +2,8 @@ import React from "react";
 import Link from "next/link";
 import { cn } from "@/utils/cn.utils";
 
+export { default as PageHeaderSkeleton } from "./PageHeaderSkeleton";
+
 export interface BreadcrumbItem {
   label: string;
   href?: string;

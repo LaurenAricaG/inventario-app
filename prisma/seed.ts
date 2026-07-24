@@ -20,13 +20,13 @@ const permissionsData = [
   },
   {
     code: "users:delete",
-    name: "Eliminar Usuarios",
-    description: "Permite eliminar usuarios del sistema",
+    name: "Suspender Usuarios",
+    description: "Permite suspender (desactivar) cuentas de usuarios",
   },
   {
-    code: "users:toggle-status",
-    name: "Activar/Desactivar Usuarios",
-    description: "Permite suspender o reactivar cuentas de usuarios",
+    code: "users:restore",
+    name: "Restaurar Usuarios",
+    description: "Permite reactivar (restaurar) cuentas de usuarios suspendidos",
   },
 
   // Clientes
@@ -194,7 +194,23 @@ const permissionsData = [
 async function main() {
   console.log("Starting seeding...");
 
-  // 1. Seed Roles
+  // 1. Seed System Configuration
+  await prisma.systemConfig.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      id: 1,
+      lock: true,
+      systemName: "Mi empresa",
+      whatsappNumber: "51987654321",
+      showPricePublic: true,
+      showStockPublic: true,
+      showCatalogsPublic: true,
+    },
+  });
+  console.log("System configuration seeded successfully.");
+
+  // 2. Seed Admin Role
   const adminRole = await prisma.role.upsert({
     where: { name: "ADMIN" },
     update: { description: "Administrador del sistema con acceso total" },
@@ -203,21 +219,9 @@ async function main() {
       description: "Administrador del sistema con acceso total",
     },
   });
+  console.log("Admin role seeded successfully.");
 
-  const sellerRole = await prisma.role.upsert({
-    where: { name: "SELLER" },
-    update: {
-      description: "Vendedor con acceso limitado a ventas, clientes y pedidos",
-    },
-    create: {
-      name: "SELLER",
-      description: "Vendedor con acceso limitado a ventas, clientes y pedidos",
-    },
-  });
-
-  console.log("Roles seeded successfully.");
-
-  // 2. Seed Permissions
+  // 3. Seed Permissions & Assign to ADMIN
   const dbPermissions = [];
   for (const perm of permissionsData) {
     const dbPerm = await prisma.permission.upsert({
@@ -228,115 +232,39 @@ async function main() {
     dbPermissions.push(dbPerm);
   }
 
-  console.log("Permissions seeded successfully.");
-
-  // 3. Associate Permissions with Roles
-  // Clear existing role permissions first to ensure clean updates
   await prisma.rolePermission.deleteMany({
-    where: {
-      roleId: { in: [adminRole.id, sellerRole.id] },
-    },
+    where: { roleId: adminRole.id },
   });
 
-  // ADMIN gets all permissions
   await prisma.rolePermission.createMany({
     data: dbPermissions.map((perm) => ({
       roleId: adminRole.id,
       permissionId: perm.id,
     })),
   });
-
-  // SELLER gets a limited set of permissions
-  const sellerPermCodes = [
-    "clients:create",
-    "clients:read",
-    "clients:update",
-    "products:read",
-    "inventory:read",
-    "orders:create",
-    "orders:read",
-    "orders:update",
-    "sales:create",
-    "sales:read",
-    "debts:read",
-    "payments:create",
-    "payments:read",
-    "campaigns:read",
-  ];
-  const sellerDbPermissions = dbPermissions.filter((perm) =>
-    sellerPermCodes.includes(perm.code),
-  );
-  await prisma.rolePermission.createMany({
-    data: sellerDbPermissions.map((perm) => ({
-      roleId: sellerRole.id,
-      permissionId: perm.id,
-    })),
-  });
-
-  console.log("Role permissions associated successfully.");
+  console.log("Admin permissions associated successfully.");
 
   // 4. Seed default Admin User
   const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash("admin123", salt);
 
   const defaultAdmin = await prisma.user.upsert({
-    where: { email: "lauren@example.com" },
+    where: { email: "[EMAIL_ADDRESS]" },
     update: {
-      name: "Lauren Arica",
-      username: "lauren",
+      name: "Usuario",
+      username: "admin",
       roleId: adminRole.id,
     },
     create: {
-      name: "Lauren Arica",
-      username: "lauren",
-      email: "lauren@example.com",
+      name: "Usuario",
+      username: "admin",
+      email: "admin@example.com",
       passwordHash,
       roleId: adminRole.id,
     },
   });
 
   console.log(`Default admin user seeded: ${defaultAdmin.email}`);
-
-  // 5. Seed default Gender Segments
-  const defaultSegments = [
-    { name: "Femenino" },
-    { name: "Masculino" },
-    { name: "Unisex" },
-    { name: "Infantil" },
-    { name: "Bebé" },
-  ];
-
-  for (const seg of defaultSegments) {
-    await prisma.genderSegment.upsert({
-      where: { name: seg.name },
-      update: {
-        createdById: defaultAdmin.id,
-      },
-      create: {
-        name: seg.name,
-        createdById: defaultAdmin.id,
-      },
-    });
-  }
-
-  console.log("Gender segments seeded successfully.");
-
-  // 6. Seed default System Configuration
-  await prisma.systemConfig.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      lock: true,
-      systemName: "Lauren Arica",
-      whatsappNumber: "51987654321",
-      showPricePublic: true,
-      showStockPublic: true,
-      showCatalogsPublic: true,
-    },
-  });
-
-  console.log("System configuration seeded successfully.");
   console.log("Seeding finished successfully.");
 }
 

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import QuickOrderConsole from "@/components/orders/QuickOrderConsole";
 
 export const metadata = {
-  title: "Registrar pedido",
+  title: "Registrar pedidos",
 };
 
 interface PageProps {

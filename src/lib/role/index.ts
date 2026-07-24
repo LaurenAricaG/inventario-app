@@ -148,12 +148,12 @@ export async function updateRoleAction(
       return { success: false, message: "El rol no existe o fue eliminado." };
     }
 
-    // Restricción para roles core del sistema
-    const isCoreRole = ["ADMIN", "SELLER"].includes(existingRole.name.toUpperCase());
+    // Restricción para roles core del sistema (ADMIN no se puede renombrar)
+    const isCoreRole = existingRole.name.toUpperCase() === "ADMIN";
     if (isCoreRole && existingRole.name.toUpperCase() !== validatedData.name.toUpperCase()) {
       return {
         success: false,
-        message: `No se puede renombrar el rol base "${existingRole.name}".`,
+        message: `No se puede renombrar el rol base del sistema "${existingRole.name}".`,
       };
     }
 
@@ -270,6 +270,13 @@ export async function deleteRoleAction(id: number) {
 
     if (!role) {
       return { success: false, message: "El rol no existe o ya fue eliminado." };
+    }
+
+    if (role.name.toUpperCase() === "ADMIN") {
+      return {
+        success: false,
+        message: "No se puede eliminar el rol principal del sistema ADMIN.",
+      };
     }
 
     // Impedir eliminación si hay usuarios asociados

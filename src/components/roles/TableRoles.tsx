@@ -57,7 +57,6 @@ export default function TableRoles({
           ) : (
             roles.map((role, index) => {
               const name = role.name;
-              const isCoreRole = ["ADMIN", "SELLER"].includes(name.toUpperCase());
               const permissionsCount = role.permissions?.length ?? 0;
 
               return (
@@ -68,22 +67,24 @@ export default function TableRoles({
                   </TableCell>
 
                   {/* Rol */}
-                  <TableCell className="font-medium text-text-primary">
+                  <TableCell>
                     <div className="flex items-center gap-2">
-                      <FiShield className={`w-4 h-4 ${isCoreRole ? "text-warning-text" : "text-info-text"}`} />
-                      <span>{name}</span>
+                      <FiShield className="w-4 h-4 text-beauty-600" />
+                      <span className="font-semibold text-text-primary text-sm">
+                        {name}
+                      </span>
                     </div>
                   </TableCell>
 
                   {/* Descripción */}
-                  <TableCell className="text-sm text-text-secondary">
-                    {role.description || <span className="text-text-tertiary/60 italic">Sin descripción</span>}
+                  <TableCell className="text-xs text-text-secondary">
+                    {role.description || "Sin descripción"}
                   </TableCell>
 
                   {/* Cantidad de Permisos */}
                   <TableCell className="text-center">
-                    <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-beauty-400/10 text-beauty-600 dark:bg-beauty-400/15 dark:text-beauty-400">
-                      {permissionsCount} {permissionsCount === 1 ? "permiso" : "permisos"}
+                    <span className="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full bg-beauty-50 text-beauty-700 dark:bg-beauty-950 dark:text-beauty-300">
+                      {permissionsCount} permiso(s)
                     </span>
                   </TableCell>
 

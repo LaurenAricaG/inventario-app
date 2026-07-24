@@ -15,6 +15,14 @@ const outfit = Outfit({
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getPublicSystemConfig();
   const companyName = config?.systemName || "Mi empresa";
+  let logoUrl = config?.systemLogoUrl || "/no-image.svg";
+
+  if (logoUrl.includes("res.cloudinary.com") && logoUrl.includes("/upload/")) {
+    logoUrl = logoUrl.replace(
+      "/upload/",
+      "/upload/c_fill,g_auto,w_128,h_128,r_max,f_png/"
+    );
+  }
 
   return {
     title: {
@@ -22,6 +30,11 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${companyName}`,
     },
     description: `Explora nuestro catálogo exclusivo de productos. Filtra por categoría, marca o género y realiza tus consultas de disponibilidad directo por WhatsApp con ${companyName}.`,
+    icons: {
+      icon: logoUrl,
+      shortcut: logoUrl,
+      apple: logoUrl,
+    },
   };
 }
 

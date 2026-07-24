@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { toast } from "sonner";
-import { regenerateClientShareToken } from "@/app/admin/actions";
+import { regenerateClientShareToken } from "@/lib/client";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import ButtonIcon from "../ButtonIcon";
