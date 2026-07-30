@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "@/lib/audit";
 import { CampaignOrderStatus, ItemArrivalStatus } from "@/generated/prisma";
-import { bulkOrderSchema, BulkOrderInput, SubstituteInput } from "./schema";
+import { bulkOrderSchema, BulkOrderInput } from "./schema";
 
 export type { BulkOrderInput, BulkOrderItemInput } from "./schema";
 

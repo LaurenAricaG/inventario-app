@@ -13,6 +13,8 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import ProductCard from "./ProductCard";
 import BrandLogo from "@/components/ui/BrandLogo";
+import Checkbox from "@/components/ui/Checkbox";
+import Button from "@/components/ui/Button";
 
 interface CatalogPortalClientProps {
   products: {
@@ -235,30 +237,34 @@ export default function CatalogPortalClient({
   return (
     <div className="min-h-screen bg-bg-page text-text-primary flex flex-col font-sans transition-colors duration-300">
       {/* 1. Header / Navbar Público */}
-      <header className="sticky top-0 z-40 w-full h-16 bg-bg-page/85 backdrop-blur-md border-b border-border-default transition-all duration-300 flex items-center justify-between px-4 sm:px-8">
-        <BrandLogo
-          size="lg"
-          systemName={systemName}
-          systemLogoUrl={systemConfig?.systemLogoUrl}
-        />
+      <header className="sticky top-0 z-40 w-full h-16 bg-bg-page/85 backdrop-blur-md border-b border-border-default transition-all duration-300">
+        <div className="w-full max-w-7xl mx-auto h-full px-4 sm:px-8 flex items-center justify-between">
+          <BrandLogo
+            size="md"
+            systemName={systemName}
+            systemLogoUrl={systemConfig?.systemLogoUrl}
+            textClassName="text-base sm:text-lg max-w-[130px] min-[380px]:max-w-[220px] sm:max-w-none truncate"
+          />
 
-        {/* Acciones Rápidas */}
-        <div className="flex items-center gap-2 sm:gap-4">
-          {showCatalogs && (
-            <Link
-              href="/pdf"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border-strong hover:bg-beauty-50 text-text-primary dark:hover:bg-beauty-950 text-xs font-semibold shadow-xs transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
-            >
-              <FiFileText className="w-3.5 h-3.5 text-beauty-600" />
-              <span>Catálogos</span>
-            </Link>
-          )}
-          <ThemeToggle />
+          {/* Acciones Rápidas */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {showCatalogs && (
+              <Link
+                href="/pdf"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full border border-border-strong hover:bg-beauty-50 text-text-primary dark:hover:bg-beauty-950 text-xs font-semibold shadow-xs transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 shrink-0"
+                title="Ver catálogos PDF"
+              >
+                <FiFileText className="w-3.5 h-3.5 text-beauty-600 shrink-0" />
+                <span className="hidden min-[360px]:inline">Catálogos</span>
+              </Link>
+            )}
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
       {/* 2. Hero Section */}
-      <section className="relative bg-bg-card dark:bg-bg-card border-b border-border-soft py-16 px-6 sm:px-12 flex flex-col items-center text-center">
+      <section className="relative border-b border-border-soft py-16 px-6 sm:px-12 flex flex-col items-center text-center overflow-hidden bg-linear-to-b from-beauty-50/50 via-bg-card to-bg-card dark:from-beauty-950/30 dark:via-bg-card dark:to-bg-card">
         <div className="relative max-w-3xl flex flex-col items-center">
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-beauty-100/50 dark:bg-beauty-950 text-beauty-600 dark:text-beauty-400 text-xs font-bold uppercase tracking-widest border border-beauty-200/50 dark:border-beauty-400/50 select-none transition-all duration-300">
             <span className="w-1.5 h-1.5 rounded-full bg-beauty-500 animate-pulse" />
@@ -291,13 +297,13 @@ export default function CatalogPortalClient({
       {/* 3. Panel de Búsqueda Rápida e Información de Filtros en Móvil */}
       <div className="bg-bg-card border-b border-border-soft px-4 py-3 sm:px-8 flex items-center justify-between gap-3 sticky top-16 z-30 shadow-sm md:hidden">
         <div className="relative flex-1">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary w-4 h-4" />
+          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary w-4 h-4" />
           <input
             type="text"
             placeholder="Buscar producto o código..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-bg-surface border border-border-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 focus-visible:border-beauty-400 transition-all text-text-primary"
+            className="w-full pl-11 pr-4 py-3 text-sm rounded-2xl bg-bg-card border border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10 outline-none text-text-primary placeholder:text-text-tertiary/70 transition-all duration-200"
             id="mobile-search-input"
           />
         </div>
@@ -321,7 +327,7 @@ export default function CatalogPortalClient({
       {/* 4. Contenido Principal */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 flex flex-col md:flex-row items-start gap-8 min-w-0">
         {/* FILTROS LATERALES - DESKTOP */}
-        <aside className="hidden md:block w-64 shrink-0 h-fit bg-bg-card border border-border-default rounded-2xl p-6 sticky top-20 shadow-sm">
+        <aside className="hidden md:block w-64 shrink-0 h-fit bg-bg-card border border-border-default rounded-2xl p-6 sticky top-20 shadow-sm transition-shadow hover:shadow-md">
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-border-soft">
             <h2 className="text-sm font-bold tracking-wider text-text-primary uppercase flex items-center gap-2">
               <FiSliders className="w-4 h-4 text-beauty-600" />
@@ -329,7 +335,7 @@ export default function CatalogPortalClient({
             </h2>
             <button
               onClick={resetFilters}
-              className="text-[11px] text-text-tertiary hover:text-text-accent flex items-center gap-1 transition-colors cursor-pointer"
+              className="text-[11px] text-text-tertiary hover:text-beauty-600 flex items-center gap-1 transition-colors cursor-pointer rounded-md px-1.5 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
               title="Limpiar filtros"
             >
               <FiRefreshCw className="w-3 h-3" />
@@ -346,13 +352,13 @@ export default function CatalogPortalClient({
               Búsqueda
             </label>
             <div className="relative">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary w-4 h-4" />
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary w-3 h-3" />
               <input
                 type="text"
                 placeholder="Nombre o código..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-bg-surface border border-border-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 text-text-primary transition-all"
+                className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-bg-card border border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10 outline-none text-text-primary placeholder:text-text-tertiary/70 transition-all duration-200"
                 id="desktop-search-input"
               />
             </div>
@@ -361,23 +367,17 @@ export default function CatalogPortalClient({
           {/* Filtro: Empresa */}
           {companies.length > 0 && (
             <div className="mb-5">
-              <span className="block text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wider">
+              <span className="block text-xs font-semibold text-text-secondary mb-3 uppercase tracking-wider">
                 Catálogo de Empresas
               </span>
-              <div className="space-y-2">
+              <div className="space-y-2.5 -mx-1 px-1 py-0.5">
                 {companies.map((company) => (
-                  <label
+                  <Checkbox
                     key={company}
-                    className="flex items-center gap-2.5 text-xs text-text-primary cursor-pointer select-none"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedCompanies.includes(company)}
-                      onChange={() => handleCompanyChange(company)}
-                      className="w-4.5 h-4.5 rounded border-border-strong text-beauty-600 focus:ring-beauty-400 bg-bg-surface cursor-pointer"
-                    />
-                    <span className="font-medium">{company}</span>
-                  </label>
+                    label={company}
+                    checked={selectedCompanies.includes(company)}
+                    onChange={() => handleCompanyChange(company)}
+                  />
                 ))}
               </div>
             </div>
@@ -386,23 +386,17 @@ export default function CatalogPortalClient({
           {/* Filtro: Marca */}
           {brands.length > 0 && (
             <div className="mb-5">
-              <span className="block text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wider">
+              <span className="block text-xs font-semibold text-text-secondary mb-3 uppercase tracking-wider">
                 Línea / Marca
               </span>
-              <div className="space-y-2 max-h-40 overflow-y-auto pr-1 scrollbar-thin">
+              <div className="space-y-2.5 max-h-40 overflow-y-auto -mx-1 px-1 py-0.5 scrollbar-thin">
                 {brands.map((brand) => (
-                  <label
+                  <Checkbox
                     key={brand}
-                    className="flex items-center gap-2.5 text-xs text-text-primary cursor-pointer select-none"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedBrands.includes(brand)}
-                      onChange={() => handleBrandChange(brand)}
-                      className="w-4.5 h-4.5 rounded border-border-strong text-beauty-600 focus:ring-beauty-400 bg-bg-surface cursor-pointer"
-                    />
-                    <span className="font-medium">{brand}</span>
-                  </label>
+                    label={brand}
+                    checked={selectedBrands.includes(brand)}
+                    onChange={() => handleBrandChange(brand)}
+                  />
                 ))}
               </div>
             </div>
@@ -414,19 +408,16 @@ export default function CatalogPortalClient({
               <span className="block text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wider">
                 Categoría
               </span>
-              <div className="flex flex-col gap-1 max-h-48 overflow-y-auto pr-1 scrollbar-thin">
+              <div className="flex flex-col gap-1 max-h-48 overflow-y-auto -mx-1 px-1 py-0.5 scrollbar-thin">
                 {categories.map((cat) => (
-                  <button
+                  <Button
                     key={cat}
+                    variant={selectedCategory === cat ? "primary" : "outline"}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-all cursor-pointer ${
-                      selectedCategory === cat
-                        ? "bg-beauty-100 text-beauty-900 font-bold dark:bg-beauty-950 dark:text-beauty-100"
-                        : "text-text-secondary hover:bg-bg-surface hover:text-text-primary"
-                    }`}
+                    className="w-full justify-start! px-3! py-2! text-xs! rounded-xl! font-medium! focus-visible:ring-inset focus-visible:ring-offset-0"
                   >
                     {cat}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -435,23 +426,17 @@ export default function CatalogPortalClient({
           {/* Filtro: Segmento / Género */}
           {genders.length > 0 && (
             <div className="mb-5">
-              <span className="block text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wider">
+              <span className="block text-xs font-semibold text-text-secondary mb-3 uppercase tracking-wider">
                 Público Objetivo
               </span>
-              <div className="space-y-2">
+              <div className="space-y-2.5 -mx-1 px-1 py-0.5">
                 {genders.map((gender) => (
-                  <label
+                  <Checkbox
                     key={gender}
-                    className="flex items-center gap-2.5 text-xs text-text-primary cursor-pointer select-none"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedGenders.includes(gender)}
-                      onChange={() => handleGenderChange(gender)}
-                      className="w-4.5 h-4.5 rounded border-border-strong text-beauty-600 focus:ring-beauty-400 bg-bg-surface cursor-pointer"
-                    />
-                    <span className="font-medium">{gender}</span>
-                  </label>
+                    label={gender}
+                    checked={selectedGenders.includes(gender)}
+                    onChange={() => handleGenderChange(gender)}
+                  />
                 ))}
               </div>
             </div>
@@ -473,7 +458,7 @@ export default function CatalogPortalClient({
                 step="5"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full accent-beauty-600 cursor-pointer"
+                className="w-full accent-beauty-600 cursor-pointer rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-card"
                 id="desktop-price-range"
               />
               <div className="flex justify-between text-[10px] text-text-tertiary mt-1">
@@ -506,16 +491,19 @@ export default function CatalogPortalClient({
           )}
 
           {/* Título de Resultados */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-start sm:items-center justify-between gap-3 mb-6">
             <div>
-              <h2 className="text-lg font-bold text-text-primary">
+              <h2 className="text-lg font-extrabold text-text-primary tracking-tight">
                 {selectedCategory === "Todas"
                   ? "Todos los productos"
                   : selectedCategory}
               </h2>
               <p className="text-xs text-text-secondary mt-0.5">
-                Se encontraron {filteredProducts.length} productos en el
-                catálogo
+                Se encontraron{" "}
+                <span className="font-bold text-beauty-600 dark:text-beauty-400">
+                  {filteredProducts.length}
+                </span>{" "}
+                productos en el catálogo
               </p>
             </div>
           </div>
@@ -550,7 +538,6 @@ export default function CatalogPortalClient({
                 showPrice={showPrice}
                 showStockCount={showStockCount}
                 whatsappNumber={whatsappNumber}
-                systemName={systemName}
                 isFavorite={favorites.includes(product.id)}
                 onToggleFavorite={toggleFavorite}
               />
@@ -683,7 +670,7 @@ export default function CatalogPortalClient({
                         onClick={() => setSelectedCategory(cat)}
                         className={`text-center text-xs py-2 rounded-xl transition-all cursor-pointer ${
                           selectedCategory === cat
-                            ? "bg-beauty-100 text-beauty-900 font-bold dark:bg-beauty-950 dark:text-beauty-100 border border-beauty-200/50"
+                            ? "bg-beauty-50 dark:bg-beauty-950/80 text-beauty-600 dark:text-beauty-400 font-bold border border-beauty-200 dark:border-beauty-800"
                             : "bg-bg-surface text-text-secondary hover:text-text-primary border border-transparent"
                         }`}
                       >
@@ -737,7 +724,7 @@ export default function CatalogPortalClient({
                     step="5"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(Number(e.target.value))}
-                    className="w-full accent-beauty-600 cursor-pointer"
+                    className="w-full accent-beauty-600 cursor-pointer rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-card"
                     id="mobile-price-range"
                   />
                   <div className="flex justify-between text-[10px] text-text-tertiary mt-1">

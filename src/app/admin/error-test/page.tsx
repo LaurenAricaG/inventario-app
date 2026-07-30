@@ -33,7 +33,6 @@ import {
   FiTrash2,
   FiSave,
   FiX,
-  FiCheck,
   FiRefreshCw,
 } from "react-icons/fi";
 

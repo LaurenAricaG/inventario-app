@@ -218,7 +218,6 @@ export default async function CampaniasPage(props: CampaniasPageProps) {
 
       // Catálogos PDF específicos
       catalogPdfs={JSON.parse(JSON.stringify(catalogs))}
-      overallCatalogsCount={overallCatalogsCount}
       allCampaignsForSelect={allCampaignsForSelect}
       brands={brands}
       existingCatalogPdfs={existingCatalogPdfs}

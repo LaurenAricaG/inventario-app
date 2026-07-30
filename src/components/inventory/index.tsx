@@ -113,7 +113,9 @@ export default function Inventory({
             Kardex de Inventario Vacío
           </h3>
           <p className="text-xs text-text-secondary mb-8 leading-relaxed max-w-sm">
-            Los movimientos de stock se generan automáticamente al crear productos, registrar ventas directas o recibir pedidos de catálogo. También puedes ingresar ajustes manuales.
+            Los movimientos de stock se generan automáticamente al crear
+            productos, registrar ventas directas o recibir pedidos de catálogo.
+            También puedes ingresar ajustes manuales.
           </p>
           {canAdjust && (
             <Button
@@ -161,7 +163,8 @@ export default function Inventory({
                 No se encontraron movimientos
               </h3>
               <p className="text-xs text-text-secondary max-w-xs leading-relaxed">
-                Prueba cambiando los términos de búsqueda o removiendo los filtros de tipo de movimiento.
+                No hay resultados para "{search}". Prueba cambiando los términos
+                de búsqueda o removiendo los filtros de tipo de movimiento.
               </p>
             </div>
           ) : (

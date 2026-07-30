@@ -11,7 +11,6 @@ import {
   FiTrash2,
   FiAlertCircle,
   FiSave,
-  FiX,
   FiArrowLeft,
   FiTag,
   FiShoppingBag,
@@ -24,7 +23,6 @@ import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import Modal from "@/components/ui/Modal";
 import Form, { FormField } from "@/components/ui/Form";
-import Textarea from "@/components/ui/Textarea";
 import { createClientAction } from "@/lib/client";
 import PageHeader from "@/components/ui/PageHeader";
 import {
@@ -378,26 +376,6 @@ export default function QuickOrderConsole({
       return next;
     });
     toast.success("Pedido del cliente removido.");
-  };
-
-  const handleUpdateDiscount = (clientId: number, discount: number) => {
-    setLocalOrders((prev) => ({
-      ...prev,
-      [clientId]: {
-        ...prev[clientId],
-        discount: isNaN(discount) ? 0 : discount,
-      },
-    }));
-  };
-
-  const handleUpdateNotes = (clientId: number, notes: string) => {
-    setLocalOrders((prev) => ({
-      ...prev,
-      [clientId]: {
-        ...prev[clientId],
-        notes,
-      },
-    }));
   };
 
   const handleSaveAll = () => {

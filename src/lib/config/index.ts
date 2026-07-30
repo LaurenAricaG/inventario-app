@@ -7,35 +7,13 @@ import { logActivity } from "@/lib/audit";
 import { systemConfigSchema } from "./schema";
 import fs from "fs/promises";
 import path from "path";
-import { v2 as cloudinary } from "cloudinary";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-function extractCloudinaryPublicId(url: string): string | null {
-  try {
-    const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[a-z0-9]+)?$/i);
-    return match ? match[1] : null;
-  } catch {
-    return null;
-  }
-}
+import { deleteCloudinaryFile } from "@/lib/cloudinary";
 
 async function deleteOldLogoFile(logoPath: string) {
   if (!logoPath) return;
 
   if (logoPath.includes("res.cloudinary.com")) {
-    const publicId = extractCloudinaryPublicId(logoPath);
-    if (publicId) {
-      try {
-        await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
-      } catch (err) {
-        console.error("Error al eliminar logo de Cloudinary:", err);
-      }
-    }
+    await deleteCloudinaryFile(logoPath, "image");
   } else if (logoPath.startsWith("/uploads/config/")) {
     const fullPath = path.join(process.cwd(), "public", logoPath);
     try {

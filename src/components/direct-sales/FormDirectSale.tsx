@@ -9,10 +9,7 @@ import {
   FiTrash2,
   FiArrowLeft,
   FiShoppingBag,
-  FiInfo,
   FiSearch,
-  FiPlusCircle,
-  FiMinusCircle,
   FiChevronDown,
   FiCheck,
   FiUser,
@@ -414,7 +411,7 @@ export default function FormDirectSale({
                         "w-full px-4 py-3 rounded-2xl border text-sm bg-bg-card text-text-primary transition-all duration-200 outline-none flex items-center justify-between text-left cursor-pointer select-none",
                         "border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10",
                         isDropdownOpen &&
-                        "border-beauty-400 ring-4 ring-beauty-400/10",
+                          "border-beauty-400 ring-4 ring-beauty-400/10",
                       )}
                     >
                       <div className="flex items-center gap-2 truncate min-w-0">
@@ -783,9 +780,9 @@ export default function FormDirectSale({
                         "w-full px-4 py-3 rounded-2xl border text-sm bg-bg-card text-text-primary transition-all duration-200 outline-none flex items-center justify-between text-left cursor-pointer select-none",
                         "border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10",
                         isClientDropdownOpen &&
-                        "border-beauty-400 ring-4 ring-beauty-400/10",
+                          "border-beauty-400 ring-4 ring-beauty-400/10",
                         errors.clientId &&
-                        "border-danger-text focus:border-danger-text focus:ring-danger-text/10",
+                          "border-danger-text focus:border-danger-text focus:ring-danger-text/10",
                       )}
                     >
                       <div className="flex items-center gap-2 truncate min-w-0">

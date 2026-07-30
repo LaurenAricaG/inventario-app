@@ -2,6 +2,7 @@
 
 import Modal from "../Modal";
 import Button from "../Button";
+import { cn } from "@/utils/cn.utils";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -14,6 +15,20 @@ interface ConfirmModalProps {
   variant?: "danger" | "warning" | "info" | "success";
   isLoading?: boolean;
 }
+
+const variantStyles: Record<
+  "danger" | "warning" | "info" | "success",
+  string
+> = {
+  danger:
+    "bg-danger-bg text-danger-text border border-danger-text/20 hover:bg-danger-bg/80 hover:border-danger-text/40",
+  warning:
+    "bg-warning-bg text-warning-text border border-warning-text/20 hover:bg-warning-bg/80 hover:border-warning-text/40",
+  info:
+    "bg-info-bg text-info-text border border-info-text/20 hover:bg-info-bg/80 hover:border-info-text/40",
+  success:
+    "bg-success-bg text-success-text border border-success-text/20 hover:bg-success-bg/80 hover:border-success-text/40",
+};
 
 export default function ConfirmModal({
   isOpen,
@@ -47,7 +62,10 @@ export default function ConfirmModal({
             onClick={onConfirm}
             loading={isLoading}
             disabled={isLoading}
-            className="px-4 py-2 text-xs font-semibold rounded-xl bg-beauty-400 hover:bg-beauty-600 text-white"
+            className={cn(
+              "px-4 py-2 text-xs font-semibold rounded-xl",
+              variantStyles[variant],
+            )}
           >
             {confirmText}
           </Button>

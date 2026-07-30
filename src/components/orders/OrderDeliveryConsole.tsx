@@ -1,6 +1,5 @@
 "use client";
 
-import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { formatDateUTC } from "@/utils/date.utils";
 import { toast } from "sonner";
@@ -58,7 +57,6 @@ export default function OrderDeliveryConsole({
   orders,
 }: OrderDeliveryConsoleProps) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
 
   const handleUpdateStatus = async (
     orderId: number,
@@ -147,7 +145,7 @@ export default function OrderDeliveryConsole({
           ) : (
             <div className="space-y-3">
               {pendingDeliveries.map((order) => {
-                const { subtotal, total } = getOrderTotals(order);
+                const { total } = getOrderTotals(order);
                 const itemsCount = order.items.filter(
                   (i) => i.arrivalStatus !== ItemArrivalStatus.MISSING,
                 ).length;

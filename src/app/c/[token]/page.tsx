@@ -74,13 +74,6 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
     notFound();
   }
 
-  // 2. Obtener campañas disponibles para el portal de clientes
-  const campaigns = await prisma.campaign.findMany({
-    where: { deletedAt: null },
-    include: { company: true },
-    orderBy: { number: "desc" },
-  });
-
   // 3. Unificar todos los registros en una sola lista cronológica de "movimientos"
   const movements: MovementItem[] = [];
 
@@ -108,8 +101,8 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
           item.arrivalStatus === "MISSING"
             ? 0
             : item.arrivalStatus === "SUBSTITUTED" &&
-              item.substitute?.catalogPrice !== undefined &&
-              item.substitute?.catalogPrice !== null
+                item.substitute?.catalogPrice !== undefined &&
+                item.substitute?.catalogPrice !== null
               ? item.substitute.catalogPrice
               : item.catalogPrice;
         return sum + item.quantity * price;
@@ -175,8 +168,8 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
             item.arrivalStatus === "MISSING"
               ? 0
               : item.arrivalStatus === "SUBSTITUTED" &&
-                item.substitute?.catalogPrice !== undefined &&
-                item.substitute?.catalogPrice !== null
+                  item.substitute?.catalogPrice !== undefined &&
+                  item.substitute?.catalogPrice !== null
                 ? item.substitute.catalogPrice
                 : item.catalogPrice;
           return itemSum + item.quantity * price;
@@ -204,14 +197,6 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
     shareToken: client.shareToken,
     createdAt: client.createdAt.toISOString(),
   };
-
-  const campaignsData = campaigns.map((camp) => ({
-    id: camp.id,
-    number: camp.number,
-    company: {
-      name: camp.company.name,
-    },
-  }));
 
   const totalItems = movements.length;
   const totalPages = Math.ceil(totalItems / limit);

@@ -215,15 +215,6 @@ export default function OrdersDashboard({
     }
   };
 
-  // Se bloquea el registro si la campaña no es la activa o si ya tiene pedidos en proceso de verificación o despacho
-  const isRegistrationLocked =
-    !currentCampaign?.isActive ||
-    initialOrders.some(
-      (o) =>
-        o.status !== CampaignOrderStatus.PENDING &&
-        o.status !== CampaignOrderStatus.CANCELLED,
-    );
-
   const hasOrders = initialOrders.length > 0;
 
   const isVerificationFinished =

@@ -78,7 +78,7 @@ export default function ClientPublicPortal({
                 Bienvenido(a) a tu portal
               </span>
               <h3 className="text-xl font-black text-text-primary tracking-tight">
-                ¡Hola, {client.name}! 👋
+                ¡Hola, {client.name}!
               </h3>
               <p className="text-xs text-text-secondary">
                 Aquí puedes consultar el detalle de tus compras, abonos y saldos

@@ -6,6 +6,7 @@ import { logActivity } from "@/lib/audit";
 import { brandSchema } from "./schema";
 import fs from "fs/promises";
 import path from "path";
+import { deleteCloudinaryFile } from "@/lib/cloudinary";
 
 async function saveLogoFile(base64Str: string): Promise<string> {
   const matches = base64Str.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
@@ -27,8 +28,12 @@ async function saveLogoFile(base64Str: string): Promise<string> {
   return `/uploads/brands/${filename}`;
 }
 
-async function deleteLogoFile(logoPath: string) {
-  if (logoPath.startsWith("/uploads/brands/")) {
+async function deleteLogoFile(logoPath: string | null | undefined) {
+  if (!logoPath) return;
+
+  if (logoPath.includes("res.cloudinary.com")) {
+    await deleteCloudinaryFile(logoPath, "image");
+  } else if (logoPath.startsWith("/uploads/brands/")) {
     const fullPath = path.join(process.cwd(), "public", logoPath);
     try {
       await fs.unlink(fullPath);
@@ -218,22 +223,15 @@ export async function updateBrandAction(
       select: { name: true, companyId: true, logoUrl: true },
     });
 
-    if (existingBrand) {
-      if (existingBrand.logoUrl !== trimmedLogoUrl) {
-        if (
-          existingBrand.logoUrl &&
-          existingBrand.logoUrl.startsWith("/uploads/brands/")
-        ) {
-          await deleteLogoFile(existingBrand.logoUrl);
-        }
-      }
+    if (existingBrand && existingBrand.logoUrl && existingBrand.logoUrl !== trimmedLogoUrl) {
+      await deleteLogoFile(existingBrand.logoUrl);
     }
 
     if (trimmedLogoUrl && trimmedLogoUrl.startsWith("data:")) {
       finalLogoUrl = await saveLogoFile(trimmedLogoUrl);
     }
 
-    const updated = await prisma.brand.update({
+    await prisma.brand.update({
       where: { id },
       data: {
         name: trimmedName,
@@ -321,14 +319,25 @@ export async function deleteBrandAction(id: number) {
     if (productCount > 0) {
       return {
         success: false,
-        message: `No se puede eliminar. Esta marca está asociada a ${productCount} producto(s) activo(s).`,
+        isWarning: true,
+        message: `No se puede eliminar la marca porque está asociada a ${productCount} producto(s) activo(s).`,
       };
+    }
+
+    const existingBrand = await prisma.brand.findUnique({
+      where: { id },
+      select: { logoUrl: true },
+    });
+
+    if (existingBrand?.logoUrl) {
+      await deleteLogoFile(existingBrand.logoUrl);
     }
 
     // Borrado lógico
     const deleted = await prisma.brand.update({
       where: { id },
       data: {
+        logoUrl: null,
         deletedAt: new Date(),
         deletedById: Number(session.user.id),
       },

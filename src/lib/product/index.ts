@@ -7,9 +7,14 @@ import { logActivity } from "@/lib/audit";
 import { productSchema } from "./schema";
 import fs from "fs/promises";
 import path from "path";
+import { deleteCloudinaryFile } from "@/lib/cloudinary";
 
-async function deleteProductImageFile(imageUrl: string) {
-  if (imageUrl.startsWith("/uploads/products/")) {
+async function deleteProductImageFile(imageUrl: string | null | undefined) {
+  if (!imageUrl) return;
+
+  if (imageUrl.includes("res.cloudinary.com")) {
+    await deleteCloudinaryFile(imageUrl, "image");
+  } else if (imageUrl.startsWith("/uploads/products/")) {
     const fullPath = path.join(process.cwd(), "public", imageUrl);
     try {
       await fs.unlink(fullPath);
@@ -341,6 +346,17 @@ export async function deleteProductAction(id: number) {
         success: false,
         message: `No se puede eliminar. Este producto está asociado a ${salesCount} venta(s) directa(s) realizada(s).`,
       };
+    }
+
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+      include: { images: true },
+    });
+
+    if (existingProduct) {
+      for (const img of existingProduct.images) {
+        await deleteProductImageFile(img.url);
+      }
     }
 
     // Borrado lógico del producto

@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { FiPlus, FiCalendar, FiFileText, FiCheckCircle, FiCircle } from "react-icons/fi";
+import {
+  FiPlus,
+  FiCalendar,
+  FiFileText,
+  FiCheckCircle,
+  FiCircle,
+} from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -34,7 +40,6 @@ interface CampaignsProps {
 
   // Catálogos PDF
   catalogPdfs: SerializedCatalogPdf[];
-  overallCatalogsCount: number;
   allCampaignsForSelect: {
     id: number;
     number: string;
@@ -66,7 +71,6 @@ export default function Campaigns({
 
   // Catálogos PDF
   catalogPdfs,
-  overallCatalogsCount,
   allCampaignsForSelect,
   brands,
   existingCatalogPdfs,
@@ -186,8 +190,8 @@ export default function Campaigns({
           { label: "campañas" },
         ]}
         action={
-          isCampaignsTab
-            ? overallCount > 0 && canCreateCampaign ? (
+          isCampaignsTab ? (
+            overallCount > 0 && canCreateCampaign ? (
               <Button
                 variant="primary"
                 onClick={() => handleOpenForm(null)}
@@ -197,16 +201,16 @@ export default function Campaigns({
                 Nueva campaña
               </Button>
             ) : undefined
-            : overallCount > 0 && canUploadCatalog ? (
-              <Button
-                variant="primary"
-                onClick={() => handleOpenCatalogForm(null)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
-              >
-                <FiPlus className="w-4 h-4" />
-                Subir catálogo
-              </Button>
-            ) : undefined
+          ) : overallCount > 0 && canUploadCatalog ? (
+            <Button
+              variant="primary"
+              onClick={() => handleOpenCatalogForm(null)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
+            >
+              <FiPlus className="w-4 h-4" />
+              Subir catálogo
+            </Button>
+          ) : undefined
         }
       />
 
@@ -277,25 +281,25 @@ export default function Campaigns({
           </p>
           {isCampaignsTab
             ? canCreateCampaign && (
-              <Button
-                variant="primary"
-                onClick={() => handleOpenForm(null)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
-              >
-                <FiPlus className="w-4 h-4" />
-                Nueva campaña
-              </Button>
-            )
+                <Button
+                  variant="primary"
+                  onClick={() => handleOpenForm(null)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
+                >
+                  <FiPlus className="w-4 h-4" />
+                  Nueva campaña
+                </Button>
+              )
             : canUploadCatalog && (
-              <Button
-                variant="primary"
-                onClick={() => handleOpenCatalogForm(null)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
-              >
-                <FiPlus className="w-4 h-4" />
-                Subir catálogo
-              </Button>
-            )}
+                <Button
+                  variant="primary"
+                  onClick={() => handleOpenCatalogForm(null)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
+                >
+                  <FiPlus className="w-4 h-4" />
+                  Subir catálogo
+                </Button>
+              )}
         </div>
       ) : (
         /* Tabla de Registros */
@@ -323,11 +327,17 @@ export default function Campaigns({
                     ? "bg-beauty-400/10 border-beauty-400/30 text-beauty-600 dark:text-beauty-400 hover:bg-beauty-400/20"
                     : "bg-bg-surface border-border-default text-text-secondary hover:text-text-primary",
                 )}
-                title={onlyActive ? "Mostrando solo campaña activa." : "Mostrando todos los catálogos."}
+                title={
+                  onlyActive
+                    ? "Mostrando solo campaña activa."
+                    : "Mostrando todos los catálogos."
+                }
               >
-                {onlyActive
-                  ? <FiCheckCircle className="w-3.5 h-3.5" />
-                  : <FiCircle className="w-3.5 h-3.5" />}
+                {onlyActive ? (
+                  <FiCheckCircle className="w-3.5 h-3.5" />
+                ) : (
+                  <FiCircle className="w-3.5 h-3.5" />
+                )}
                 Campaña activa
               </Button>
             )}

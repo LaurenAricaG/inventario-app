@@ -18,7 +18,6 @@ import Form, { FormField } from "@/components/ui/Form";
 import Input from "@/components/ui/Input";
 import {
   transitionOrderStatusAction,
-  updateOrderDiscountAndNotesAction,
 } from "@/lib/campaign-order/index";
 import { CampaignOrderStatus, ItemArrivalStatus } from "@/generated/prisma";
 
@@ -53,6 +52,7 @@ interface SerializedOrderItem {
 
 interface SerializedCampaignOrder {
   id: number;
+  orderNumber: number;
   clientId: number;
   campaignId: number;
   status: CampaignOrderStatus;
@@ -77,7 +77,7 @@ export default function OrderPackingConsole({
   const discountInputRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
 
   // Guardar estado local de las casillas de verificación de productos empacados
   const [checkedItems, setCheckedItems] = useState<Record<number, boolean>>({});
@@ -95,24 +95,6 @@ export default function OrderPackingConsole({
       ...prev,
       [itemId]: !prev[itemId],
     }));
-  };
-
-  const handleUpdateStatus = async (
-    orderId: number,
-    status: CampaignOrderStatus,
-    successMsg: string,
-  ) => {
-    try {
-      const res = await transitionOrderStatusAction(orderId, status);
-      if (res.success) {
-        toast.success(successMsg);
-        router.refresh();
-      } else {
-        toast.error(res.message);
-      }
-    } catch (error: any) {
-      toast.error(error.message || "Error al actualizar estado del pedido.");
-    }
   };
 
   const handleConfirmPacking = async () => {

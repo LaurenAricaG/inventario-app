@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import {
-  FiClock,
-  FiSearch,
-  FiCopy,
-  FiCheck,
-  FiFilter,
-} from "react-icons/fi";
+import { FiClock, FiSearch, FiCopy, FiCheck, FiFilter } from "react-icons/fi";
 import { toast } from "sonner";
 import { formatDateTimeWithSeconds } from "@/utils/date.utils";
 import { LuHistory } from "react-icons/lu";
@@ -209,7 +203,8 @@ export default function Logs({
                 No se encontraron logs
               </h3>
               <p className="text-xs text-text-secondary max-w-xs leading-relaxed">
-                Ningún registro coincide con tus filtros o términos de búsqueda.
+                No hay resultados para "{search}".Ningún registro coincide con
+                tus filtros o términos de búsqueda.
               </p>
             </div>
           ) : (
@@ -279,7 +274,8 @@ export default function Logs({
                 <div className="text-left">
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${
-                      actionColors[selectedLog.action] || "bg-bg-surface text-text-secondary border-border-default"
+                      actionColors[selectedLog.action] ||
+                      "bg-bg-surface text-text-secondary border-border-default"
                     }`}
                   >
                     {selectedLog.action}

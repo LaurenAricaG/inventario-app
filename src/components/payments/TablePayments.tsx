@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/navigation"; // Wait, we can keep the standard Link for client name, or Next Link which is already imported. Ah, actually standard next Link is imported from next/link (which was at line 3: import Link from "next/link";)
 import { FiCalendar, FiTrash2 } from "react-icons/fi";
 import { PaymentMethod } from "@/generated/prisma";
 import ButtonIcon from "@/components/ui/ButtonIcon";

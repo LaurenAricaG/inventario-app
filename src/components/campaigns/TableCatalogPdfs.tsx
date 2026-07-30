@@ -1,6 +1,6 @@
 "use client";
 
-import { FiEdit2, FiTrash2, FiFileText, FiExternalLink } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiFileText } from "react-icons/fi";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
@@ -92,7 +92,11 @@ export default function TableCatalogPdfs({
                   </TableCell>
                   <TableCell className="text-left">
                     <span className="text-sm text-text-secondary font-medium">
-                      {catalog.title || <span className="italic text-text-tertiary">Sin título especificado</span>}
+                      {catalog.title || (
+                        <span className="italic text-text-tertiary">
+                          Sin título especificado
+                        </span>
+                      )}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">

@@ -68,18 +68,21 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
       children,
       size = "md",
     },
-    ref
+    ref,
   ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(
-      controlledValue !== undefined ? controlledValue : defaultValue || ""
+      controlledValue !== undefined ? controlledValue : defaultValue || "",
     );
 
     const containerRef = useRef<HTMLDivElement>(null);
     const nativeSelectRef = useRef<HTMLSelectElement>(null);
 
     // Expose the native select ref to parents using forwardRef
-    useImperativeHandle(ref, () => nativeSelectRef.current as HTMLSelectElement);
+    useImperativeHandle(
+      ref,
+      () => nativeSelectRef.current as HTMLSelectElement,
+    );
 
     const options = extractOptions(children);
 
@@ -101,7 +104,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         }
       };
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     const handleOptionClick = (val: string) => {
@@ -114,15 +118,14 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
       if (onChange && nativeSelectRef.current) {
         // Temporarily assign the value to native select and dispatch event
-        const previousValue = nativeSelectRef.current.value;
         nativeSelectRef.current.value = val;
 
         // Create a synthetic-like ChangeEvent
         const event = {
           target: nativeSelectRef.current,
           currentTarget: nativeSelectRef.current,
-          preventDefault: () => { },
-          stopPropagation: () => { },
+          preventDefault: () => {},
+          stopPropagation: () => {},
           nativeEvent: new Event("change", { bubbles: true }),
         } as unknown as React.ChangeEvent<HTMLSelectElement>;
 
@@ -160,13 +163,15 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             "w-full rounded-2xl border bg-bg-card text-text-primary transition-all duration-200 outline-none flex items-center justify-between text-left cursor-pointer select-none",
-            size === "sm" ? "px-3 py-1.5 text-xs rounded-xl" : "px-4 py-3 text-sm rounded-2xl",
+            size === "sm"
+              ? "px-3 py-1.5 text-xs rounded-xl"
+              : "px-4 py-3 text-sm rounded-2xl",
             "border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10",
             "disabled:opacity-50 disabled:bg-bg-surface disabled:cursor-not-allowed",
             isOpen && "border-beauty-400 ring-4 ring-beauty-400/10",
             error &&
-            "border-danger-text focus:border-danger-text focus:ring-danger-text/10",
-            className
+              "border-danger-text focus:border-danger-text focus:ring-danger-text/10",
+            className,
           )}
         >
           <div className="flex items-center gap-3 min-w-0 ">
@@ -183,13 +188,15 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 <span className="truncate">{selectedOption.label}</span>
               </span>
             ) : (
-              <span className="text-text-tertiary/70 truncate">{placeholder}</span>
+              <span className="text-text-tertiary/70 truncate">
+                {placeholder}
+              </span>
             )}
           </div>
           <FiChevronDown
             className={cn(
               "w-4 h-4 text-text-tertiary transition-transform duration-250 shrink-0",
-              isOpen && "rotate-180"
+              isOpen && "rotate-180",
             )}
           />
         </button>
@@ -214,12 +221,14 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                       onClick={() => handleOptionClick(opt.value)}
                       className={cn(
                         "w-full text-left flex items-center justify-between cursor-pointer transition-colors duration-150 select-none",
-                        size === "sm" ? "px-2.5 py-2 text-xs rounded-lg" : "px-3 py-2.5 rounded-xl text-xs sm:text-sm",
+                        size === "sm"
+                          ? "px-2.5 py-2 text-xs rounded-lg"
+                          : "px-3 py-2.5 rounded-xl text-xs sm:text-sm",
                         isOptDisabled
                           ? "opacity-40 cursor-not-allowed bg-transparent text-text-tertiary"
                           : isSelected
                             ? "bg-beauty-400/10 text-beauty-600 dark:bg-beauty-400/15 dark:text-beauty-400 font-semibold"
-                            : "text-text-secondary dark:text-text-primary/85 hover:bg-beauty-400/10 hover:text-beauty-600 dark:hover:bg-beauty-400/15 dark:hover:text-beauty-400"
+                            : "text-text-secondary dark:text-text-primary/85 hover:bg-beauty-400/10 hover:text-beauty-600 dark:hover:bg-beauty-400/15 dark:hover:text-beauty-400",
                       )}
                     >
                       <span className="flex items-center gap-2.5">
@@ -242,7 +251,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Select.displayName = "Select";

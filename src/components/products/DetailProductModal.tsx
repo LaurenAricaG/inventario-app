@@ -10,8 +10,6 @@ import {
   FiHash,
   FiTrendingUp,
   FiCreditCard,
-  FiCheckCircle,
-  FiSlash,
 } from "react-icons/fi";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";

@@ -24,7 +24,6 @@ import {
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { TbBrandAirtable } from "react-icons/tb";
 import { AiOutlineProduct } from "react-icons/ai";
-import { useSystemConfig } from "@/context/SystemConfigContext";
 import BrandLogo from "@/components/ui/BrandLogo";
 
 interface SidebarProps {

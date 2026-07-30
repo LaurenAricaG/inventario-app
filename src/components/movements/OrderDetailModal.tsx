@@ -13,7 +13,6 @@ import {
   TableCell,
 } from "@/components/ui/Table";
 
-import { useSystemConfig } from "@/context/SystemConfigContext";
 import { formatDateTime, formatDateUTC } from "@/utils/date.utils";
 
 interface OrderDetailModalProps {
@@ -61,15 +60,14 @@ export default function OrderDetailModal({
   order,
   isPublic = false,
 }: OrderDetailModalProps) {
-  const systemConfig = useSystemConfig();
   if (!order) return null;
 
   const calculatedSubtotal = order.items.reduce((sum, item) => {
     if (item.arrivalStatus === "MISSING") return sum;
     const price =
       item.arrivalStatus === "SUBSTITUTED" &&
-        item.substitute?.catalogPrice !== undefined &&
-        item.substitute?.catalogPrice !== null
+      item.substitute?.catalogPrice !== undefined &&
+      item.substitute?.catalogPrice !== null
         ? item.substitute.catalogPrice
         : item.catalogPrice;
     return sum + item.quantity * price;
@@ -154,8 +152,8 @@ export default function OrderDetailModal({
                       : item.productName;
                     const displayPrice =
                       isSubstituted &&
-                        item.substitute?.catalogPrice !== undefined &&
-                        item.substitute?.catalogPrice !== null
+                      item.substitute?.catalogPrice !== undefined &&
+                      item.substitute?.catalogPrice !== null
                         ? item.substitute.catalogPrice
                         : item.catalogPrice;
 
@@ -294,8 +292,9 @@ export default function OrderDetailModal({
                 Estado:
               </span>
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColors[order.status]
-                  }`}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                  statusColors[order.status]
+                }`}
               >
                 {statusTranslations[order.status] || order.status}
               </span>
@@ -336,8 +335,8 @@ export default function OrderDetailModal({
                 : item.productCode;
               const displayPrice =
                 isSubstituted &&
-                  item.substitute?.catalogPrice !== undefined &&
-                  item.substitute?.catalogPrice !== null
+                item.substitute?.catalogPrice !== undefined &&
+                item.substitute?.catalogPrice !== null
                   ? item.substitute.catalogPrice
                   : item.catalogPrice;
 
@@ -375,8 +374,9 @@ export default function OrderDetailModal({
                   </TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${itemStatusColors[item.arrivalStatus]
-                        }`}
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                        itemStatusColors[item.arrivalStatus]
+                      }`}
                     >
                       {itemStatusTranslations[item.arrivalStatus] ||
                         item.arrivalStatus}
@@ -427,8 +427,8 @@ export default function OrderDetailModal({
                     {order.status === "CANCELLED"
                       ? "0.00"
                       : (
-                        order.total || calculatedSubtotal - order.discount
-                      ).toFixed(2)}
+                          order.total || calculatedSubtotal - order.discount
+                        ).toFixed(2)}
                   </span>
                 </div>
               </div>

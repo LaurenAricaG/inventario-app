@@ -40,7 +40,6 @@ interface ProductCardProps {
   showPrice: boolean;
   showStockCount: boolean;
   whatsappNumber: string;
-  systemName: string;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
 }
@@ -50,7 +49,6 @@ export default function ProductCard({
   showPrice,
   showStockCount,
   whatsappNumber,
-  systemName,
   isFavorite,
   onToggleFavorite,
 }: ProductCardProps) {
@@ -78,7 +76,6 @@ export default function ProductCard({
 
   // Generador de enlace de WhatsApp
   const generateWhatsAppLink = () => {
-    const brandTag = product.brand.company.name;
     const priceText = showPrice
       ? `S/. ${product.price.toFixed(2)}`
       : "Consultar precio";
@@ -96,7 +93,7 @@ export default function ProductCard({
   };
 
   return (
-    <article className="group bg-bg-card border-2 border-border-default/60 hover:border-beauty-300 dark:hover:border-beauty-700/60 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg relative h-full">
+    <article className="group bg-bg-card border border-border-default hover:border-beauty-400 dark:hover:border-beauty-600 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg relative h-full">
       {/* Botón Favorito */}
       <button
         onClick={() => onToggleFavorite(product.id)}

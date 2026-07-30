@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { FiSettings, FiGlobe, FiBriefcase, FiImage } from "react-icons/fi";
+import { FiGlobe, FiBriefcase, FiImage } from "react-icons/fi";
 import Button from "@/components/ui/Button";
 import Form, { FormField } from "@/components/ui/Form";
 import Input from "@/components/ui/Input";

@@ -133,19 +133,19 @@ export default function ImageUpload({
       {uploadTab === "file" ? (
         /* Drag & Drop Area / Upload Zone */
         <div className="group relative">
-          {value && !isUrlValue ? (
+          {value ? (
             /* Preview inside Upload Zone */
             <div className="relative w-full h-40 border border-border-strong rounded-2xl overflow-hidden bg-bg-surface flex items-center justify-center shadow-xs">
               <img
                 src={
                   value === "pending-local-file"
-                    ? localPreviewUrl || undefined
-                    : value || undefined
+                    ? localPreviewUrl || "/no-image.svg"
+                    : value || "/no-image.svg"
                 }
                 alt={previewAlt}
                 className="max-h-full max-w-full object-contain p-4 transition-transform duration-300 group-hover:scale-[1.03]"
-                onError={() => {
-                  toast.error("Error al cargar la previsualización.");
+                onError={(e) => {
+                  e.currentTarget.src = "/no-image.svg";
                 }}
               />
               {/* Overlay controls (always visible, high contrast, clean buttons) */}
@@ -228,11 +228,11 @@ export default function ImageUpload({
           {value && isUrlValue ? (
             <div className="relative w-full h-32 border border-border-soft rounded-xl overflow-hidden bg-bg-surface flex items-center justify-center p-3">
               <img
-                src={value}
+                src={value || "/no-image.svg"}
                 alt={previewAlt}
                 className="max-h-full max-w-full object-contain"
-                onError={() => {
-                  // Ignore URL load errors temporarily since user might be typing
+                onError={(e) => {
+                  e.currentTarget.src = "/no-image.svg";
                 }}
               />
               <button

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { FiPlus, FiShoppingBag } from "react-icons/fi";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -35,7 +34,6 @@ export default function DirectSales({
   search,
   permissions,
 }: DirectSalesProps) {
-  const router = useRouter();
   const canCreate = permissions.includes("sales:create");
   const canDelete = permissions.includes("sales:delete");
 
@@ -85,10 +83,7 @@ export default function DirectSales({
       <PageHeader
         title="Ventas Directas"
         subtitle="Listado de ventas directas."
-        breadcrumbs={[
-          { label: "admin", href: "/admin" },
-          { label: "ventas" },
-        ]}
+        breadcrumbs={[{ label: "admin", href: "/admin" }, { label: "ventas" }]}
         action={
           canCreate ? (
             <Link

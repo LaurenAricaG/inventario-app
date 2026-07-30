@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { FiPlus, FiLayers, FiTag } from "react-icons/fi";
+import { FiPlus, FiTag } from "react-icons/fi";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Pagination from "@/components/ui/Pagination";

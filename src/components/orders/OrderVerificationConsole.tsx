@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, Fragment } from "react";
+import { useState, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -87,7 +87,6 @@ export default function OrderVerificationConsole({
   orders,
 }: OrderVerificationConsoleProps) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
 
   // Buscar ítem para sustituto (soporta unitario o lote)
   const [substitutingItem, setSubstitutingItem] = useState<{
@@ -256,33 +255,6 @@ export default function OrderVerificationConsole({
       toast.error(error.message || "Error al aplicar sustituto.");
     } finally {
       setIsSubmittingSubstitute(false);
-    }
-  };
-
-  // Finalizar verificación del pedido del cliente
-  const handleVerifyOrder = async (orderId: number) => {
-    try {
-      const order = orders.find((o) => o.id === orderId);
-      const allItemsMissing =
-        order?.items.every(
-          (item) => item.arrivalStatus === ItemArrivalStatus.MISSING,
-        ) || false;
-      const targetStatus = allItemsMissing
-        ? CampaignOrderStatus.CANCELLED
-        : CampaignOrderStatus.VERIFIED;
-
-      const res = await transitionOrderStatusAction(orderId, targetStatus);
-      if (res.success) {
-        const successMsg = allItemsMissing
-          ? "Pedido anulado (todos los productos faltaron)."
-          : "Pedido verificado y listo para empacado.";
-        toast.success(successMsg);
-        router.refresh();
-      } else {
-        toast.error(res.message);
-      }
-    } catch (error: any) {
-      toast.error(error.message || "Error al verificar el pedido.");
     }
   };
 
@@ -497,7 +469,6 @@ export default function OrderVerificationConsole({
                     const isExpanded = !!expandedGroupKeys[group.key];
                     const pendingItemIds = getPendingItemIds(group.items);
                     const isGroupFullyVerified = pendingItemIds.length === 0;
-                    const allItemIds = group.items.map((i) => i.id);
 
                     return (
                       <Fragment key={group.key}>

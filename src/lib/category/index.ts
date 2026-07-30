@@ -151,7 +151,7 @@ export async function updateCategoryAction(id: number, name: string) {
       select: { name: true },
     });
 
-    const updated = await prisma.category.update({
+    await prisma.category.update({
       where: { id },
       data: {
         name: trimmedName,

@@ -6,6 +6,7 @@ import { logActivity } from "@/lib/audit";
 import { companySchema } from "./schema";
 import fs from "fs/promises";
 import path from "path";
+import { deleteCloudinaryFile } from "@/lib/cloudinary";
 
 async function saveLogoFile(base64Str: string): Promise<string> {
   const matches = base64Str.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
@@ -27,8 +28,12 @@ async function saveLogoFile(base64Str: string): Promise<string> {
   return `/uploads/companies/${filename}`;
 }
 
-async function deleteLogoFile(logoPath: string) {
-  if (logoPath.startsWith("/uploads/companies/")) {
+async function deleteLogoFile(logoPath: string | null | undefined) {
+  if (!logoPath) return;
+
+  if (logoPath.includes("res.cloudinary.com")) {
+    await deleteCloudinaryFile(logoPath, "image");
+  } else if (logoPath.startsWith("/uploads/companies/")) {
     const fullPath = path.join(process.cwd(), "public", logoPath);
     try {
       await fs.unlink(fullPath);
@@ -193,19 +198,15 @@ export async function updateCompanyAction(id: number, name: string, logoUrl?: st
       select: { name: true, logoUrl: true },
     });
 
-    if (existingCompany) {
-      if (existingCompany.logoUrl !== trimmedLogoUrl) {
-        if (existingCompany.logoUrl && existingCompany.logoUrl.startsWith("/uploads/companies/")) {
-          await deleteLogoFile(existingCompany.logoUrl);
-        }
-      }
+    if (existingCompany && existingCompany.logoUrl && existingCompany.logoUrl !== trimmedLogoUrl) {
+      await deleteLogoFile(existingCompany.logoUrl);
     }
 
     if (trimmedLogoUrl && trimmedLogoUrl.startsWith("data:")) {
       finalLogoUrl = await saveLogoFile(trimmedLogoUrl);
     }
 
-    const updated = await prisma.company.update({
+    await prisma.company.update({
       where: { id },
       data: {
         name: trimmedName,
@@ -260,6 +261,22 @@ export async function deleteCompanyAction(id: number) {
       };
     }
 
+    // Verificar si la empresa tiene marcas asociadas activas
+    const brandCount = await prisma.brand.count({
+      where: {
+        companyId: id,
+        deletedAt: null,
+      },
+    });
+
+    if (brandCount > 0) {
+      return {
+        success: false,
+        isWarning: true,
+        message: `No se puede eliminar la empresa porque está asignada a ${brandCount} marca(s).`,
+      };
+    }
+
     // Verificar si la empresa está siendo usada por algún producto activo
     const productCount = await prisma.product.count({
       where: {
@@ -273,14 +290,25 @@ export async function deleteCompanyAction(id: number) {
     if (productCount > 0) {
       return {
         success: false,
-        message: `No se puede eliminar. Esta empresa está asociada a ${productCount} producto(s) activo(s).`,
+        isWarning: true,
+        message: `No se puede eliminar la empresa porque está asociada a ${productCount} producto(s) activo(s).`,
       };
+    }
+
+    const existingCompany = await prisma.company.findUnique({
+      where: { id },
+      select: { logoUrl: true },
+    });
+
+    if (existingCompany?.logoUrl) {
+      await deleteLogoFile(existingCompany.logoUrl);
     }
 
     // Borrado lógico
     const deleted = await prisma.company.update({
       where: { id },
       data: {
+        logoUrl: null,
         deletedAt: new Date(),
         deletedById: Number(session.user.id),
       },

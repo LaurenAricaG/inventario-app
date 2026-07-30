@@ -66,7 +66,12 @@ export default function Companies({
         toast.success(res.message);
         setIsOpenDeleteModal(false);
       } else {
-        toast.error(res.message);
+        if (res.isWarning) {
+          toast.warning(res.message);
+        } else {
+          toast.error(res.message);
+        }
+        setIsOpenDeleteModal(false);
       }
     } catch (error) {
       toast.error("Ocurrió un error inesperado al eliminar la empresa.");

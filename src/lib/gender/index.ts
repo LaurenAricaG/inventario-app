@@ -153,7 +153,7 @@ export async function updateGenderAction(id: number, name: string) {
       select: { name: true },
     });
 
-    const updated = await prisma.genderSegment.update({
+    await prisma.genderSegment.update({
       where: { id },
       data: {
         name: trimmedName,

@@ -1,4 +1,4 @@
-import { CatalogPdf, Campaign, Brand } from "./models";
+import { CatalogPdf } from "./models";
 
 export type SerializedCatalogPdf = Omit<
   CatalogPdf,

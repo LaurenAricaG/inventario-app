@@ -38,7 +38,7 @@ export default function Header({
           title={collapsed ? "Expandir menú" : "Colapsar menú"}
           aria-label={collapsed ? "Expandir menú" : "Colapsar menú"}
         />
-        <h1 className="text-base font-semibold text-text-primary leading-none tracking-wide">
+        <h1 className="text-base text-text-primary leading-none tracking-wide">
           {greeting}
         </h1>
       </div>

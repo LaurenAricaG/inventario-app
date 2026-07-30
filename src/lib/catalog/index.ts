@@ -4,40 +4,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "@/lib/audit";
 import { catalogPdfSchema } from "./schema";
-import { v2 as cloudinary } from "cloudinary";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-/**
- * Extrae el public_id de Cloudinary a partir de la URL segura.
- * Ejemplo: https://res.cloudinary.com/demo/image/upload/v123/inventario/catalogs/abc.pdf
- * → inventario/catalogs/abc
- */
-function extractCloudinaryPublicId(url: string): string | null {
-  try {
-    const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[a-z0-9]+)?$/i);
-    return match ? match[1] : null;
-  } catch {
-    return null;
-  }
-}
-
-async function deleteCloudinaryFile(pdfUrl: string): Promise<void> {
-  if (!pdfUrl.includes("res.cloudinary.com")) return;
-
-  const publicId = extractCloudinaryPublicId(pdfUrl);
-  if (!publicId) return;
-
-  try {
-    await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
-  } catch (error) {
-    console.error("Error al eliminar archivo de Cloudinary:", error);
-  }
-}
+import { deleteCloudinaryFile } from "@/lib/cloudinary";
 
 export async function createCatalogPdfAction(
   campaignId: number,

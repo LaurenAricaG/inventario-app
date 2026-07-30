@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import Brands from "@/components/brands";
 import Products from "@/components/products";
 
 export const metadata = {
