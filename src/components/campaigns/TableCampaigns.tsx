@@ -13,6 +13,8 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { SerializedCampaign } from "@/types/campaigns";
+import { cn } from "@/utils/cn.utils";
+import { getCompanyBadgeStyle } from "@/utils/brand.utils";
 
 interface TableCampaignsProps {
   campaigns: SerializedCampaign[];
@@ -58,7 +60,7 @@ export default function TableCampaigns({
 
               {/* Empresa Relacionada */}
               <TableCell className="text-center">
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-semibold bg-bg-surface text-text-secondary border border-border-default/50">
+                <span className={cn("inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border", getCompanyBadgeStyle(campania.company?.name))}>
                   {campania.company?.name || "Sin empresa"}
                 </span>
               </TableCell>

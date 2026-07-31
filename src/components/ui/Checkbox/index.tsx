@@ -21,16 +21,15 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               )}
               {...props}
             />
-            {/* Custom Checkbox Design */}
             <div
               className={cn(
                 "w-5 h-5 rounded-lg border border-border-strong/60 bg-bg-card flex items-center justify-center transition-all duration-200",
-                "peer-checked:bg-beauty-400 peer-checked:border-beauty-400 peer-checked:shadow-sm peer-checked:shadow-beauty-400/20",
-                "peer-checked:[&_svg]:scale-100", // Scale the child SVG when peer is checked
-                "peer-focus-visible:ring-2 peer-focus-visible:ring-beauty-400/40 peer-focus-visible:ring-offset-1",
+                "peer-checked:bg-beauty-600 peer-checked:border-beauty-600 peer-checked:shadow-xs",
+                "peer-checked:[&_svg]:scale-100",
+                "peer-focus-visible:ring-2 peer-focus-visible:ring-beauty-500 dark:peer-focus-visible:ring-beauty-400 peer-focus-visible:ring-offset-2 ring-offset-bg-card",
                 "peer-disabled:opacity-50 peer-disabled:cursor-not-allowed",
                 error && "border-danger-text peer-focus-visible:ring-danger-text/20",
-                "group-hover:border-beauty-400/50 peer-checked:group-hover:border-beauty-600"
+                "group-hover:border-beauty-400/50 peer-checked:group-hover:border-beauty-700"
               )}
             >
               <svg

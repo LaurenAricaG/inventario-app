@@ -15,6 +15,7 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { ProductWithRelations } from "@/types/models";
 import { cn } from "@/utils/cn.utils";
+import { getBrandBadgeStyle, getCompanyBadgeStyle } from "@/utils/brand.utils";
 
 interface DetailProductModalProps {
   isOpen: boolean;
@@ -71,7 +72,7 @@ export default function DetailProductModal({
           <div className="space-y-3.5">
             {/* Brand, Category, Gender & Visibility Badges */}
             <div className="flex flex-wrap gap-2 items-center select-none">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold tracking-wide uppercase bg-beauty-50 text-beauty-800 dark:bg-beauty-950/20 dark:text-beauty-300 border border-beauty-100 dark:border-beauty-500/10">
+              <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold tracking-wide uppercase border", getBrandBadgeStyle(product.brand.name))}>
                 <FiTag className="w-3 h-3" />
                 {product.brand.name}
               </span>

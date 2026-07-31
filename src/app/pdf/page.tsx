@@ -4,6 +4,8 @@ import ThemeToggle from "@/components/theme/ThemeToggle";
 import BrandLogo from "@/components/ui/BrandLogo";
 import PageHeader from "@/components/ui/PageHeader";
 import { formatDateUTC } from "@/utils/date.utils";
+import { cn } from "@/utils/cn.utils";
+import { getBrandBadgeStyle, getCompanyBadgeStyle } from "@/utils/brand.utils";
 import { prisma } from "@/lib/prisma";
 import { getPublicSystemConfig } from "@/lib/config";
 
@@ -106,9 +108,9 @@ export default async function CatalogoPdfPublico() {
                         {company.name.charAt(0).toUpperCase()}
                       </div>
                     )}
-                    <h2 className="text-lg font-extrabold text-text-primary">
+                    <span className={cn("px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold border shadow-xs select-none", getCompanyBadgeStyle(company.name))}>
                       {company.name}
-                    </h2>
+                    </span>
                   </div>
                   <span className="text-xs font-bold text-success-text bg-success-bg/30 border border-success-text/10 px-2.5 py-0.5 rounded-full w-fit">
                     Campaña {campaign.number}
@@ -163,8 +165,10 @@ export default async function CatalogoPdfPublico() {
                         {/* Detalles y Acciones */}
                         <div className="p-4 flex-1 flex flex-col justify-between gap-4">
                           <div>
-                            <h3 className="text-xs sm:text-sm font-bold text-text-primary uppercase tracking-wider flex items-center gap-1.5 select-none truncate">
-                              {brand.name}
+                            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5 select-none truncate">
+                              <span className={cn("px-2.5 py-0.5 rounded-md text-xs font-extrabold border select-none", getBrandBadgeStyle(brand.name))}>
+                                {brand.name}
+                              </span>
                             </h3>
                             <p className="text-[11px] text-text-secondary mt-1 select-none line-clamp-1">
                               {catalog

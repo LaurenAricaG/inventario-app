@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { SerializedCompany } from "@/types/companies";
+import { cn } from "@/utils/cn.utils";
+import { getCompanyBadgeStyle } from "@/utils/brand.utils";
 
 interface TableCompaniesProps {
   companies: SerializedCompany[];
@@ -97,7 +99,7 @@ export default function TableCompanies({
                   ) : (
                     <NoImagePlaceholder className="w-10 h-10" p="p-1.5" />
                   )}
-                  <span className="font-semibold text-text-primary text-left">
+                  <span className={cn("inline-flex items-center px-2.5 py-1 rounded-md font-semibold text-xs border", getCompanyBadgeStyle(empresa.name))}>
                     {empresa.name}
                   </span>
                 </div>

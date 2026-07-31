@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { SerializedBrand } from "@/types/brands";
+import { cn } from "@/utils/cn.utils";
+import { getBrandBadgeStyle, getCompanyBadgeStyle } from "@/utils/brand.utils";
 
 interface TableBrandsProps {
   brands: SerializedBrand[];
@@ -98,7 +100,7 @@ export default function TableBrands({
                   ) : (
                     <NoImagePlaceholder className="w-10 h-10" p="p-1.5" />
                   )}
-                  <span className="font-semibold text-text-primary text-left">
+                  <span className={cn("inline-flex items-center px-2.5 py-1 rounded-md font-bold text-xs border", getBrandBadgeStyle(marca.name))}>
                     {marca.name}
                   </span>
                 </div>
@@ -106,7 +108,7 @@ export default function TableBrands({
 
               {/* Empresa relacionada */}
               <TableCell className="text-center">
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-semibold bg-beauty-50 text-beauty-700 border border-beauty-100 dark:text-beauty-400 dark:border-beauty-300/40">
+                <span className={cn("inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border", getCompanyBadgeStyle(marca.company?.name))}>
                   {marca.company?.name || "Sin empresa"}
                 </span>
               </TableCell>

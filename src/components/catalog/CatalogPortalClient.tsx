@@ -69,7 +69,6 @@ export default function CatalogPortalClient({
 
   // Estados para filtros
   const [search, setSearch] = useState("");
-  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
   const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
@@ -98,22 +97,11 @@ export default function CatalogPortalClient({
     localStorage.setItem("lauren-favorites-ids", JSON.stringify(nextFavorites));
   };
 
-  // Obtener listas únicas de filtros basadas en los productos disponibles
-  const companies = useMemo(() => {
-    const names = products.map((p) => p.brand.company.name);
+  // Obtener lista única de marcas basada en los productos disponibles
+  const brands = useMemo(() => {
+    const names = products.map((p) => p.brand.name);
     return Array.from(new Set(names)).sort();
   }, [products]);
-
-  // Filtrar marcas basadas en las empresas seleccionadas
-  const brands = useMemo(() => {
-    const filteredProducts = products.filter(
-      (p) =>
-        selectedCompanies.length === 0 ||
-        selectedCompanies.includes(p.brand.company.name),
-    );
-    const names = filteredProducts.map((p) => p.brand.name);
-    return Array.from(new Set(names)).sort();
-  }, [products, selectedCompanies]);
 
   const categories = useMemo(() => {
     const names = products.map((p) => p.category.name);
@@ -150,11 +138,6 @@ export default function CatalogPortalClient({
         (product.description &&
           product.description.toLowerCase().includes(search.toLowerCase()));
 
-      // Filtro de Empresa (Company)
-      const matchesCompany =
-        selectedCompanies.length === 0 ||
-        selectedCompanies.includes(product.brand.company.name);
-
       // Filtro de marcas
       const matchesBrand =
         selectedBrands.length === 0 ||
@@ -176,7 +159,6 @@ export default function CatalogPortalClient({
 
       return (
         !!matchesSearch &&
-        matchesCompany &&
         matchesBrand &&
         matchesCategory &&
         matchesGender &&
@@ -186,28 +168,12 @@ export default function CatalogPortalClient({
   }, [
     products,
     search,
-    selectedCompanies,
     selectedBrands,
     selectedCategory,
     selectedGenders,
     maxPrice,
     showPrice,
   ]);
-
-  // Manejadores de filtros
-  const handleCompanyChange = (companyName: string) => {
-    setSelectedCompanies((prev) => {
-      const isSelected = prev.includes(companyName);
-      const next = isSelected
-        ? prev.filter((c) => c !== companyName)
-        : [...prev, companyName];
-      // Si se quita una empresa, limpiar las marcas seleccionadas que pertenezcan a esa empresa
-      if (isSelected) {
-        setSelectedBrands([]);
-      }
-      return next;
-    });
-  };
 
   const handleBrandChange = (brandName: string) => {
     setSelectedBrands((prev) =>
@@ -227,7 +193,6 @@ export default function CatalogPortalClient({
 
   const resetFilters = () => {
     setSearch("");
-    setSelectedCompanies([]);
     setSelectedBrands([]);
     setSelectedCategory("Todas");
     setSelectedGenders([]);
@@ -303,25 +268,26 @@ export default function CatalogPortalClient({
             placeholder="Buscar producto o código..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 text-sm rounded-2xl bg-bg-card border border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10 outline-none text-text-primary placeholder:text-text-tertiary/70 transition-all duration-200"
+            className="w-full h-9 pl-11 pr-4 text-xs rounded-2xl bg-bg-card border border-border-strong/40 focus:border-beauty-400 focus:ring-4 focus:ring-beauty-400/10 outline-none text-text-primary placeholder:text-text-tertiary/70 transition-all duration-200"
             id="mobile-search-input"
           />
         </div>
-        <button
+        <Button
+          type="button"
+          variant="outline"
           onClick={() => setMobileFiltersOpen(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-beauty-50 hover:bg-beauty-100 text-beauty-800 border border-beauty-200/50 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
+          className="h-9! px-4! text-xs! font-semibold! rounded-2xl! shrink-0 flex items-center gap-1.5"
           aria-label="Filtros"
         >
-          <FiSliders className="w-4 h-4" />
+          <FiSliders className="w-4 h-4 text-beauty-600 dark:text-beauty-400 shrink-0" />
           <span>Filtros</span>
-          {(selectedCompanies.length > 0 ||
-            selectedBrands.length > 0 ||
+          {(selectedBrands.length > 0 ||
             selectedCategory !== "Todas" ||
             selectedGenders.length > 0 ||
             maxPrice < absMaxPrice) && (
-            <span className="w-2 h-2 rounded-full bg-beauty-600 animate-pulse" />
-          )}
-        </button>
+              <span className="w-2 h-2 rounded-full bg-beauty-600 dark:bg-beauty-400 animate-pulse shrink-0" />
+            )}
+        </Button>
       </div>
 
       {/* 4. Contenido Principal */}
@@ -364,32 +330,13 @@ export default function CatalogPortalClient({
             </div>
           </div>
 
-          {/* Filtro: Empresa */}
-          {companies.length > 0 && (
-            <div className="mb-5">
-              <span className="block text-xs font-semibold text-text-secondary mb-3 uppercase tracking-wider">
-                Catálogo de Empresas
-              </span>
-              <div className="space-y-2.5 -mx-1 px-1 py-0.5">
-                {companies.map((company) => (
-                  <Checkbox
-                    key={company}
-                    label={company}
-                    checked={selectedCompanies.includes(company)}
-                    onChange={() => handleCompanyChange(company)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Filtro: Marca */}
           {brands.length > 0 && (
             <div className="mb-5">
               <span className="block text-xs font-semibold text-text-secondary mb-3 uppercase tracking-wider">
-                Línea / Marca
+                Marca
               </span>
-              <div className="space-y-2.5 max-h-40 overflow-y-auto -mx-1 px-1 py-0.5 scrollbar-thin">
+              <div className="space-y-2.5 max-h-40 overflow-y-auto -mx-1 p-1.5 scrollbar-thin">
                 {brands.map((brand) => (
                   <Checkbox
                     key={brand}
@@ -408,13 +355,16 @@ export default function CatalogPortalClient({
               <span className="block text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wider">
                 Categoría
               </span>
-              <div className="flex flex-col gap-1 max-h-48 overflow-y-auto -mx-1 px-1 py-0.5 scrollbar-thin">
+              <div className="flex flex-col gap-1 max-h-48 overflow-y-auto -mx-1 p-1.5 scrollbar-thin">
                 {categories.map((cat) => (
                   <Button
                     key={cat}
                     variant={selectedCategory === cat ? "primary" : "outline"}
                     onClick={() => setSelectedCategory(cat)}
-                    className="w-full justify-start! px-3! py-2! text-xs! rounded-xl! font-medium! focus-visible:ring-inset focus-visible:ring-offset-0"
+                    className={`w-full justify-start! px-3! py-2! text-xs! rounded-xl! font-medium! focus-visible:ring-inset focus-visible:ring-offset-0 ${selectedCategory === cat
+                      ? "bg-beauty-600! hover:bg-beauty-700! border-beauty-600! text-white! shadow-xs!"
+                      : ""
+                      }`}
                   >
                     {cat}
                   </Button>
@@ -429,7 +379,7 @@ export default function CatalogPortalClient({
               <span className="block text-xs font-semibold text-text-secondary mb-3 uppercase tracking-wider">
                 Público Objetivo
               </span>
-              <div className="space-y-2.5 -mx-1 px-1 py-0.5">
+              <div className="space-y-2.5 -mx-1 p-1.5">
                 {genders.map((gender) => (
                   <Checkbox
                     key={gender}
@@ -475,17 +425,18 @@ export default function CatalogPortalClient({
           {categories.length > 1 && (
             <div className="flex md:hidden items-center gap-2 overflow-x-auto w-full max-w-full pb-4 mb-4 scrollbar-none">
               {categories.map((cat) => (
-                <button
+                <Button
                   key={cat}
+                  type="button"
+                  variant={selectedCategory === cat ? "primary" : "outline"}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs rounded-full border transition-all cursor-pointer ${
-                    selectedCategory === cat
-                      ? "bg-beauty-600 border-beauty-600 text-white font-semibold"
-                      : "bg-bg-card border-border-default text-text-secondary hover:text-text-primary"
-                  }`}
+                  className={`shrink-0! whitespace-nowrap! px-4! py-2! text-xs! rounded-full! focus-visible:ring-inset! focus-visible:ring-offset-0! ${selectedCategory === cat
+                    ? "bg-beauty-600! hover:bg-beauty-700! border-beauty-600! text-white! font-semibold!"
+                    : ""
+                    }`}
                 >
                   {cat}
-                </button>
+                </Button>
               ))}
             </div>
           )}
@@ -520,12 +471,13 @@ export default function CatalogPortalClient({
               <p className="text-xs text-text-secondary max-w-xs mb-6 leading-relaxed">
                 Prueba ajustando los filtros o cambiando el término de búsqueda.
               </p>
-              <button
+              <Button
+                variant="primary"
                 onClick={resetFilters}
-                className="px-4 py-2 text-xs font-semibold rounded-xl bg-beauty-600 hover:bg-beauty-700 text-white transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400"
+                className="px-4! py-2! text-xs! font-semibold! rounded-xl! bg-beauty-600! hover:bg-beauty-700! border-beauty-600! text-white!"
               >
                 Restablecer Filtros
-              </button>
+              </Button>
             </div>
           )}
 
@@ -603,54 +555,28 @@ export default function CatalogPortalClient({
 
             {/* Filtros Internos */}
             <div className="flex-1 overflow-y-auto p-4 space-y-6">
-              {/* Filtro: Empresa */}
-              {companies.length > 0 && (
-                <div>
-                  <span className="block text-xs font-semibold text-text-secondary mb-2.5 uppercase tracking-wider">
-                    Empresa
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {companies.map((company) => {
-                      const active = selectedCompanies.includes(company);
-                      return (
-                        <button
-                          key={company}
-                          onClick={() => handleCompanyChange(company)}
-                          className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
-                            active
-                              ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
-                              : "bg-bg-surface border-border-default text-text-secondary"
-                          }`}
-                        >
-                          {company}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
               {/* Filtro: Marca */}
               {brands.length > 0 && (
                 <div>
                   <span className="block text-xs font-semibold text-text-secondary mb-2.5 uppercase tracking-wider">
-                    Catalogo
+                    Marca
                   </span>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     {brands.map((brand) => {
                       const active = selectedBrands.includes(brand);
                       return (
-                        <button
+                        <Button
                           key={brand}
+                          type="button"
+                          variant={active ? "primary" : "outline"}
                           onClick={() => handleBrandChange(brand)}
-                          className={`px-3 py-1.5 text-[11px] font-semibold rounded-xl border transition-all cursor-pointer ${
-                            active
-                              ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
-                              : "bg-bg-surface border-border-default text-text-secondary"
-                          }`}
+                          className={`px-3.5! py-1.5! text-xs! font-medium! rounded-full! transition-all focus-visible:ring-inset! focus-visible:ring-offset-0! ${active
+                            ? "bg-beauty-600! hover:bg-beauty-700! border-beauty-600! text-white! shadow-xs!"
+                            : ""
+                            }`}
                         >
                           {brand}
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>
@@ -663,20 +589,24 @@ export default function CatalogPortalClient({
                   <span className="block text-xs font-semibold text-text-secondary mb-2.5 uppercase tracking-wider">
                     Categoría
                   </span>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {categories.map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => setSelectedCategory(cat)}
-                        className={`text-center text-xs py-2 rounded-xl transition-all cursor-pointer ${
-                          selectedCategory === cat
-                            ? "bg-beauty-50 dark:bg-beauty-950/80 text-beauty-600 dark:text-beauty-400 font-bold border border-beauty-200 dark:border-beauty-800"
-                            : "bg-bg-surface text-text-secondary hover:text-text-primary border border-transparent"
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map((cat) => {
+                      const active = selectedCategory === cat;
+                      return (
+                        <Button
+                          key={cat}
+                          type="button"
+                          variant={active ? "primary" : "outline"}
+                          onClick={() => setSelectedCategory(cat)}
+                          className={`px-3.5! py-1.5! text-xs! font-medium! rounded-full! transition-all focus-visible:ring-inset! focus-visible:ring-offset-0! ${active
+                            ? "bg-beauty-600! hover:bg-beauty-700! border-beauty-600! text-white! shadow-xs!"
+                            : ""
+                            }`}
+                        >
+                          {cat}
+                        </Button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -687,21 +617,22 @@ export default function CatalogPortalClient({
                   <span className="block text-xs font-semibold text-text-secondary mb-2.5 uppercase tracking-wider">
                     Público Objetivo
                   </span>
-                  <div className="grid grid-cols-2 gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     {genders.map((gender) => {
                       const active = selectedGenders.includes(gender);
                       return (
-                        <button
+                        <Button
                           key={gender}
+                          type="button"
+                          variant={active ? "primary" : "outline"}
                           onClick={() => handleGenderChange(gender)}
-                          className={`text-center text-xs py-2 rounded-xl border transition-all cursor-pointer ${
-                            active
-                              ? "bg-beauty-50 border-beauty-400 text-beauty-800 font-bold dark:bg-beauty-950 dark:border-beauty-600 dark:text-beauty-100"
-                              : "bg-bg-surface border-border-default text-text-secondary"
-                          }`}
+                          className={`px-3.5! py-1.5! text-xs! font-medium! rounded-full! transition-all focus-visible:ring-inset! focus-visible:ring-offset-0! ${active
+                            ? "bg-beauty-600! hover:bg-beauty-700! border-beauty-600! text-white! shadow-xs!"
+                            : ""
+                            }`}
                         >
                           {gender}
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>
@@ -713,7 +644,7 @@ export default function CatalogPortalClient({
                 <div>
                   <div className="flex justify-between text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wider">
                     <span>Precio Máx.</span>
-                    <span className="text-beauty-600 font-bold font-mono">
+                    <span className="text-beauty-600 dark:text-beauty-400 font-bold font-mono">
                       S/. {maxPrice}
                     </span>
                   </div>
@@ -737,18 +668,20 @@ export default function CatalogPortalClient({
 
             {/* Footer del cajón / Acciones */}
             <div className="p-4 border-t border-border-soft flex gap-2">
-              <button
+              <Button
+                variant="outline"
                 onClick={resetFilters}
-                className="flex-1 py-2.5 text-xs font-semibold rounded-xl bg-bg-surface hover:bg-bg-accent text-text-secondary transition-colors cursor-pointer border border-border-default"
+                className="flex-1! py-2.5! text-xs! font-semibold! rounded-xl!"
               >
                 Limpiar Todo
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="primary"
                 onClick={() => setMobileFiltersOpen(false)}
-                className="flex-1 py-2.5 text-xs font-semibold rounded-xl bg-beauty-600 hover:bg-beauty-700 text-white transition-colors cursor-pointer"
+                className="flex-1! py-2.5! text-xs! font-semibold! rounded-xl! bg-beauty-600! hover:bg-beauty-700! text-white!"
               >
-                Aplicar Filtros
-              </button>
+                Ver resultados ({filteredProducts.length})
+              </Button>
             </div>
           </div>
         </div>

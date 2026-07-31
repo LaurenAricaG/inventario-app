@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/Table";
 import { ProductWithRelations } from "@/types/models";
 import { cn } from "@/utils/cn.utils";
+import { getBrandBadgeStyle } from "@/utils/brand.utils";
 
 interface TableProductsProps {
   products: ProductWithRelations[];
@@ -90,7 +91,7 @@ export default function TableProducts({
                   <TableCell className="text-left">
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-beauty-50 text-beauty-800 dark:bg-beauty-950/20 dark:text-beauty-300 border border-beauty-100 dark:border-beauty-500/10">
+                        <span className={cn("inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border", getBrandBadgeStyle(product.brand.name))}>
                           {product.brand.name}
                         </span>
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-bg-surface text-text-secondary border border-border-soft">

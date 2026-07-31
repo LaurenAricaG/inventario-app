@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { SerializedCatalogPdf } from "@/types/catalogs";
+import { cn } from "@/utils/cn.utils";
+import { getBrandBadgeStyle, getCompanyBadgeStyle } from "@/utils/brand.utils";
 
 interface TableCatalogPdfsProps {
   catalogs: SerializedCatalogPdf[];
@@ -68,27 +70,23 @@ export default function TableCatalogPdfs({
                     {rowIndex}
                   </TableCell>
                   <TableCell className="text-left">
-                    <span className="font-semibold text-text-primary">
-                      {campaignText}
-                    </span>
+                    {catalog.campaign ? (
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-bold text-text-primary text-xs">
+                          Campaña {catalog.campaign.number}
+                        </span>
+                        <span className={cn("px-2 py-0.5 rounded-full text-xs font-semibold border", getCompanyBadgeStyle(catalog.campaign.company.name))}>
+                          {catalog.campaign.company.name}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-text-tertiary">Sin campaña</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-left">
-                    <div className="flex items-center gap-2">
-                      {catalog.brand?.logoUrl ? (
-                        <img
-                          src={catalog.brand.logoUrl}
-                          alt={brandText}
-                          className="w-6 h-6 object-contain rounded bg-bg-surface p-0.5 border border-border-soft"
-                        />
-                      ) : (
-                        <div className="w-6 h-6 rounded bg-beauty-50 flex items-center justify-center text-[10px] font-bold text-beauty-600 border border-beauty-100">
-                          {brandText.substring(0, 2).toUpperCase()}
-                        </div>
-                      )}
-                      <span className="text-sm text-text-primary">
-                        {brandText}
-                      </span>
-                    </div>
+                    <span className={cn("inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border", getBrandBadgeStyle(catalog.brand?.name))}>
+                      {brandText}
+                    </span>
                   </TableCell>
                   <TableCell className="text-left">
                     <span className="text-sm text-text-secondary font-medium">

@@ -9,6 +9,7 @@ import {
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { cn } from "@/utils/cn.utils";
+import { getBrandBadgeStyle, getCompanyBadgeStyle } from "@/utils/brand.utils";
 
 interface ProductCardProps {
   product: {
@@ -94,6 +95,16 @@ export default function ProductCard({
 
   return (
     <article className="group bg-bg-card border border-border-default hover:border-beauty-400 dark:hover:border-beauty-600 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg relative h-full">
+      {/* Badge de Empresa en esquina superior izquierda */}
+      <span
+        className={cn(
+          "absolute top-3 left-3 z-10 px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-wider border shadow-xs select-none backdrop-blur-xs",
+          getCompanyBadgeStyle(product.brand.company.name),
+        )}
+      >
+        {product.brand.company.name}
+      </span>
+
       {/* Botón Favorito */}
       <button
         onClick={() => onToggleFavorite(product.id)}
@@ -163,29 +174,21 @@ export default function ProductCard({
             ))}
           </div>
         )}
-
-        {/* Marca Badge */}
-        <span
-          className={cn(
-            "absolute bottom-3 left-3 px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-wider border shadow-xs select-none",
-            product.brand.company.name.toLowerCase() === "natura"
-              ? "bg-orange-50/90 border-orange-200/50 text-orange-700 dark:bg-orange-950/90 dark:border-orange-900/40 dark:text-orange-300"
-              : "bg-purple-50/90 border-purple-200/50 text-purple-700 dark:bg-purple-950/90 dark:border-purple-900/40 dark:text-purple-300",
-          )}
-        >
-          {product.brand.name}
-        </span>
       </div>
 
       {/* Contenido / Detalles del producto */}
       <div className="p-4 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-1.5">
-          {/* Empresa, Categoría y Segmento */}
+          {/* Marca, Categoría y Segmento */}
           <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-text-tertiary font-extrabold gap-2">
             <div className="flex items-center gap-1.5 truncate">
-              <span>{product.brand.company.name}</span>
+              {/* Badge de Marca en su propio color */}
+              <span className={cn("px-2 py-0.5 rounded-md text-[9px] font-extrabold border select-none", getBrandBadgeStyle(product.brand.name))}>
+                {product.brand.name}
+              </span>
               <span className="text-text-tertiary/50">•</span>
-              <span className="text-beauty-600 dark:text-beauty-400 font-bold truncate">
+              {/* Categoría */}
+              <span className="text-text-secondary font-extrabold truncate">
                 {product.category.name}
               </span>
             </div>

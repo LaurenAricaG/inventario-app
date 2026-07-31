@@ -15,22 +15,24 @@ const ThemeToggle = () => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <div className="w-12 h-12" aria-hidden="true" />;
+  if (!mounted) return <div className="w-9 h-9" aria-hidden="true" />;
 
   return (
     <button
       type="button"
       className={cn(
-        "p-3 rounded-full flex items-center justify-center transition-colors duration-200 group relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400",
-        "text-gray-600 dark:text-gray-100 hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer",
+        "w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 group relative cursor-pointer shadow-xs border shrink-0",
+        "border-border-strong bg-bg-card text-text-primary hover:bg-beauty-50 hover:border-beauty-300 dark:hover:bg-beauty-950/80 dark:hover:border-beauty-700",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 focus-visible:ring-offset-2 ring-offset-bg-card"
       )}
       onClick={toggleTheme}
       aria-label="Cambiar tema"
+      title={theme === "light" ? "Cambiar a modo oscuro" : "Cambiar a modo claro"}
     >
       {theme === "light" ? (
-        <FiMoon className="text-slate-800" />
+        <FiMoon className="w-4 h-4 text-text-primary group-hover:text-beauty-600 transition-transform group-hover:scale-110" />
       ) : (
-        <FiSun className="text-slate-200 " />
+        <FiSun className="w-4 h-4 text-amber-400 group-hover:text-amber-300 transition-transform group-hover:scale-110 group-hover:rotate-45" />
       )}
     </button>
   );
