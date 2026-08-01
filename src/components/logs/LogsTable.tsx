@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/Table";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
+import { auditActionTranslations } from "@/utils/translations.utils";
 import { SerializedAuditLog } from "./index";
 
 interface LogsTableProps {
@@ -80,14 +81,14 @@ export default function LogsTable({
                 )}
               </TableCell>
 
-              {/* Acción (CREATE / UPDATE / DELETE) con badges de color */}
+              {/* Acción (Creación / Edición / Eliminación) con badges de color */}
               <TableCell className="text-center">
                 <span
                   className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border select-none ${
                     actionColors[log.action] || "bg-bg-surface text-text-secondary border-border-default"
                   }`}
                 >
-                  {log.action}
+                  {auditActionTranslations[log.action] || log.action}
                 </span>
               </TableCell>
 

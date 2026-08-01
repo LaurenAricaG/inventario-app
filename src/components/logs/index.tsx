@@ -45,19 +45,11 @@ export interface LogsProps {
   entityFilter: string;
 }
 
-const entityTranslations: Record<string, string> = {
-  Company: "Empresa",
-  Brand: "Marca",
-  GenderSegment: "Género",
-  User: "Usuario",
-  Client: "Cliente",
-  Product: "Producto",
-  DirectSale: "Venta Directa",
-  Order: "Pedido Catálogo",
-  Payment: "Pago/Abono",
-  Debt: "Deuda",
-  Campaign: "Campaña",
-};
+import {
+  auditEntityTranslations as entityTranslations,
+  auditActionTranslations,
+  formatAuditDetails,
+} from "@/utils/translations.utils";
 
 const actionColors: Record<string, string> = {
   CREATE: "bg-success-bg/50 border-success-text/10 text-success-text",
@@ -167,9 +159,9 @@ export default function Logs({
                   icon={<FiFilter className="w-4 h-4" />}
                 >
                   <option value="ALL">Acción (Todas)</option>
-                  <option value="CREATE">CREATE</option>
-                  <option value="UPDATE">UPDATE</option>
-                  <option value="DELETE">DELETE</option>
+                  <option value="CREATE">Creación</option>
+                  <option value="UPDATE">Edición</option>
+                  <option value="DELETE">Eliminación</option>
                 </Select>
               </div>
 
@@ -278,7 +270,7 @@ export default function Logs({
                       "bg-bg-surface text-text-secondary border-border-default"
                     }`}
                   >
-                    {selectedLog.action}
+                    {auditActionTranslations[selectedLog.action] || selectedLog.action}
                   </span>
                 </div>
               </div>
@@ -311,8 +303,8 @@ export default function Logs({
                           selectedLog.details.after;
                         const payload =
                           antes || despues
-                            ? { antes, despues }
-                            : selectedLog.details;
+                            ? { antes: formatAuditDetails(antes), despues: formatAuditDetails(despues) }
+                            : formatAuditDetails(selectedLog.details);
                         handleCopy(JSON.stringify(payload, null, 2));
                       }}
                       className="px-3 py-1.5 rounded-lg text-xs font-semibold gap-1.5 border-border-strong text-text-primary hover:bg-bg-surface"
@@ -337,10 +329,12 @@ export default function Logs({
               {selectedLog.details &&
               Object.keys(selectedLog.details).length > 0 ? (
                 (() => {
-                  const antesVal =
-                    selectedLog.details.antes || selectedLog.details.before;
-                  const despuesVal =
-                    selectedLog.details.despues || selectedLog.details.after;
+                  const antesVal = formatAuditDetails(
+                    selectedLog.details.antes || selectedLog.details.before
+                  );
+                  const despuesVal = formatAuditDetails(
+                    selectedLog.details.despues || selectedLog.details.after
+                  );
 
                   if (antesVal || despuesVal) {
                     return (
@@ -371,7 +365,7 @@ export default function Logs({
                   return (
                     <div className="relative group">
                       <pre className="p-4 bg-zinc-950 text-emerald-400 rounded-xl overflow-x-auto text-xs font-mono border border-border-default/60 max-h-80 scrollbar-thin scrollbar-thumb-stone-300 dark:scrollbar-thumb-zinc-700 select-all outline-none focus:outline-none focus-visible:outline-none">
-                        {JSON.stringify(selectedLog.details, null, 2)}
+                        {JSON.stringify(formatAuditDetails(selectedLog.details), null, 2)}
                       </pre>
                       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] text-zinc-500 font-mono select-none">
                         JSON formateado

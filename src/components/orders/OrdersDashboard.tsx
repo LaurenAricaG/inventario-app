@@ -84,30 +84,17 @@ interface SerializedCampaignOrder {
   items: SerializedOrderItem[];
 }
 
+import {
+  orderStatusTranslations as statusTranslations,
+  orderStatusColors as statusColors,
+} from "@/utils/translations.utils";
+
 interface OrdersDashboardProps {
   initialOrders: SerializedCampaignOrder[];
   campaigns: SerializedCampaign[];
   selectedCampaignId: number;
   permissions: string[];
 }
-
-const statusTranslations: Record<CampaignOrderStatus, string> = {
-  PENDING: "Pendiente",
-  VERIFIED: "Verificado",
-  PACKED: "Empacado",
-  DELIVERED: "Entregado",
-  CANCELLED: "Cancelado",
-};
-
-const statusColors: Record<CampaignOrderStatus, string> = {
-  PENDING: "bg-warning-bg/50 border-warning-text/10 text-warning-text",
-  VERIFIED:
-    "bg-beauty-100 text-beauty-800 dark:bg-beauty-900/60 dark:text-beauty-200 border-beauty-400/10",
-  PACKED:
-    "bg-beauty-200 text-beauty-900 dark:bg-beauty-900/80 dark:text-beauty-100 border-beauty-400/20",
-  DELIVERED: "bg-success-bg/50 border-success-text/10 text-success-text",
-  CANCELLED: "bg-danger-bg/50 border-danger-text/10 text-danger-text",
-};
 
 export default function OrdersDashboard({
   initialOrders,

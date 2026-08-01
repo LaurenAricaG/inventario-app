@@ -212,15 +212,16 @@ export default function CatalogPortalClient({
           />
 
           {/* Acciones Rápidas */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {showCatalogs && (
               <Link
                 href="/pdf"
-                className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full border border-border-strong hover:bg-beauty-50 text-text-primary dark:hover:bg-beauty-950 text-xs font-semibold shadow-xs transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 shrink-0"
+                className="h-9 w-9 sm:w-auto px-0 sm:px-3.5 rounded-full flex items-center justify-center gap-1.5 transition-all duration-200 border shrink-0 border-border-strong bg-bg-card text-text-primary hover:bg-beauty-50 hover:border-beauty-300 dark:hover:bg-beauty-950/80 dark:hover:border-beauty-700 shadow-xs text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 focus-visible:ring-offset-2 ring-offset-bg-card group"
                 title="Ver catálogos PDF"
+                aria-label="Ver catálogos PDF"
               >
-                <FiFileText className="w-3.5 h-3.5 text-beauty-600 shrink-0" />
-                <span className="hidden min-[360px]:inline">Catálogos</span>
+                <FiFileText className="w-4 h-4 text-text-primary group-hover:text-beauty-600 transition-transform group-hover:scale-110 shrink-0" />
+                <span className="hidden sm:inline">Catálogos</span>
               </Link>
             )}
             <ThemeToggle />

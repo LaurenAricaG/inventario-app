@@ -5,29 +5,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "@/lib/audit";
 import { stockMovementSchema } from "./schema";
-
-const translateReason = (reason: string, type: "INPUT" | "OUTPUT") => {
-  switch (reason) {
-    case "PURCHASE":
-      return "Compra";
-    case "SALE":
-      return "Venta";
-    case "GIFT":
-      return type === "INPUT" ? "Regalo Recibido" : "Regalo a Cliente";
-    case "PERSONAL_USE":
-      return "Uso Personal";
-    case "LOSS_OR_DAMAGE":
-      return "Pérdida o Daño";
-    case "ADJUSTMENT":
-      return type === "INPUT" ? "Ajuste (Ingreso)" : "Ajuste (Salida)";
-    case "RETURN":
-      return "Devolución";
-    case "LOAN":
-      return type === "INPUT" ? "Retorno de Préstamo" : "Préstamo";
-    default:
-      return reason;
-  }
-};
+import { translateStockReason as translateReason } from "@/utils/translations.utils";
 
 export async function createStockMovementAction(data: any) {
   try {

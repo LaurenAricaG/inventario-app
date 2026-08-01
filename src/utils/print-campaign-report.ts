@@ -29,13 +29,7 @@ interface PrintOrder {
   paymentDate?: Date | string | null;
 }
 
-const statusTranslations: Record<string, string> = {
-  PENDING: "Pendiente",
-  VERIFIED: "Verificado",
-  PACKED: "Empacado",
-  DELIVERED: "Entregado",
-  CANCELLED: "Cancelado",
-};
+import { orderStatusTranslations as statusTranslations } from "@/utils/translations.utils";
 
 const statusBadgeStyles: Record<string, string> = {
   PENDING:

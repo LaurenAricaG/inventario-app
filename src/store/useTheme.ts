@@ -20,7 +20,7 @@ const useThemeStore = create<ThemeState>()(
       setTheme: (theme) => set({ theme }),
     }),
     {
-      name: "sistema--theme-storage",
+      name: "sistema-theme-storage",
     },
   ),
 );

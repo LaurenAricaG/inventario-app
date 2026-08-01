@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
   if (logoUrl.includes("res.cloudinary.com") && logoUrl.includes("/upload/")) {
     logoUrl = logoUrl.replace(
       "/upload/",
-      "/upload/c_fill,g_auto,w_128,h_128,r_max,f_png/"
+      "/upload/c_fill,g_auto,w_128,h_128,r_max,f_png/",
     );
   }
 
@@ -41,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const themeScript = `
 (function() {
   try {
-    var stored = localStorage.getItem('sistema--theme-storage');
+    var stored = localStorage.getItem('sistema-theme-storage');
     if (stored) {
       var parsed = JSON.parse(stored);
       if (parsed && parsed.state && parsed.state.theme === 'dark') {

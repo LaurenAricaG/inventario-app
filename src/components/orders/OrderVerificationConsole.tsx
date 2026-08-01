@@ -22,6 +22,10 @@ import {
   transitionOrderStatusAction,
 } from "@/lib/campaign-order/index";
 import { CampaignOrderStatus, ItemArrivalStatus } from "@/generated/prisma";
+import {
+  itemStatusTranslations as statusTranslations,
+  itemStatusColors as statusColors,
+} from "@/utils/translations.utils";
 
 interface SerializedBrand {
   id: number;
@@ -67,20 +71,6 @@ interface OrderVerificationConsoleProps {
   campaign: SerializedCampaign;
   orders: SerializedCampaignOrder[];
 }
-
-const statusTranslations: Record<ItemArrivalStatus, string> = {
-  PENDING: "Pendiente",
-  RECEIVED: "Recibido",
-  MISSING: "Faltante (No llegó)",
-  SUBSTITUTED: "Sustituido",
-};
-
-const statusColors: Record<ItemArrivalStatus, string> = {
-  PENDING: "bg-warning-bg/40 border-warning-text/10 text-warning-text",
-  RECEIVED: "bg-success-bg/40 border-success-text/10 text-success-text",
-  MISSING: "bg-danger-bg/40 border-danger-text/10 text-danger-text",
-  SUBSTITUTED: "bg-info-bg/40 border-info-text/10 text-info-text",
-};
 
 export default function OrderVerificationConsole({
   campaign,

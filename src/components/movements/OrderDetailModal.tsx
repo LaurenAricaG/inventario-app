@@ -14,6 +14,12 @@ import {
 } from "@/components/ui/Table";
 
 import { formatDateTime, formatDateUTC } from "@/utils/date.utils";
+import {
+  orderStatusTranslations as statusTranslations,
+  orderStatusColors as statusColors,
+  itemStatusTranslations,
+  itemStatusColors,
+} from "@/utils/translations.utils";
 
 interface OrderDetailModalProps {
   isOpen: boolean;
@@ -21,38 +27,6 @@ interface OrderDetailModalProps {
   order: CampaignOrderWithRelations | null;
   isPublic?: boolean;
 }
-
-const statusTranslations: Record<string, string> = {
-  PENDING: "Pendiente",
-  VERIFIED: "Verificado",
-  PACKED: "Empacado",
-  DELIVERED: "Entregado",
-  CANCELLED: "Cancelado",
-};
-
-const statusColors: Record<string, string> = {
-  PENDING: "bg-warning-bg/50 border-warning-text/10 text-warning-text",
-  VERIFIED:
-    "bg-beauty-100 text-beauty-800 dark:bg-beauty-900/60 dark:text-beauty-200 border-beauty-400/10",
-  PACKED:
-    "bg-beauty-200 text-beauty-900 dark:bg-beauty-900/80 dark:text-beauty-100 border-beauty-400/20",
-  DELIVERED: "bg-success-bg/50 border-success-text/10 text-success-text",
-  CANCELLED: "bg-danger-bg/50 border-danger-text/10 text-danger-text",
-};
-
-const itemStatusTranslations: Record<string, string> = {
-  PENDING: "Pendiente",
-  RECEIVED: "Recibido",
-  MISSING: "Faltante",
-  SUBSTITUTED: "Sustituido",
-};
-
-const itemStatusColors: Record<string, string> = {
-  PENDING: "bg-warning-bg/40 border-warning-text/10 text-warning-text",
-  RECEIVED: "bg-success-bg/40 border-success-text/10 text-success-text",
-  MISSING: "bg-danger-bg/40 border-danger-text/10 text-danger-text",
-  SUBSTITUTED: "bg-info-bg/40 border-info-text/10 text-info-text",
-};
 
 export default function OrderDetailModal({
   isOpen,
