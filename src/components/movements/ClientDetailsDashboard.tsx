@@ -154,19 +154,19 @@ export default function ClientDetailsDashboard({
         }
       />
 
-      {/* Top Grid: Datos de Cliente + Resumen Consolidado */}
+      {/* Top Grid: Datos de Cliente + Saldo Pendiente */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Datos del Cliente */}
-        <div className="lg:col-span-1 bg-bg-card border border-border-default/70 p-6 rounded-3xl shadow-xs flex flex-col justify-between select-none">
+        <div className="lg:col-span-2 bg-bg-card border border-border-default/70 p-6 rounded-3xl shadow-xs flex flex-col justify-between select-none">
           <div className="space-y-2">
-            <h3 className="text-xl font-black text-text-primary tracking-tight">
+            <h3 className="text-xl sm:text-2xl font-black text-text-primary tracking-tight">
               {client.name}
             </h3>
 
-            <>
+            <div className="space-y-1 pt-1">
               {client.phone ? (
                 <p className="text-xs text-text-secondary font-medium">
-                  Teléfono: {client.phone}
+                  <span className="font-semibold text-text-primary">Teléfono:</span> {client.phone}
                 </p>
               ) : (
                 <p className="text-xs text-text-tertiary font-medium italic">
@@ -175,18 +175,18 @@ export default function ClientDetailsDashboard({
               )}
               {client.address && (
                 <p className="text-xs text-text-secondary">
-                  Dirección: {client.address}
+                  <span className="font-semibold text-text-primary">Dirección:</span> {client.address}
                 </p>
               )}
               {client.notes && (
                 <p className="text-xs text-text-tertiary italic">
-                  Nota: {client.notes}
+                  <span className="font-semibold text-text-secondary not-italic">Nota:</span> {client.notes}
                 </p>
               )}
-            </>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between border-t border-border-soft pt-4 mt-4">
+          <div className="flex flex-wrap items-center justify-between border-t border-border-soft pt-4 mt-4 gap-3">
             <span className="text-xs font-semibold text-text-secondary">
               Compartir Estado:
             </span>
@@ -202,7 +202,7 @@ export default function ClientDetailsDashboard({
                 target="_blank"
                 variant="success"
                 icon={FaWhatsapp}
-                iconClassName="text-green-600 dark:text-green-500"
+                iconClassName="text-success-text"
                 title="Compartir por WhatsApp"
               />
               <ButtonIcon
@@ -216,110 +216,64 @@ export default function ClientDetailsDashboard({
           </div>
         </div>
 
-        {/* Resumen Financiero */}
-        <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4 select-none">
-          {/* Card: Total Compras */}
-          <div className="bg-bg-card border border-border-default/70 p-5 rounded-3xl shadow-xs flex flex-col justify-between">
-            <span className="text-[10px] text-text-tertiary font-bold uppercase tracking-wider">
-              Total Compras
-            </span>
-            <div>
-              <p className="text-lg font-black font-mono text-text-primary mt-2">
-                S/ {summary.totalSales.toFixed(2)}
-              </p>
-              <span className="text-[9px] text-text-tertiary font-semibold block mt-1">
-                Ventas registradas
-              </span>
-            </div>
+        {/* Card: Saldo Neto Deudor / Pendiente */}
+        <div
+          className={cn(
+            "lg:col-span-1 border p-6 rounded-3xl shadow-sm flex flex-col justify-between transition-all duration-300 relative overflow-hidden select-none",
+            summary.balance > 0.01
+              ? "bg-danger-bg/20 border-danger-text/20"
+              : "bg-success-bg/20 border-success-text/20",
+          )}
+        >
+          {/* Icono decorativo de fondo */}
+          <div className="absolute right-4 top-4 opacity-10 dark:opacity-20 pointer-events-none">
+            <FiDollarSign
+              className={cn(
+                "w-12 h-12",
+                summary.balance > 0.01
+                  ? "text-danger-text"
+                  : "text-success-text",
+              )}
+            />
           </div>
 
-          {/* Card: Deudas Adicionales */}
-          <div className="bg-bg-card border border-border-default/70 p-5 rounded-3xl shadow-xs flex flex-col justify-between">
-            <span className="text-[10px] text-text-tertiary font-bold uppercase tracking-wider">
-              Deudas Adicionales
-            </span>
-            <div>
-              <p className="text-lg font-black font-mono text-text-primary mt-2">
-                S/ {summary.totalExternalDebts.toFixed(2)}
-              </p>
-              <span className="text-[9px] text-text-tertiary font-semibold block mt-1">
-                Cargos externos
-              </span>
-            </div>
-          </div>
+          <span className="text-[10px] text-text-tertiary font-extrabold uppercase tracking-wider block">
+            Saldo pendiente
+          </span>
 
-          {/* Card: Abonos / Pagado */}
-          <div className="bg-bg-card border border-border-default/70 p-5 rounded-3xl shadow-xs flex flex-col justify-between">
-            <span className="text-[10px] text-text-tertiary font-bold uppercase tracking-wider">
-              Abonos / Pagado
-            </span>
-            <div>
-              <p className="text-lg font-black font-mono text-success-text mt-2">
-                S/ {summary.totalPayments.toFixed(2)}
-              </p>
-              <span className="text-[9px] text-success-text/80 font-bold block mt-1">
-                Total abonado
-              </span>
-            </div>
-          </div>
+          <div className="mt-3">
+            <p
+              className={cn(
+                "text-3xl font-black font-mono tracking-tight",
+                summary.balance > 0.01
+                  ? "text-danger-text"
+                  : "text-success-text",
+              )}
+            >
+              S/ {summary.balance.toFixed(2)}
+            </p>
 
-          {/* Card: Saldo Neto Deudor */}
-          <div
-            className={cn(
-              "border p-6 rounded-3xl shadow-sm flex flex-col justify-between transition-all duration-300 relative overflow-hidden",
-              summary.balance > 0.01
-                ? "bg-linear-to-br from-red-500/10 to-rose-500/5 border-red-500/20 dark:from-red-950/20 dark:to-zinc-950"
-                : "bg-linear-to-br from-green-500/10 to-emerald-500/5 border-green-500/20 dark:from-green-950/20 dark:to-zinc-950",
-            )}
-          >
-            {/* Icono decorativo de fondo */}
-            <div className="absolute right-4 top-4 opacity-10 dark:opacity-20 pointer-events-none">
-              <FiDollarSign
+            <div className="mt-2.5 flex items-center">
+              <span
                 className={cn(
-                  "w-12 h-12",
-                  summary.balance > 0.01 ? "text-red-500" : "text-green-500",
-                )}
-              />
-            </div>
-
-            <span className="text-[10px] text-text-tertiary font-extrabold uppercase tracking-wider block">
-              Saldo pendiente
-            </span>
-
-            <div className="mt-3">
-              <p
-                className={cn(
-                  "text-3xl font-black font-mono tracking-tight",
+                  "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border shadow-xs select-none",
                   summary.balance > 0.01
-                    ? "text-danger-text"
-                    : "text-success-text",
+                    ? "bg-danger-bg/40 border-danger-text/10 text-danger-text"
+                    : "bg-success-bg/40 border-success-text/10 text-success-text",
                 )}
               >
-                S/ {summary.balance.toFixed(2)}
-              </p>
-
-              <div className="mt-2.5 flex items-center">
-                <span
-                  className={cn(
-                    "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border shadow-xs select-none",
-                    summary.balance > 0.01
-                      ? "bg-danger-bg/40 border-danger-text/10 text-danger-text"
-                      : "bg-success-bg/40 border-success-text/10 text-success-text",
-                  )}
-                >
-                  {summary.balance > 0.01 ? (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-danger-text animate-pulse" />
-                      Pendiente de Pago
-                    </>
-                  ) : (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-success-text" />
-                      Al Día / Cancelado
-                    </>
-                  )}
-                </span>
-              </div>
+                {summary.balance > 0.01 ? (
+                  <>
+                    <span className="w-1.5 h-1.5 rounded-full bg-danger-text animate-pulse" />
+                    Pendiente de Pago
+                  </>
+                ) : (
+                  <>
+                    <span className="w-1.5 h-1.5 rounded-full bg-success-text" />
+                    Al Día / Cancelado
+                  </>
+                )}
+              </span>
             </div>
           </div>
         </div>

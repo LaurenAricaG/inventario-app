@@ -63,107 +63,118 @@ export async function saveCampaignOrdersAction(campaignId: number, orders: BulkO
       return { success: false, message: "La campaña seleccionada no existe." };
     }
 
-    const results = await prisma.$transaction(async (tx) => {
-      const savedOrders = [];
+    const auditLogsToCreate: Array<Parameters<typeof logActivity>[0]> = [];
 
-      for (const input of orders) {
-        // Verificar cliente
-        const client = await tx.client.findFirst({
-          where: { id: input.clientId, deletedAt: null },
-        });
+    const results = await prisma.$transaction(
+      async (tx) => {
+        const savedOrders = [];
 
-        if (!client) {
-          throw new Error(`El cliente con ID ${input.clientId} no existe o fue eliminado.`);
-        }
-
-        // Buscar si ya existe la orden
-        let order = await tx.campaignOrder.findFirst({
-          where: {
-            clientId: input.clientId,
-            campaignId,
-            deletedAt: null,
-          },
-        });
-
-        const isNew = !order;
-
-        if (order) {
-          // Actualizar cabecera
-          order = await tx.campaignOrder.update({
-            where: { id: order.id },
-            data: {
-              discount: input.discount,
-              notes: input.notes || null,
-              updatedById: userId,
-            },
+        for (const input of orders) {
+          // Verificar cliente
+          const client = await tx.client.findFirst({
+            where: { id: input.clientId, deletedAt: null },
           });
-          // Eliminar ítems antiguos
-          await tx.campaignOrderItem.deleteMany({
-            where: { campaignOrderId: order.id },
-          });
-        } else {
-          // Crear nueva orden
-          order = await tx.campaignOrder.create({
-            data: {
+
+          if (!client) {
+            throw new Error(`El cliente con ID ${input.clientId} no existe o fue eliminado.`);
+          }
+
+          // Buscar si ya existe la orden
+          let order = await tx.campaignOrder.findFirst({
+            where: {
               clientId: input.clientId,
               campaignId,
-              discount: input.discount,
-              notes: input.notes || null,
-              status: CampaignOrderStatus.PENDING,
-              createdById: userId,
+              deletedAt: null,
             },
           });
-        }
 
-        // Crear nuevos ítems
-        if (input.items.length > 0) {
-          await tx.campaignOrderItem.createMany({
-            data: input.items.map((item) => ({
-              campaignOrderId: order!.id,
-              brandId: item.brandId,
-              productCode: item.productCode || null,
-              productName: item.productName.trim(),
-              catalogPrice: item.catalogPrice,
-              quantity: item.quantity,
-              arrivalStatus: ItemArrivalStatus.PENDING,
-            })),
+          const isNew = !order;
+
+          if (order) {
+            // Actualizar cabecera
+            order = await tx.campaignOrder.update({
+              where: { id: order.id },
+              data: {
+                discount: input.discount,
+                notes: input.notes || null,
+                updatedById: userId,
+              },
+            });
+            // Eliminar ítems antiguos
+            await tx.campaignOrderItem.deleteMany({
+              where: { campaignOrderId: order.id },
+            });
+          } else {
+            // Crear nueva orden
+            order = await tx.campaignOrder.create({
+              data: {
+                clientId: input.clientId,
+                campaignId,
+                discount: input.discount,
+                notes: input.notes || null,
+                status: CampaignOrderStatus.PENDING,
+                createdById: userId,
+              },
+            });
+          }
+
+          // Crear nuevos ítems
+          if (input.items.length > 0) {
+            await tx.campaignOrderItem.createMany({
+              data: input.items.map((item) => ({
+                campaignOrderId: order!.id,
+                brandId: item.brandId,
+                productCode: item.productCode || null,
+                productName: item.productName.trim(),
+                catalogPrice: item.catalogPrice,
+                quantity: item.quantity,
+                arrivalStatus: ItemArrivalStatus.PENDING,
+              })),
+            });
+          }
+
+          // Calcular total temporal
+          const orderTotal = input.items.reduce((sum, item) => sum + item.quantity * item.catalogPrice, 0) - input.discount;
+
+          // Cargar marcas asociadas para detalles de log
+          const brandIds = Array.from(new Set(input.items.map((i) => i.brandId)));
+          const brands = await tx.brand.findMany({
+            where: { id: { in: brandIds } },
+            select: { id: true, name: true },
           });
+          const brandMap = new Map(brands.map((b) => [b.id, b.name]));
+
+          // Acumular información de auditoría para registrarla tras confirmar la transacción
+          auditLogsToCreate.push({
+            userId,
+            action: isNew ? "CREATE" : "UPDATE",
+            entity: "CampaignOrder",
+            entityId: order.id,
+            details: {
+              cliente: `${client.name} (ID: ${client.id})`,
+              campaña: `${campaign.company.name} - ${campaign.number}`,
+              items: input.items.map(
+                (i) =>
+                  `${i.productName} [Marca: ${brandMap.get(i.brandId) || "N/A"}] (Cant: ${i.quantity
+                  }, Código: ${i.productCode || "S/C"}, Precio Catálogo: S/ ${i.catalogPrice.toFixed(2)})`
+              ),
+              total: orderTotal,
+            },
+          });
+
+          savedOrders.push(order);
         }
 
-        // Calcular total temporal
-        const orderTotal = input.items.reduce((sum, item) => sum + item.quantity * item.catalogPrice, 0) - input.discount;
-
-        // Cargar marcas asociadas para detalles de log
-        const brandIds = Array.from(new Set(input.items.map((i) => i.brandId)));
-        const brands = await tx.brand.findMany({
-          where: { id: { in: brandIds } },
-          select: { id: true, name: true },
-        });
-        const brandMap = new Map(brands.map((b) => [b.id, b.name]));
-
-        // Registrar actividad de auditoría súper detallada (con marcas, códigos y precios)
-        await logActivity({
-          userId,
-          action: isNew ? "CREATE" : "UPDATE",
-          entity: "CampaignOrder",
-          entityId: order.id,
-          details: {
-            cliente: `${client.name} (ID: ${client.id})`,
-            campaña: `${campaign.company.name} - ${campaign.number}`,
-            items: input.items.map(
-              (i) =>
-                `${i.productName} [Marca: ${brandMap.get(i.brandId) || "N/A"}] (Cant: ${i.quantity
-                }, Código: ${i.productCode || "S/C"}, Precio Catálogo: S/ ${i.catalogPrice.toFixed(2)})`
-            ),
-            total: orderTotal,
-          },
-        });
-
-        savedOrders.push(order);
+        return savedOrders;
+      },
+      {
+        maxWait: 10000,
+        timeout: 30000,
       }
+    );
 
-      return savedOrders;
-    });
+    // Registrar auditoría de forma asíncrona tras finalizar la transacción sin bloquear la DB
+    Promise.allSettled(auditLogsToCreate.map((log) => logActivity(log)));
 
     revalidatePath("/admin/pedidos");
     revalidatePath("/admin/movimientos");

@@ -12,6 +12,7 @@ import {
 } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
 import Button from "@/components/ui/Button";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
 import PageHeader from "@/components/ui/PageHeader";
@@ -356,13 +357,10 @@ export default function OrderVerificationConsole({
   };
 
   const getPendingItemIds = (
-    groupItems: { id: number; orderStatus: CampaignOrderStatus }[],
+    groupItems: { id: number; arrivalStatus: ItemArrivalStatus }[],
   ) => {
     return groupItems
-      .filter(
-        (i) =>
-          i.orderStatus === CampaignOrderStatus.PENDING,
-      )
+      .filter((i) => i.arrivalStatus === ItemArrivalStatus.PENDING)
       .map((i) => i.id);
   };
 
@@ -470,18 +468,20 @@ export default function OrderVerificationConsole({
                         >
                           {/* Botón de Colapso */}
                           <td className="px-4 py-3 text-center">
-                            <button
-                              type="button"
+                            <ButtonIcon
+                              icon={FiChevronDown}
+                              variant="secondary"
                               onClick={() => toggleGroupExpand(group.key)}
-                              className="p-1 rounded-md text-text-secondary hover:bg-bg-surface transition-all cursor-pointer"
-                            >
-                              <FiChevronDown
-                                className={cn(
-                                  "w-4 h-4 transition-transform duration-200",
-                                  isExpanded && "rotate-180",
-                                )}
-                              />
-                            </button>
+                              title={
+                                isExpanded
+                                  ? "Colapsar distribución"
+                                  : "Expandir distribución"
+                              }
+                              iconClassName={cn(
+                                "transition-transform duration-200",
+                                isExpanded && "rotate-180",
+                              )}
+                            />
                           </td>
                           <td className="px-4 py-3 font-mono text-text-secondary">
                             {group.productCode || "S/C"}
@@ -602,8 +602,8 @@ export default function OrderVerificationConsole({
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                   {group.items.map((subItem) => {
                                     const isItemVerified =
-                                      subItem.orderStatus !==
-                                      CampaignOrderStatus.PENDING;
+                                      subItem.arrivalStatus !==
+                                      ItemArrivalStatus.PENDING;
 
                                     return (
                                       <div
@@ -659,7 +659,7 @@ export default function OrderVerificationConsole({
                                                 )
                                               }
                                               className={cn(
-                                                "px-2 py-1 rounded text-[9px] font-bold cursor-pointer transition-all disabled:opacity-50",
+                                                "px-2 py-1 rounded text-[9px] font-bold cursor-pointer transition-all outline-none focus:outline-none focus-visible:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed",
                                                 subItem.arrivalStatus ===
                                                   ItemArrivalStatus.RECEIVED
                                                   ? "bg-success-text text-white font-black"
@@ -678,7 +678,7 @@ export default function OrderVerificationConsole({
                                                 )
                                               }
                                               className={cn(
-                                                "px-2 py-1 rounded text-[9px] font-bold cursor-pointer transition-all disabled:opacity-50",
+                                                "px-2 py-1 rounded text-[9px] font-bold cursor-pointer transition-all outline-none focus:outline-none focus-visible:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed",
                                                 subItem.arrivalStatus ===
                                                   ItemArrivalStatus.MISSING
                                                   ? "bg-danger-text text-white font-black"
@@ -706,7 +706,7 @@ export default function OrderVerificationConsole({
                                                 )
                                               }
                                               className={cn(
-                                                "px-2 py-1 rounded text-[9px] font-bold cursor-pointer transition-all disabled:opacity-50",
+                                                "px-2 py-1 rounded text-[9px] font-bold cursor-pointer transition-all outline-none focus:outline-none focus-visible:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed",
                                                 subItem.arrivalStatus ===
                                                   ItemArrivalStatus.SUBSTITUTED
                                                   ? "bg-info-text text-white font-black"

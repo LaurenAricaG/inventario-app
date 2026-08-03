@@ -1,17 +1,26 @@
+import Skeleton from "@/components/ui/Skeleton";
 import { PageHeaderSkeleton } from "@/components/ui/PageHeader";
 
 export default function PedidosLoading() {
   return (
     <div className="space-y-6">
-      {/* Page Header Skeleton */}
-      <PageHeaderSkeleton hasAction={true} />
+      {/* Page Header Skeleton con los 2 selectores de empresa y campaña */}
+      <PageHeaderSkeleton
+        action={
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            <Skeleton className="h-10 w-full sm:w-40 rounded-2xl" />
+            <Skeleton className="h-10 w-full sm:w-44 rounded-2xl" />
+          </div>
+        }
+      />
 
       {/* Botones de Flujo de Campaña */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="h-10 w-36 bg-border-strong/20 rounded-2xl animate-pulse" />
-        <div className="h-10 w-28 bg-border-strong/20 rounded-2xl animate-pulse" />
-        <div className="h-10 w-28 bg-border-strong/20 rounded-2xl animate-pulse" />
-        <div className="h-10 w-28 bg-border-strong/20 rounded-2xl animate-pulse" />
+      <div className="flex flex-wrap items-center gap-2.5">
+        <Skeleton className="h-10 w-36 rounded-2xl" />
+        <Skeleton className="h-10 w-28 rounded-2xl" />
+        <Skeleton className="h-10 w-28 rounded-2xl" />
+        <Skeleton className="h-10 w-28 rounded-2xl" />
+        <Skeleton className="h-10 w-36 rounded-2xl" />
       </div>
 
       {/* Grid de Estadísticas */}

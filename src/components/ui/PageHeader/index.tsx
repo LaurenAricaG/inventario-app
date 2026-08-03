@@ -27,13 +27,13 @@ export default function PageHeader({
   return (
     <div
       className={cn(
-        "flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none",
+        "flex flex-col md:flex-row md:items-center justify-between gap-4 select-none",
         className,
       )}
     >
-      <div className="space-y-1">
+      <div className="space-y-1 min-w-0 flex-1">
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <nav className="flex items-center gap-1.5 text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-3">
+          <nav className="flex items-center gap-1.5 text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-3 flex-wrap">
             {breadcrumbs.map((item, idx) => (
               <React.Fragment key={idx}>
                 {idx > 0 && (
@@ -55,15 +55,17 @@ export default function PageHeader({
             ))}
           </nav>
         )}
-        <h1 className="text-2xl font-black text-text-primary tracking-tight leading-none">
+        <h1 className="text-xl sm:text-2xl font-black text-text-primary tracking-tight leading-tight">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-xs sm:text-sm text-text-secondary">{subtitle}</p>
+          <p className="text-xs sm:text-sm text-text-secondary leading-normal">
+            {subtitle}
+          </p>
         )}
       </div>
       {action && (
-        <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
+        <div className="flex items-center gap-3 shrink-0 self-start md:self-auto w-full md:w-auto">
           {action}
         </div>
       )}

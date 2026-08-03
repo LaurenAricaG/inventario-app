@@ -44,47 +44,47 @@ export default function Movements({
       />
 
       {/* Tarjetas de Resumen Consolidado */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 select-none">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 select-none">
         {/* Card: Total por Cobrar */}
-        <div className="p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-danger-bg text-danger-text flex items-center justify-center shrink-0 border border-danger-text/10">
-            <FiTrendingUp className="w-6 h-6 animate-pulse" />
+        <div className="p-4 sm:p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-3.5 sm:gap-4 min-w-0">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-danger-bg text-danger-text flex items-center justify-center shrink-0 border border-danger-text/10">
+            <FiTrendingUp className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
           </div>
-          <div>
-            <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-bold">
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] sm:text-xs text-text-tertiary uppercase tracking-wider font-bold truncate">
               Total por Cobrar
             </p>
-            <h4 className="text-xl font-bold font-mono text-danger-text mt-0.5">
+            <h4 className="text-lg sm:text-xl font-bold font-mono text-danger-text mt-0.5 truncate">
               S/ {summary.totalOutstanding.toFixed(2)}
             </h4>
           </div>
         </div>
 
         {/* Card: Total Recaudado */}
-        <div className="p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-success-bg text-success-text flex items-center justify-center shrink-0 border border-success-text/10">
-            <FiDollarSign className="w-6 h-6" />
+        <div className="p-4 sm:p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-3.5 sm:gap-4 min-w-0">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-success-bg text-success-text flex items-center justify-center shrink-0 border border-success-text/10">
+            <FiDollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-bold">
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] sm:text-xs text-text-tertiary uppercase tracking-wider font-bold truncate">
               Total Cobrado (Historial)
             </p>
-            <h4 className="text-xl font-bold font-mono text-success-text mt-0.5">
+            <h4 className="text-lg sm:text-xl font-bold font-mono text-success-text mt-0.5 truncate">
               S/ {summary.totalCollected.toFixed(2)}
             </h4>
           </div>
         </div>
 
         {/* Card: Clientes Deudores */}
-        <div className="p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-beauty-400/10 text-beauty-500 flex items-center justify-center shrink-0 border border-beauty-400/20">
-            <FiUsers className="w-6 h-6" />
+        <div className="p-4 sm:p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-3.5 sm:gap-4 min-w-0">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-beauty-400/10 text-beauty-500 flex items-center justify-center shrink-0 border border-beauty-400/20">
+            <FiUsers className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-bold">
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] sm:text-xs text-text-tertiary uppercase tracking-wider font-bold truncate">
               Clientes con Saldo Deudor
             </p>
-            <h4 className="text-xl font-bold font-mono text-text-primary mt-0.5">
+            <h4 className="text-lg sm:text-xl font-bold font-mono text-text-primary mt-0.5 truncate">
               {summary.debtorsCount} deudores
             </h4>
           </div>

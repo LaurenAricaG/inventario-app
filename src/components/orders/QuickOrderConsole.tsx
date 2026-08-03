@@ -19,6 +19,7 @@ import {
 import { cn } from "@/utils/cn.utils";
 import { formatDateShortUTC } from "@/utils/date.utils";
 import Button from "@/components/ui/Button";
+import ButtonIcon from "@/components/ui/ButtonIcon";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import Modal from "@/components/ui/Modal";
@@ -803,13 +804,12 @@ export default function QuickOrderConsole({
                     <span className="font-mono font-black text-text-primary text-sm">
                       S/ {total.toFixed(2)}
                     </span>
-                    <button
+                    <ButtonIcon
+                      icon={FiTrash2}
+                      variant="danger"
                       onClick={() => handleRemoveClientOrder(order.clientId)}
-                      className="p-1.5 rounded-lg border border-transparent text-danger-text hover:bg-danger-bg/50 transition-colors duration-150 cursor-pointer"
                       title="Eliminar pedido del cliente completo"
-                    >
-                      <FiTrash2 className="w-4 h-4" />
-                    </button>
+                    />
                   </div>
                 </div>
 
@@ -866,15 +866,14 @@ export default function QuickOrderConsole({
                             S/ {(item.quantity * item.catalogPrice).toFixed(2)}
                           </td>
                           <td className="px-6 py-3 text-center">
-                            <button
+                            <ButtonIcon
+                              icon={FiTrash2}
+                              variant="danger"
                               onClick={() =>
                                 handleRemoveItem(order.clientId, item.id)
                               }
-                              className="p-1.5 rounded-lg text-text-tertiary hover:text-danger-text hover:bg-danger-bg/40 transition-all duration-150 cursor-pointer"
                               title="Remover producto"
-                            >
-                              <FiTrash2 className="w-3.5 h-3.5" />
-                            </button>
+                            />
                           </td>
                         </tr>
                       ))}

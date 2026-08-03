@@ -44,7 +44,7 @@ const typeTranslations: Record<string, string> = {
 
 const typeColors: Record<string, string> = {
   VENTA_DIRECTA:
-    "bg-pink-100 text-pink-800 dark:bg-pink-900/40 dark:text-pink-200 border-pink-200/20",
+    "bg-beauty-400/10 text-beauty-500 border-beauty-500/20",
   PEDIDO_CATALOGO: "bg-info-bg/50 border-info-text/10 text-info-text",
   DEUDA_EXTERNA: "bg-warning-bg/40 border-warning-text/10 text-warning-text",
   PAGO: "bg-success-bg/40 border-success-text/10 text-success-text",
@@ -66,15 +66,15 @@ export default function ClientPublicPortal({
       {/* Top Grid: Bienvenida + Saldo Pendiente */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Tarjeta de Bienvenida */}
-        <div className="lg:col-span-2 bg-bg-card border p-6 rounded-3xl shadow-xs flex flex-col justify-between select-none relative overflow-hidden bg-linear-to-br from-beauty-500/5 to-pink-500/5 dark:from-beauty-900/10 dark:to-zinc-900/5 border-beauty-500/20">
+        <div className="lg:col-span-2 bg-bg-card border p-6 rounded-3xl shadow-xs flex flex-col justify-between select-none relative overflow-hidden bg-linear-to-br from-beauty-500/5 to-beauty-400/10 border-beauty-500/20">
           <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-beauty-500/10 dark:bg-beauty-500/5 rounded-full blur-3xl pointer-events-none" />
 
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-beauty-500 to-pink-600 flex items-center justify-center text-white font-black text-lg shadow-sm shadow-beauty-500/20 shrink-0 select-none">
+            <div className="w-12 h-12 rounded-2xl bg-beauty-500 flex items-center justify-center text-text-on-accent font-black text-lg shadow-sm shadow-beauty-500/20 shrink-0 select-none">
               {client.name.charAt(0).toUpperCase()}
             </div>
             <div className="space-y-1 flex-1">
-              <span className="text-[10px] text-beauty-600 dark:text-beauty-400 font-extrabold uppercase tracking-widest block">
+              <span className="text-[10px] text-beauty-500 font-extrabold uppercase tracking-widest block">
                 Bienvenido(a) a tu portal
               </span>
               <h3 className="text-xl font-black text-text-primary tracking-tight">
@@ -93,8 +93,8 @@ export default function ClientPublicPortal({
           className={cn(
             "border p-6 rounded-3xl shadow-sm flex flex-col justify-between transition-all duration-300 relative overflow-hidden",
             balance > 0.01
-              ? "bg-linear-to-br from-red-500/10 to-rose-500/5 border-red-500/20 dark:from-red-950/20 dark:to-zinc-950"
-              : "bg-linear-to-br from-green-500/10 to-emerald-500/5 border-green-500/20 dark:from-green-950/20 dark:to-zinc-950",
+              ? "bg-danger-bg/20 border-danger-text/20"
+              : "bg-success-bg/20 border-success-text/20",
           )}
         >
           {/* Icono de fondo */}
@@ -102,7 +102,7 @@ export default function ClientPublicPortal({
             <FiDollarSign
               className={cn(
                 "w-12 h-12",
-                balance > 0.01 ? "text-red-500" : "text-green-500",
+                balance > 0.01 ? "text-danger-text" : "text-success-text",
               )}
             />
           </div>

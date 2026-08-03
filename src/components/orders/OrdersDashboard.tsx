@@ -365,8 +365,8 @@ export default function OrdersDashboard({
         subtitle="Gestión completa de pedidos por campaña, recepción de cajas y despacho."
         breadcrumbs={[{ label: "admin", href: "/admin" }, { label: "pedidos" }]}
         action={
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative w-40">
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            <div className="relative w-full sm:w-40 min-w-[130px] flex-1 sm:flex-none">
               <Select
                 value={selectedCompanyId}
                 onChange={(e) => handleCompanyChange(e.target.value)}
@@ -382,7 +382,7 @@ export default function OrdersDashboard({
                 <FiLoader className="absolute right-8 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary animate-spin pointer-events-none" />
               )}
             </div>
-            <div className="w-44">
+            <div className="w-full sm:w-44 min-w-[140px] flex-1 sm:flex-none">
               <Select
                 value={selectedCampaignId.toString()}
                 onChange={(e) => handleCampaignChange(e.target.value)}
@@ -495,47 +495,47 @@ export default function OrdersDashboard({
       )}
 
       {/* Tarjetas Estadísticas */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 select-none">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 select-none">
         {/* Card: Total Pedidos */}
-        <div className="p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-beauty-400/10 text-beauty-500 flex items-center justify-center shrink-0 border border-beauty-500/10">
-            <FiShoppingBag className="w-6 h-6" />
+        <div className="p-4 sm:p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-3.5 sm:gap-4 min-w-0">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-beauty-400/10 text-beauty-500 flex items-center justify-center shrink-0 border border-beauty-500/10">
+            <FiShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <span className="text-[10px] text-text-tertiary font-bold uppercase tracking-wider block">
+          <div className="min-w-0 flex-1">
+            <span className="text-[10px] sm:text-xs text-text-tertiary font-bold uppercase tracking-wider block truncate">
               Total Pedidos
             </span>
-            <span className="text-xl font-black text-text-primary tracking-tight mt-0.5 block">
+            <span className="text-lg sm:text-xl font-black text-text-primary tracking-tight mt-0.5 block truncate">
               {totalOrders}
             </span>
           </div>
         </div>
 
         {/* Card: Monto Consolidado */}
-        <div className="p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-success-bg/10 text-success-text flex items-center justify-center shrink-0 border border-success-text/10">
-            <FiTrendingUp className="w-6 h-6" />
+        <div className="p-4 sm:p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-3.5 sm:gap-4 min-w-0">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-success-bg/10 text-success-text flex items-center justify-center shrink-0 border border-success-text/10">
+            <FiTrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <span className="text-[10px] text-text-tertiary font-bold uppercase tracking-wider block">
+          <div className="min-w-0 flex-1">
+            <span className="text-[10px] sm:text-xs text-text-tertiary font-bold uppercase tracking-wider block truncate">
               Monto Consolidado
             </span>
-            <span className="text-xl font-black text-text-primary tracking-tight mt-0.5 block font-mono">
+            <span className="text-lg sm:text-xl font-black text-text-primary tracking-tight mt-0.5 block font-mono truncate">
               S/ {totalAmount.toFixed(2)}
             </span>
           </div>
         </div>
 
         {/* Card: Pendientes de Entrega */}
-        <div className="p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-warning-bg/10 text-warning-text flex items-center justify-center shrink-0 border border-warning-text/10">
-            <FiTruck className="w-6 h-6 animate-pulse" />
+        <div className="p-4 sm:p-5 bg-bg-card border border-border-default/70 rounded-3xl shadow-xs flex items-center gap-3.5 sm:gap-4 min-w-0">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-warning-bg/10 text-warning-text flex items-center justify-center shrink-0 border border-warning-text/10">
+            <FiTruck className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
           </div>
-          <div>
-            <span className="text-[10px] text-text-tertiary font-bold uppercase tracking-wider block">
+          <div className="min-w-0 flex-1">
+            <span className="text-[10px] sm:text-xs text-text-tertiary font-bold uppercase tracking-wider block truncate">
               Pendientes de Despacho
             </span>
-            <span className="text-xl font-black text-text-primary tracking-tight mt-0.5 block">
+            <span className="text-lg sm:text-xl font-black text-text-primary tracking-tight mt-0.5 block truncate">
               {pendingDeliveries}
             </span>
           </div>

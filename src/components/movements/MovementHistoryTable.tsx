@@ -37,9 +37,10 @@ interface MovementHistoryTableProps {
 const typeConfig = {
   VENTA_DIRECTA: {
     label: "Venta Directa",
-    badge: "bg-beauty-100 text-beauty-800 dark:bg-beauty-900/60 dark:text-beauty-200 border-beauty-400/10",
+    badge:
+      "bg-beauty-400/10 text-beauty-500 border-beauty-500/20",
     icon: FiArrowUpRight,
-    iconColor: "text-pink-500",
+    iconColor: "text-beauty-500",
     sign: "+",
     signColor: "text-text-primary",
   },
