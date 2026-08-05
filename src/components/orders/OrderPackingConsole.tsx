@@ -11,6 +11,7 @@ import {
   FiUser,
 } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
+import { formatDateUTC } from "@/utils/date.utils";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import PageHeader from "@/components/ui/PageHeader";
@@ -559,6 +560,16 @@ export default function OrderPackingConsole({
                   />
                 </FormField>
 
+                {campaign && (
+                  <div className="p-3 bg-bg-surface border border-border-default/80 rounded-xl text-xs flex items-center justify-between gap-2">
+                    <span className="text-text-tertiary font-medium">
+                      Fecha fin de la campaña ({campaign.company?.name || "Empresa"} - {campaign.number}):
+                    </span>
+                    <span className="font-bold text-text-primary font-mono bg-beauty-500/10 text-beauty-600 dark:text-beauty-400 px-2.5 py-1 rounded-md border border-beauty-500/20">
+                      {formatDateUTC(campaign.endDate)}
+                    </span>
+                  </div>
+                )}
                 <FormField label="Fecha Límite de Pago (Opcional)" error={paymentDateError || undefined}>
                   <Input
                     type="date"

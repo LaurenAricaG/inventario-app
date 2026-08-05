@@ -31,7 +31,7 @@ export async function createPaymentAction(data: PaymentInput) {
       return { success: false, message: errorMsg };
     }
 
-    const { amount, method, note, campaignId, clientId } = validation.data;
+    const { amount, method, note, clientId } = validation.data;
 
     // Verificar que el cliente existe y no esté eliminado
     const client = await prisma.client.findFirst({
@@ -45,24 +45,10 @@ export async function createPaymentAction(data: PaymentInput) {
       };
     }
 
-    // Si se especificó una campaña, verificar que exista
-    if (campaignId) {
-      const campaign = await prisma.campaign.findUnique({
-        where: { id: campaignId },
-      });
-      if (!campaign) {
-        return {
-          success: false,
-          message: "La campaña seleccionada no existe.",
-        };
-      }
-    }
-
     // Crear el pago
     const payment = await prisma.payment.create({
       data: {
         clientId,
-        campaignId: campaignId || null,
         amount,
         method,
         note: note || null,
@@ -80,8 +66,7 @@ export async function createPaymentAction(data: PaymentInput) {
         cliente: `${client.name} (ID: ${client.id})`,
         monto: amount,
         metodo: method,
-        nota: note,
-        campaniaId: campaignId,
+        ...(note ? { nota: note } : {}),
       },
     });
 

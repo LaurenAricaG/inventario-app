@@ -16,13 +16,7 @@ interface CustomerPageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
-const methodTranslations: Record<PaymentMethod, string> = {
-  CASH: "Efectivo",
-  YAPE: "Yape",
-  PLIN: "Plin",
-  BANK_TRANSFER: "Transferencia Bancaria",
-  OTHER: "Otro",
-};
+import { paymentMethodTranslations } from "@/utils/translations.utils";
 
 export default async function ClientPortalPage(props: CustomerPageProps) {
   const { token } = await props.params;
@@ -141,7 +135,7 @@ export default async function ClientPortalPage(props: CustomerPageProps) {
       type: "PAGO",
       date: payment.paidAt.toISOString(),
       amount: payment.amount,
-      description: `Abono recibido - Método: ${methodTranslations[payment.method]}`,
+      description: `Abono recibido - Método: ${paymentMethodTranslations[payment.method] || payment.method}`,
       raw: payment,
     });
   });

@@ -1,7 +1,12 @@
 "use client";
 
 import { FiEye, FiTrash2, FiCalendar, FiArrowDownLeft, FiArrowUpRight, FiPlus } from "react-icons/fi";
+import { cn } from "@/utils/cn.utils";
 import { formatDateLocal } from "@/utils/date.utils";
+import {
+  paymentMethodTranslations,
+  paymentMethodBadgeColors,
+} from "@/utils/translations.utils";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
@@ -160,7 +165,22 @@ export default function MovementHistoryTable({
 
                   {/* Detalle / Glosa */}
                   <TableCell className="hidden md:table-cell text-xs sm:text-sm text-text-primary">
-                    <div className="font-semibold">{movement.description}</div>
+                    {movement.type === "PAGO" && movement.raw?.method ? (
+                      <div className="font-semibold flex items-center gap-1.5 flex-wrap">
+                        <span>Abono recibido - Método:</span>
+                        <span
+                          className={cn(
+                            "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border",
+                            paymentMethodBadgeColors[movement.raw.method] ||
+                              paymentMethodBadgeColors.OTHER,
+                          )}
+                        >
+                          {paymentMethodTranslations[movement.raw.method] || movement.raw.method}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="font-semibold">{movement.description}</div>
+                    )}
                     {movement.raw.note && (
                       <div className="text-[11px] text-text-tertiary mt-0.5 italic">
                         Nota: {movement.raw.note}

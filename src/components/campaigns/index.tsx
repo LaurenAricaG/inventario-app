@@ -342,8 +342,15 @@ export default function Campaigns({
               </Button>
             )}
             <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
-              Total: {overallCount} {isCampaignsTab ? "campañas" : "catálogos"}{" "}
-              registrados
+              {isCampaignsTab
+                ? search
+                  ? `Total: ${totalItems} de ${overallCount} campañas`
+                  : `Total: ${overallCount} campañas registradas`
+                : onlyActive
+                ? `Total: ${totalItems} ${totalItems === 1 ? "catálogo activo" : "catálogos activos"}`
+                : search
+                ? `Total: ${totalItems} de ${overallCount} catálogos`
+                : `Total: ${overallCount} catálogos registrados`}
             </div>
           </div>
 

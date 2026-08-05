@@ -9,7 +9,6 @@ export const paymentSchema = z.object({
     message: "Método de pago no válido.",
   }),
   note: z.string().optional(),
-  campaignId: z.number().nullable().optional(),
   clientId: z.number({ message: "El cliente es requerido." }),
 });
 

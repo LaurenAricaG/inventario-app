@@ -7,6 +7,10 @@ import { FiDollarSign, FiEye, FiCalendar } from "react-icons/fi";
 import { MovementItem } from "./MovementHistoryTable";
 import DetailSaleModal from "@/components/direct-sales/DetailSaleModal";
 import OrderDetailModal from "./OrderDetailModal";
+import {
+  paymentMethodTranslations,
+  paymentMethodBadgeColors,
+} from "@/utils/translations.utils";
 import Pagination from "@/components/ui/Pagination";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
@@ -209,6 +213,19 @@ export default function ClientPublicPortal({
                           {m.raw.campaign.company.name} - Campaña{" "}
                           {m.raw.campaign.number}
                         </>
+                      ) : m.type === "PAGO" && m.raw?.method ? (
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span>Abono recibido - Método:</span>
+                          <span
+                            className={cn(
+                              "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border",
+                              paymentMethodBadgeColors[m.raw.method] ||
+                                paymentMethodBadgeColors.OTHER,
+                            )}
+                          >
+                            {paymentMethodTranslations[m.raw.method] || m.raw.method}
+                          </span>
+                        </div>
                       ) : (
                         <>{m.description}</>
                       )}

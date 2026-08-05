@@ -61,10 +61,32 @@ export function translateOrderStatus(status: string | null | undefined): string 
 // ========================================================
 export const paymentMethodTranslations: Record<string, string> = {
   CASH: "Efectivo",
+  cash: "Efectivo",
   YAPE: "Yape",
+  yape: "Yape",
   PLIN: "Plin",
+  plin: "Plin",
   BANK_TRANSFER: "Transferencia",
-  OTHER: "Otro",
+  bank_transfer: "Transferencia",
+  OTHER: "Otros",
+  other: "Otros",
+};
+
+export const paymentMethodBadgeColors: Record<string, string> = {
+  CASH: "bg-blue-50/70 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800",
+  cash: "bg-blue-50/70 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800",
+  YAPE: "bg-purple-50/70 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800",
+  yape: "bg-purple-50/70 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800",
+  PLIN: "bg-teal-50/70 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800",
+  plin: "bg-teal-50/70 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800",
+  BANK_TRANSFER:
+    "bg-indigo-50/70 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800",
+  bank_transfer:
+    "bg-indigo-50/70 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800",
+  OTHER:
+    "bg-stone-50/70 text-stone-700 border-stone-200 dark:bg-stone-900/20 dark:text-stone-300 dark:border-stone-800",
+  other:
+    "bg-stone-50/70 text-stone-700 border-stone-200 dark:bg-stone-900/20 dark:text-stone-300 dark:border-stone-800",
 };
 
 /**
@@ -186,6 +208,7 @@ export function formatAuditDetails(obj: any): any {
   if (obj === null || obj === undefined) return obj;
 
   if (typeof obj === "string") {
+    if (paymentMethodTranslations[obj]) return paymentMethodTranslations[obj];
     if (stockReasonTranslations[obj]) return stockReasonTranslations[obj];
     if (auditActionTranslations[obj]) return auditActionTranslations[obj];
     if (auditEntityTranslations[obj]) return auditEntityTranslations[obj];

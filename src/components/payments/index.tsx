@@ -15,6 +15,7 @@ import TablePayments from "./TablePayments";
 import FormPayments from "./FormPayments";
 import PageHeader from "@/components/ui/PageHeader";
 import { deletePaymentAction } from "@/lib/payment";
+import { paymentMethodTranslations as methodTranslations } from "@/utils/translations.utils";
 
 interface SerializedPayment {
   id: number;
@@ -37,14 +38,6 @@ interface PaymentsProps {
   selectedMethod: string;
   permissions: string[];
 }
-
-const methodTranslations: Record<PaymentMethod, string> = {
-  CASH: "Efectivo",
-  YAPE: "Yape",
-  PLIN: "Plin",
-  BANK_TRANSFER: "Transf. Bancaria",
-  OTHER: "Otro",
-};
 
 export default function Payments({
   initialPayments,
@@ -142,9 +135,9 @@ export default function Payments({
               icon={<FiFilter className="w-4 h-4" />}
             >
               <option value="ALL">Todos los métodos</option>
-              {Object.keys(methodTranslations).map((key) => (
+              {Object.keys(PaymentMethod).map((key) => (
                 <option key={key} value={key}>
-                  {methodTranslations[key as PaymentMethod]}
+                  {methodTranslations[key] || key}
                 </option>
               ))}
             </Select>

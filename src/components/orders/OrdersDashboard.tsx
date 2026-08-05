@@ -793,6 +793,16 @@ export default function OrdersDashboard({
               pedidos entregados heredarán esta fecha automáticamente si no se
               define una específica para el cliente.
             </p>
+            {currentCampaign && (
+              <div className="p-3 bg-bg-surface border border-border-default/80 rounded-xl text-xs flex items-center justify-between gap-2">
+                <span className="text-text-tertiary font-medium">
+                  Fecha fin de la campaña ({currentCampaign.company?.name || "Empresa"} - {currentCampaign.number}):
+                </span>
+                <span className="font-bold text-text-primary font-mono bg-beauty-500/10 text-beauty-600 dark:text-beauty-400 px-2.5 py-1 rounded-md border border-beauty-500/20">
+                  {formatDateUTC(currentCampaign.endDate)}
+                </span>
+              </div>
+            )}
             <FormField
               label="Fecha de Pago de Campaña"
               required

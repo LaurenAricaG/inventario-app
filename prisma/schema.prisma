@@ -239,7 +239,6 @@ model Campaign {
   company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   catalogPdfs    CatalogPdf[]
   campaignOrders CampaignOrder[]
-  payments       Payment[]
 
   @@unique([companyId, number])
   @@index([companyId])
@@ -624,7 +623,6 @@ model DirectSaleItem {
 model Payment {
   id         Int           @id @default(autoincrement())
   clientId   Int
-  campaignId Int?
   amount     Float
   method     PaymentMethod @default(CASH)
   note       String?
@@ -636,11 +634,9 @@ model Payment {
   createdBy   User          @relation("PaymentCreatedBy", fields: [createdById], references: [id])
   updatedBy   User?         @relation("PaymentUpdatedBy", fields: [updatedById], references: [id])
 
-  client   Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@index([clientId])
-  @@index([campaignId])
   @@index([paidAt])
   @@index([createdById])
   @@index([updatedById])

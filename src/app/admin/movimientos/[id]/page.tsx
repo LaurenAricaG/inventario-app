@@ -14,13 +14,7 @@ interface FichaClientePageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
-const methodTranslations: Record<PaymentMethod, string> = {
-  CASH: "Efectivo",
-  YAPE: "Yape",
-  PLIN: "Plin",
-  BANK_TRANSFER: "Transferencia Bancaria",
-  OTHER: "Otro",
-};
+import { paymentMethodTranslations } from "@/utils/translations.utils";
 
 export default async function FichaClientePage(props: FichaClientePageProps) {
   const session = await auth();
@@ -157,7 +151,7 @@ export default async function FichaClientePage(props: FichaClientePageProps) {
       type: "PAGO",
       date: payment.paidAt.toISOString(),
       amount: payment.amount,
-      description: `Abono recibido - Método: ${methodTranslations[payment.method]}`,
+      description: `Abono recibido - Método: ${paymentMethodTranslations[payment.method] || payment.method}`,
       raw: payment,
     });
   });

@@ -31,17 +31,10 @@ interface TablePaymentsProps {
   onDelete: (id: number) => void;
 }
 
-import { paymentMethodTranslations as methodTranslations } from "@/utils/translations.utils";
-
-const badgeColors: Record<PaymentMethod, string> = {
-  CASH: "bg-blue-50/70 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800",
-  YAPE: "bg-purple-50/70 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800",
-  PLIN: "bg-teal-50/70 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800",
-  BANK_TRANSFER:
-    "bg-indigo-50/70 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800",
-  OTHER:
-    "bg-stone-50/70 text-stone-700 border-stone-200 dark:bg-stone-900/20 dark:text-stone-300 dark:border-stone-800",
-};
+import {
+  paymentMethodTranslations as methodTranslations,
+  paymentMethodBadgeColors as badgeColors,
+} from "@/utils/translations.utils";
 
 export default function TablePayments({
   payments,
