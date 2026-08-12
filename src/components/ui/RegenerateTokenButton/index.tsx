@@ -71,6 +71,7 @@ export default function RegenerateTokenButton({
         onClose={() => setIsModalOpen(false)}
         title="Confirmar Regeneración"
         size="md"
+        className="whitespace-normal"
         footer={
           <>
             <Button
@@ -90,12 +91,18 @@ export default function RegenerateTokenButton({
           </>
         }
       >
-        <div className="space-y-3">
+        <div className="space-y-3 whitespace-normal wrap-break-words">
           <p className="text-text-secondary text-xs sm:text-sm leading-relaxed">
-            ¿Estás seguro de que deseas regenerar el enlace del estado de cuenta para <strong className="text-text-primary">"{clientName}"</strong>?
+            ¿Estás seguro de que deseas regenerar el enlace del estado de cuenta
+            para <strong className="text-text-primary">"{clientName}"</strong>?
           </p>
           <p className="text-text-secondary text-xs sm:text-sm leading-relaxed">
-            El enlace anterior quedará <strong className="text-danger-text">inhabilitado inmediatamente</strong> y deberás enviarle el nuevo enlace al cliente para que pueda acceder.
+            El enlace anterior quedará{" "}
+            <strong className="text-danger-text">
+              inhabilitado inmediatamente
+            </strong>{" "}
+            y deberás enviarle el nuevo enlace al cliente para que pueda
+            acceder.
           </p>
         </div>
       </Modal>
