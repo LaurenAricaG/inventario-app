@@ -40,9 +40,7 @@ export const orderStatusTranslations: Record<string, string> = {
 
 export const orderStatusColors: Record<string, string> = {
   PENDING: "bg-warning-bg/50 border-warning-text/10 text-warning-text",
-  VERIFIED:
-    // "bg-beauty-400/10 border-beauty-500/20 text-beauty-500 dark:text-beauty-500",
-    "bg-beauty-500/10 border-beauty-500/20 text-beauty-600 dark:text-beauty-500",
+  VERIFIED: "bg-beauty-500/10 border-beauty-500/20 text-beauty-600 dark:text-beauty-500",
   PACKED: "bg-info-bg/50 border-info-text/10 text-info-text",
   DELIVERED: "bg-success-bg/50 border-success-text/10 text-success-text",
   CANCELLED: "bg-danger-bg/50 border-danger-text/10 text-danger-text",

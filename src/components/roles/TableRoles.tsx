@@ -83,7 +83,7 @@ export default function TableRoles({
 
                   {/* Cantidad de Permisos */}
                   <TableCell className="text-center">
-                    <span className="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full bg-beauty-50 text-beauty-700 dark:bg-beauty-950 dark:text-beauty-300">
+                    <span className="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full bg-beauty-500/10 border-beauty-500/20 text-beauty-600 dark:text-beauty-500">
                       {permissionsCount} permiso(s)
                     </span>
                   </TableCell>

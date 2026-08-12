@@ -5,7 +5,7 @@ import {
   FiCalendar,
   FiUser,
   FiEye,
-  FiFileText,
+  FiDownload,
 } from "react-icons/fi";
 import { generatePdfDirectSale } from "@/utils/generate-pdf-direct-sale";
 import { formatDateLocal } from "@/utils/date.utils";
@@ -141,7 +141,7 @@ export default function TableDirectSales({
                           )
                         }
                         variant="secondary"
-                        icon={FiFileText}
+                        icon={FiDownload}
                         title="Descargar boleta de venta (PDF)"
                       />
                       {canDelete && (

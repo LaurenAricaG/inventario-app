@@ -1,6 +1,6 @@
 "use client";
 
-import { FiEdit2, FiTrash2, FiFileText } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiFile } from "react-icons/fi";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import {
@@ -104,8 +104,8 @@ export default function TableCatalogPdfs({
                           href={catalog.pdfUrl}
                           target="_blank"
                           variant="secondary"
-                          icon={FiFileText}
-                          title="Ver documento"
+                          icon={FiFile}
+                          title="Ver catálogo PDF"
                         />
                       )}
                       {canUpdate && (

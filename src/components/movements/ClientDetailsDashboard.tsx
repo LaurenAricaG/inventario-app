@@ -192,13 +192,12 @@ export default function ClientDetailsDashboard({
             </span>
             <div className="flex items-center gap-2">
               <ButtonIcon
-                href={`https://api.whatsapp.com/send?${
-                  cleanPhone
+                href={`https://api.whatsapp.com/send?${cleanPhone
                     ? `phone=${cleanPhone.startsWith("51") ? cleanPhone : "51" + cleanPhone}&`
                     : ""
-                }text=${encodeURIComponent(
-                  `Hola ${client.name}, te comparto el enlace para que puedas ver el estado de tu cuenta de pedidos y pagos: ${origin}/c/${client.shareToken}`,
-                )}`}
+                  }text=${encodeURIComponent(
+                    `Hola ${client.name}, te comparto el enlace para que puedas ver el estado de tu cuenta de pedidos y pagos: ${origin}/c/${client.shareToken}`,
+                  )}`}
                 target="_blank"
                 variant="success"
                 icon={FaWhatsapp}
@@ -281,11 +280,11 @@ export default function ClientDetailsDashboard({
 
       {/* Contenido de Movimientos (Pestañas) */}
       <div className="overflow-hidden bg-bg-card border border-border-default/80 rounded-2xl shadow-xs">
-        <div className=" p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-soft bg-bg-card">
+        <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-soft bg-bg-card">
           <h3 className="text-lg font-bold text-text-primary select-none">
             Historial de Movimientos
           </h3>
-          <div className="flex items-center gap-3">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
             {canCreatePayment && (
               <Button
                 variant="outline"
@@ -296,20 +295,20 @@ export default function ClientDetailsDashboard({
                   }
                   setIsOpenPaymentModal(true);
                 }}
-                className="flex items-center gap-2 border-border-default/60 hover:bg-beauty-400/10 hover:text-beauty-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 text-xs font-bold py-2 px-4 rounded-xl cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2 border-border-default/60 hover:bg-beauty-400/10 hover:text-beauty-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 text-xs font-bold py-2 px-3 sm:px-4 rounded-xl cursor-pointer"
               >
-                <FiDollarSign className="w-3.5 h-3.5" />
-                <span>Registrar Pago</span>
+                <FiDollarSign className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">Nuevo Pago</span>
               </Button>
             )}
             {canCreateDebt && (
               <Button
                 variant="outline"
                 onClick={() => setIsOpenDebtModal(true)}
-                className="flex items-center gap-2 border-border-default/60 hover:bg-beauty-400/10 hover:text-beauty-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 text-xs font-bold py-2 px-4 rounded-xl cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2 border-border-default/60 hover:bg-beauty-400/10 hover:text-beauty-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-beauty-400 text-xs font-bold py-2 px-3 sm:px-4 rounded-xl cursor-pointer"
               >
-                <FiAlertTriangle className="w-3.5 h-3.5" />
-                <span>Registrar Deuda</span>
+                <FiAlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">Nueva Deuda</span>
               </Button>
             )}
           </div>

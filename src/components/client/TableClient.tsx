@@ -68,8 +68,8 @@ export default function TableClient({
             <TableHead className="text-center w-16">N°</TableHead>
             <TableHead>Cliente</TableHead>
             <TableHead className="hidden md:table-cell">Dirección</TableHead>
-            <TableHead>Estado de Cuenta</TableHead>
-            <TableHead className="text-right w-32">Acciones</TableHead>
+            <TableHead className="whitespace-nowrap">Estado de Cuenta</TableHead>
+            <TableHead className="text-right whitespace-nowrap w-32">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -128,7 +128,7 @@ export default function TableClient({
                   </TableCell>
 
                   {/* Shared Link / Token */}
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <CopyButton
                         text={`/c/${client.shareToken}`}
@@ -152,7 +152,7 @@ export default function TableClient({
                   </TableCell>
 
                   {/* Acciones */}
-                  <TableCell className="text-right">
+                  <TableCell className="text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-2">
                       {canUpdate && (
                         <ButtonIcon

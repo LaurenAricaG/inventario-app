@@ -109,24 +109,24 @@ export default function Dashboard({
             Control de inventario, deudas y pedidos activos
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 sm:gap-2 w-full sm:w-auto">
           {canCreateSale && (
             <Link
               href="/admin/ventas/nueva"
-              className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-beauty-400 hover:bg-beauty-600 text-white shadow-sm shadow-beauty-400/10 focus-visible:ring-beauty-400 gap-2 self-start sm:self-auto"
+              className="w-full sm:w-auto flex items-center justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-beauty-400 hover:bg-beauty-600 text-white shadow-sm shadow-beauty-400/10 focus-visible:ring-beauty-400 gap-1.5 sm:gap-2"
             >
-              <FiPlus className="w-4 h-4" />
-              Nueva Venta
+              <FiPlus className="w-4 h-4 shrink-0" />
+              <span className="truncate">Nueva Venta</span>
             </Link>
           )}
           {canCreatePayment && (
             <Button
               variant="outline"
               onClick={() => setIsPaymentModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto shadow-sm shrink-0"
+              className="w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold shadow-sm"
             >
-              <FiPlus className="w-4 h-4" />
-              <span>Nuevo Pago</span>
+              <FiPlus className="w-4 h-4 shrink-0" />
+              <span className="truncate">Nuevo Pago</span>
             </Button>
           )}
         </div>
