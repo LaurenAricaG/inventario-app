@@ -19,6 +19,7 @@ export default async function DashboardLayout({
     redirect("/login");
   }
   const userName = session?.user?.name ?? "Usuario";
+  const userEmail = session?.user?.email ?? "";
   const userRole = session?.user?.role ?? "Rol";
   const userPermissions = session?.user?.permissions ?? [];
 
@@ -27,6 +28,7 @@ export default async function DashboardLayout({
       <DashboardLayoutClient
         initialCollapsed={initialCollapsed}
         userName={userName}
+        userEmail={userEmail}
         userRole={userRole}
         userPermissions={userPermissions}
       >

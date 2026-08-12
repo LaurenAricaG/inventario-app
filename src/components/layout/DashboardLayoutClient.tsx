@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 interface DashboardLayoutClientProps {
   initialCollapsed: boolean;
   userName?: string;
+  userEmail?: string;
   userRole?: string;
   userPermissions?: string[];
   children: React.ReactNode;
@@ -18,6 +19,7 @@ interface DashboardLayoutClientProps {
 export default function DashboardLayoutClient({
   initialCollapsed,
   userName = "Usuario",
+  userEmail = "",
   userRole = "Rol",
   userPermissions = [],
   children,
@@ -74,7 +76,9 @@ export default function DashboardLayoutClient({
           collapsed={collapsed}
           onToggle={handleToggle}
           userName={userName}
+          userEmail={userEmail}
           userRole={userRole}
+          userPermissions={userPermissions}
         />
 
         {/* Área del Contenido de las páginas */}

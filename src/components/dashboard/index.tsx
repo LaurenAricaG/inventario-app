@@ -7,6 +7,7 @@ import {
   FiAlertCircle,
   FiPackage,
   FiShoppingBag,
+  FiUsers,
   FiPlus,
   FiCalendar,
   FiClock,
@@ -18,6 +19,12 @@ import FormPayments from "@/components/payments/FormPayments";
 import { formatDateShortWithTime, formatDateShortUTC } from "@/utils/date.utils";
 import TableDashboard, { PendingDebtor } from "./TableDashboard";
 import Button from "../ui/Button";
+import DashboardCharts, {
+  MonthlyFinancial,
+  StockCompany,
+  StockCategory,
+  CompanyCampaignOrders,
+} from "./DashboardCharts";
 
 interface ActiveCampaign {
   id: number;
@@ -52,6 +59,10 @@ interface DashboardProps {
   activities: Activity[];
   clientsList: { id: number; name: string; balance: number }[];
   permissions: string[];
+  financialData: MonthlyFinancial[];
+  companyStockData: StockCompany[];
+  categoryStockData: StockCategory[];
+  companyCampaignOrdersData: CompanyCampaignOrders[];
 }
 
 const iconMap = {
@@ -59,6 +70,7 @@ const iconMap = {
   "alert-circle": FiAlertCircle,
   "package": FiPackage,
   "shopping-bag": FiShoppingBag,
+  "users": FiUsers,
 };
 
 export default function Dashboard({
@@ -70,6 +82,10 @@ export default function Dashboard({
   activities,
   clientsList,
   permissions,
+  financialData,
+  companyStockData,
+  categoryStockData,
+  companyCampaignOrdersData,
 }: DashboardProps) {
   const router = useRouter();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -146,6 +162,14 @@ export default function Dashboard({
           );
         })}
       </div>
+
+      {/* Sección de Gráficos con Recharts */}
+      <DashboardCharts
+        financialData={financialData}
+        companyStockData={companyStockData}
+        categoryStockData={categoryStockData}
+        companyCampaignOrdersData={companyCampaignOrdersData}
+      />
 
       {/* Cuerpo principal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">

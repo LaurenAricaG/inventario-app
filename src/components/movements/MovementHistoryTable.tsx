@@ -142,8 +142,7 @@ export default function MovementHistoryTable({
                   <TableCell>
                     <div className="flex flex-col gap-1 items-start">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${config.badge
-                          }`}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${config.badge}`}
                       >
                         <Icon className={`w-3 h-3 mr-1 shrink-0 ${config.iconColor}`} />
                         {config.label}
@@ -158,6 +157,19 @@ export default function MovementHistoryTable({
                             : "bg-warning-bg/30 text-warning-text border-warning-text/10"
                           }`}>
                           Estado: {orderStatusTranslations[movement.status!] || movement.status}
+                        </span>
+                      )}
+
+                      {/* Mostrar método de pago en vista responsive (móvil) */}
+                      {movement.type === "PAGO" && movement.raw?.method && (
+                        <span
+                          className={cn(
+                            "md:hidden inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold border",
+                            paymentMethodBadgeColors[movement.raw.method] ||
+                              paymentMethodBadgeColors.OTHER,
+                          )}
+                        >
+                          Método: {paymentMethodTranslations[movement.raw.method] || movement.raw.method}
                         </span>
                       )}
                     </div>

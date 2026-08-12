@@ -198,14 +198,27 @@ export default function ClientPublicPortal({
                       </div>
                     </TableCell>
                     <TableCell className="whitespace-nowrap select-none">
-                      <span
-                        className={cn(
-                          "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border",
-                          typeColors[m.type],
+                      <div className="flex flex-col gap-1 items-start">
+                        <span
+                          className={cn(
+                            "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border",
+                            typeColors[m.type],
+                          )}
+                        >
+                          {typeTranslations[m.type] || m.type}
+                        </span>
+                        {m.type === "PAGO" && m.raw?.method && (
+                          <span
+                            className={cn(
+                              "md:hidden inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold border",
+                              paymentMethodBadgeColors[m.raw.method] ||
+                                paymentMethodBadgeColors.OTHER,
+                            )}
+                          >
+                            Método: {paymentMethodTranslations[m.raw.method] || m.raw.method}
+                          </span>
                         )}
-                      >
-                        {typeTranslations[m.type] || m.type}
-                      </span>
+                      </div>
                     </TableCell>
                     <TableCell className="hidden md:table-cell text-text-primary font-medium">
                       {m.type === "PEDIDO_CATALOGO" ? (

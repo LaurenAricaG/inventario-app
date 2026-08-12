@@ -8,7 +8,7 @@ import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
 import Modal from "@/components/ui/Modal";
 import { createExternalDebtAction } from "@/lib/external-debt";
-import { FiSearch, FiChevronDown, FiUser } from "react-icons/fi";
+import { FiSearch, FiChevronDown, FiUser, FiInfo } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
 
 interface FormDebtsProps {
@@ -311,6 +311,14 @@ export default function FormDebts({
             rows={3}
           />
         </FormField>
+
+        {/* Aviso de límite de tiempo para anulación */}
+        <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-info-bg/30 border border-info-text/15 text-text-secondary text-xs select-none">
+          <FiInfo className="w-4 h-4 text-info-text shrink-0 mt-0.5" />
+          <span>
+            <strong className="text-text-primary font-semibold">Nota:</strong> Una vez registrada la deuda, tendrás un plazo máximo de <strong className="text-text-primary font-semibold">48 horas</strong> para poder anularla.
+          </span>
+        </div>
       </Form>
     </Modal>
   );

@@ -125,7 +125,7 @@ export async function deleteExternalDebtAction(id: number) {
     if (diffInHours > 48) {
       return {
         success: false,
-        message: "No se puede eliminar, deuda procesada",
+        message: "No se puede eliminar, la deuda fue procesada",
       };
     }
 

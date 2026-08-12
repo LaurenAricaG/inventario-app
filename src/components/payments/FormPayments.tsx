@@ -10,7 +10,7 @@ import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import Modal from "@/components/ui/Modal";
 import { createPaymentAction } from "@/lib/payment";
-import { FiSearch, FiChevronDown, FiUser, FiDollarSign } from "react-icons/fi";
+import { FiSearch, FiChevronDown, FiUser, FiDollarSign, FiInfo } from "react-icons/fi";
 import { cn } from "@/utils/cn.utils";
 
 interface FormPaymentsProps {
@@ -353,6 +353,14 @@ export default function FormPayments({
             rows={3}
           />
         </FormField>
+
+        {/* Aviso de límite de tiempo para anulación */}
+        <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-info-bg/30 border border-info-text/15 text-text-secondary text-xs select-none">
+          <FiInfo className="w-4 h-4 text-info-text shrink-0 mt-0.5" />
+          <span>
+            <strong className="text-text-primary font-semibold">Nota:</strong> Una vez registrado el pago, tendrás un plazo máximo de <strong className="text-text-primary font-semibold">48 horas</strong> para poder anularlo.
+          </span>
+        </div>
       </Form>
     </Modal>
   );

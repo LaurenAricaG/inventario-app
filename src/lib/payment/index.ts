@@ -125,7 +125,7 @@ export async function deletePaymentAction(id: number) {
     if (diffInHours > 48) {
       return {
         success: false,
-        message: "No se puede eliminar, pago procesado",
+        message: "No se puede eliminar, el pago fue procesado",
       };
     }
 

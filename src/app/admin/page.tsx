@@ -278,11 +278,15 @@ export default async function DashboardPage() {
 
   const metrics = [
     {
-      title: "Ventas de campaña",
+      title: "Monto de campaña",
       value: `S/. ${campaignSalesTotal.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      description: campaignsToUse.length > 0
-        ? `Campaña ${campaignsToUse[0].number} (${campaignsToUse[0].company.name})`
-        : "Sin campaña activa",
+      description:
+        activeCampaigns.length === 0
+          ? "Sin campañas activas"
+          : `${activeCampaigns.length} ${activeCampaigns.length === 1
+            ? "empresa con campaña activa"
+            : "empresas con campañas activas"
+          }`,
       iconKey: "trending-up",
       accentClass: "bg-success-bg text-success-text",
       bordercard: "success-text",
@@ -290,7 +294,7 @@ export default async function DashboardPage() {
     {
       title: "Por cobrar (deudas)",
       value: `S/. ${totalOutstanding.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      description: `${debtorsCount} ${debtorsCount === 1 ? 'cliente pendiente' : 'clientes pendientes'}`,
+      description: `${debtorsCount} ${debtorsCount === 1 ? "cliente pendiente" : "clientes pendientes"}`,
       iconKey: "alert-circle",
       accentClass: "bg-danger-bg text-danger-text",
       bordercard: "danger-text",
@@ -298,20 +302,202 @@ export default async function DashboardPage() {
     {
       title: "Productos en stock",
       value: `${totalStock} uds.`,
-      description: `${categoriesCount} ${categoriesCount === 1 ? 'categoría' : 'categorías'}`,
+      description: `${categoriesCount} ${categoriesCount === 1 ? "categoría" : "categorías"}`,
       iconKey: "package",
       accentClass: "bg-info-bg text-info-text",
       bordercard: "info-text",
     },
     {
-      title: "Pedidos de campaña",
-      value: `${campaignOrdersCount} ${campaignOrdersCount === 1 ? 'pedido' : 'pedidos'}`,
-      description: `${readyForDeliveryCount} listos para entrega`,
-      iconKey: "shopping-bag",
+      title: "Clientes con deudas",
+      value: `${debtorsCount} ${debtorsCount === 1 ? "cliente" : "clientes"}`,
+      description: "Clientes pendientes de pagar",
+      iconKey: "users",
       accentClass: "bg-beauty-50 text-beauty-600 dark:bg-beauty-900/60 dark:text-beauty-200",
       bordercard: "beauty-200",
     },
   ];
+
+  // 6. Fetch data for Recharts Charts
+  const productsWithCompany = await prisma.product.findMany({
+    where: { deletedAt: null },
+    select: {
+      stock: true,
+      brand: {
+        select: {
+          company: { select: { name: true } },
+        },
+      },
+    },
+  });
+
+  const companyStockMap: Record<string, number> = {};
+  productsWithCompany.forEach((p) => {
+    const name = p.brand?.company?.name || "Sin Empresa";
+    companyStockMap[name] = (companyStockMap[name] || 0) + (p.stock || 0);
+  });
+
+  const companyStockData = Object.entries(companyStockMap).map(([name, value]) => ({
+    name,
+    value,
+  }));
+
+  const productsWithCategory = await prisma.product.findMany({
+    where: { deletedAt: null },
+    select: {
+      stock: true,
+      category: { select: { name: true } },
+    },
+  });
+
+  const categoryStockMap: Record<string, number> = {};
+  productsWithCategory.forEach((p) => {
+    const name = p.category?.name || "Sin Categoría";
+    categoryStockMap[name] = (categoryStockMap[name] || 0) + (p.stock || 0);
+  });
+
+  const categoryStockData = Object.entries(categoryStockMap)
+    .map(([name, stock]) => ({ name, stock }))
+    .sort((a, b) => b.stock - a.stock)
+    .slice(0, 6);
+
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+  sixMonthsAgo.setDate(1);
+  sixMonthsAgo.setHours(0, 0, 0, 0);
+
+  const [allPayments, allDirectSales, allDeliveredOrders, allExternalDebts] = await Promise.all([
+    prisma.payment.findMany({
+      select: { amount: true, paidAt: true },
+    }),
+    prisma.directSale.findMany({
+      where: { deletedAt: null },
+      select: { total: true, createdAt: true },
+    }),
+    prisma.campaignOrder.findMany({
+      where: {
+        status: "DELIVERED",
+        deletedAt: null,
+      },
+      select: {
+        createdAt: true,
+        total: true,
+        discount: true,
+        items: {
+          select: {
+            arrivalStatus: true,
+            catalogPrice: true,
+            quantity: true,
+            substitute: { select: { catalogPrice: true } },
+          },
+        },
+      },
+    }),
+    prisma.externalDebt.findMany({
+      select: { amount: true, createdAt: true },
+    }),
+  ]);
+
+  const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Dic"];
+  const financialData: { month: string; deudas: number; cobros: number }[] = [];
+
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+
+    const startOfMonth = new Date(d.getFullYear(), d.getMonth(), 1, 0, 0, 0, 0);
+    const endOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59, 999);
+    const monthLabel = `${monthNames[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`;
+
+    let debtsUpToMonth = 0;
+    let paymentsUpToMonth = 0;
+    let cobrosThisMonth = 0;
+
+    allDirectSales.forEach((s) => {
+      if (new Date(s.createdAt) <= endOfMonth) {
+        debtsUpToMonth += s.total;
+      }
+    });
+
+    allDeliveredOrders.forEach((o) => {
+      if (new Date(o.createdAt) <= endOfMonth) {
+        debtsUpToMonth += getOrderTotal(o);
+      }
+    });
+
+    allExternalDebts.forEach((debt) => {
+      if (new Date(debt.createdAt) <= endOfMonth) {
+        debtsUpToMonth += debt.amount;
+      }
+    });
+
+    allPayments.forEach((p) => {
+      const paidDate = new Date(p.paidAt);
+      if (paidDate <= endOfMonth) {
+        paymentsUpToMonth += p.amount;
+      }
+      if (paidDate >= startOfMonth && paidDate <= endOfMonth) {
+        cobrosThisMonth += p.amount;
+      }
+    });
+
+    const accumulatedDebt = Math.max(0, debtsUpToMonth - paymentsUpToMonth);
+
+    financialData.push({
+      month: monthLabel,
+      deudas: Number(accumulatedDebt.toFixed(2)),
+      cobros: Number(cobrosThisMonth.toFixed(2)),
+    });
+  }
+
+  // d. Ventas/Pedidos por Empresa en Campaña Activa
+  const allCompanies = await prisma.company.findMany({
+    where: { deletedAt: null },
+    select: { id: true, name: true },
+  });
+
+  const companyCampaignOrdersData = await Promise.all(
+    allCompanies.map(async (company) => {
+      let campaign = await prisma.campaign.findFirst({
+        where: { companyId: company.id, isActive: true, deletedAt: null },
+      });
+      if (!campaign) {
+        campaign = await prisma.campaign.findFirst({
+          where: { companyId: company.id, deletedAt: null },
+          orderBy: { endDate: "desc" },
+        });
+      }
+
+      if (!campaign) {
+        return {
+          company: company.name,
+          campaignNumber: "-",
+          totalAmount: 0,
+          count: 0,
+        };
+      }
+
+      const orders = await prisma.campaignOrder.findMany({
+        where: {
+          campaignId: campaign.id,
+          status: { not: "CANCELLED" },
+          deletedAt: null,
+        },
+        include: {
+          items: {
+            include: { substitute: true },
+          },
+        },
+      });
+
+      const totalAmount = orders.reduce((sum, o) => sum + getOrderTotal(o), 0);
+      return {
+        company: company.name,
+        campaignNumber: campaign.number,
+        totalAmount: Number(totalAmount.toFixed(2)),
+        count: orders.length,
+      };
+    })
+  );
 
   // Serialize Date objects before passing them to the Client Component
   const serializedActiveCampaigns = activeCampaigns.map((camp) => ({
@@ -332,6 +518,10 @@ export default async function DashboardPage() {
       activities={sortedActivities}
       clientsList={clientsList}
       permissions={permissions}
+      financialData={financialData}
+      companyStockData={companyStockData}
+      categoryStockData={categoryStockData}
+      companyCampaignOrdersData={companyCampaignOrdersData}
     />
   );
 }

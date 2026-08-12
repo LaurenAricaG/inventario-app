@@ -26,7 +26,8 @@ const permissionsData = [
   {
     code: "users:restore",
     name: "Restaurar Usuarios",
-    description: "Permite reactivar (restaurar) cuentas de usuarios suspendidos",
+    description:
+      "Permite reactivar (restaurar) cuentas de usuarios suspendidos",
   },
 
   // Clientes
@@ -87,7 +88,8 @@ const permissionsData = [
   {
     code: "inventory:adjust",
     name: "Registrar Ajustes de Stock",
-    description: "Permite registrar ingresos, salidas manuales y ajustes en el Kardex",
+    description:
+      "Permite registrar ingresos, salidas manuales y ajustes en el Kardex",
   },
 
   // Pedidos de Campaña
@@ -106,17 +108,6 @@ const permissionsData = [
     name: "Editar Pedidos",
     description: "Permite actualizar items o datos de los pedidos de campaña",
   },
-  {
-    code: "orders:delete",
-    name: "Eliminar Pedidos",
-    description: "Permite eliminar pedidos de campaña",
-  },
-  {
-    code: "orders:receive",
-    name: "Recibir Productos",
-    description:
-      "Permite marcar la llegada y verificación de los productos del pedido",
-  },
 
   // Ventas Directas
   {
@@ -128,11 +119,6 @@ const permissionsData = [
     code: "sales:read",
     name: "Ver Ventas Directas",
     description: "Permite visualizar el histórico de ventas directas",
-  },
-  {
-    code: "sales:update",
-    name: "Editar Ventas Directas",
-    description: "Permite modificar o anular ventas directas",
   },
   {
     code: "sales:delete",
@@ -152,6 +138,11 @@ const permissionsData = [
     description: "Permite consultar el estado de las deudas de los clientes",
   },
   {
+    code: "debts:delete",
+    name: "Eliminar/Anular Deudas",
+    description: "Permite remover o anular registros de deudas externas",
+  },
+  {
     code: "payments:create",
     name: "Registrar Pagos",
     description: "Permite registrar abonos y pagos de deudas de clientes",
@@ -160,6 +151,162 @@ const permissionsData = [
     code: "payments:read",
     name: "Ver Pagos",
     description: "Permite visualizar el historial de abonos y pagos recibidos",
+  },
+  {
+    code: "payments:delete",
+    name: "Eliminar/Anular Pagos",
+    description: "Permite remover o anular registros de abonos y pagos",
+  },
+
+  // Roles y Permisos
+  {
+    code: "roles:create",
+    name: "Crear Roles",
+    description: "Permite crear nuevos roles de usuario",
+  },
+  {
+    code: "roles:read",
+    name: "Ver Roles",
+    description: "Permite ver el listado de roles y sus permisos",
+  },
+  {
+    code: "roles:update",
+    name: "Editar Roles",
+    description: "Permite modificar el nombre y permisos de los roles",
+  },
+  {
+    code: "roles:delete",
+    name: "Eliminar Roles",
+    description: "Permite remover roles del sistema",
+  },
+
+  // Empresas
+  {
+    code: "companies:create",
+    name: "Crear Empresas",
+    description: "Permite registrar nuevas empresas",
+  },
+  {
+    code: "companies:read",
+    name: "Ver Empresas",
+    description: "Permite consultar el listado de empresas",
+  },
+  {
+    code: "companies:update",
+    name: "Editar Empresas",
+    description: "Permite actualizar datos de las empresas",
+  },
+  {
+    code: "companies:delete",
+    name: "Eliminar Empresas",
+    description: "Permite remover empresas del sistema",
+  },
+
+  // Marcas
+  {
+    code: "brands:create",
+    name: "Crear Marcas",
+    description: "Permite registrar nuevas marcas",
+  },
+  {
+    code: "brands:read",
+    name: "Ver Marcas",
+    description: "Permite consultar el listado de marcas",
+  },
+  {
+    code: "brands:update",
+    name: "Editar Marcas",
+    description: "Permite actualizar datos de las marcas",
+  },
+  {
+    code: "brands:delete",
+    name: "Eliminar Marcas",
+    description: "Permite remover marcas del sistema",
+  },
+
+  // Géneros
+  {
+    code: "genders:create",
+    name: "Crear Géneros",
+    description: "Permite registrar nuevos géneros/segmentos",
+  },
+  {
+    code: "genders:read",
+    name: "Ver Géneros",
+    description: "Permite ver la lista de géneros registrados",
+  },
+  {
+    code: "genders:update",
+    name: "Editar Géneros",
+    description: "Permite modificar géneros registrados",
+  },
+  {
+    code: "genders:delete",
+    name: "Eliminar Géneros",
+    description: "Permite remover géneros del sistema",
+  },
+
+  // Categorías
+  {
+    code: "categories:create",
+    name: "Crear Categorías",
+    description: "Permite registrar nuevas categorías de productos",
+  },
+  {
+    code: "categories:read",
+    name: "Ver Categorías",
+    description: "Permite ver el listado de categorías",
+  },
+  {
+    code: "categories:update",
+    name: "Editar Categorías",
+    description: "Permite modificar categorías existentes",
+  },
+  {
+    code: "categories:delete",
+    name: "Eliminar Categorías",
+    description: "Permite remover categorías del sistema",
+  },
+
+  // Movimientos (Kardex)
+  {
+    code: "transactions:read",
+    name: "Ver Histórico de Movimientos",
+    description:
+      "Permite consultar el historial general de movimientos de inventario",
+  },
+  {
+    code: "transactions:detail",
+    name: "Ver Ficha de Movimientos de Cliente",
+    description:
+      "Permite visualizar el detalle y ficha completa de movimientos por cliente",
+  },
+
+  // Bitácora de Auditoría
+  {
+    code: "audit:read",
+    name: "Ver Bitácora de Auditoría",
+    description:
+      "Permite consultar el registro de actividades y auditoría del sistema",
+  },
+
+  // Configuración del Sistema
+  {
+    code: "config:read",
+    name: "Ver Configuración",
+    description: "Permite acceder al módulo de configuración del sistema",
+  },
+  {
+    code: "config:edit",
+    name: "Editar Configuración",
+    description:
+      "Permite modificar los datos generales de la empresa y configuración",
+  },
+  {
+    code: "config:show",
+    name: "Configurar Visibilidad Pública",
+    description:
+      "Permite modificar las opciones de visibilidad pública (precios, stock, catálogos)",
   },
 
   // Campañas y Catálogos
@@ -184,10 +331,26 @@ const permissionsData = [
     description: "Permite eliminar campañas del sistema",
   },
   {
+    code: "catalogs:read",
+    name: "Ver Catálogos PDF",
+    description: "Permite ver la lista de catálogos PDF",
+  },
+  {
     code: "catalogs:upload",
     name: "Subir Catálogos PDF",
     description:
       "Permite subir archivos PDF de catálogos asociados a las marcas",
+  },
+  {
+    code: "catalogs:update",
+    name: "Editar Catálogos PDF",
+    description:
+      "Permite modificar o reemplazar archivos PDF de catálogos",
+  },
+  {
+    code: "catalogs:delete",
+    name: "Eliminar Catálogos PDF",
+    description: "Permite eliminar catálogos PDF del sistema",
   },
 ];
 
@@ -265,6 +428,111 @@ async function main() {
   });
 
   console.log(`Default admin user seeded: ${defaultAdmin.email}`);
+
+  // 5. Seed Base Gender Segments (Géneros)
+  const genders = ["Femenino", "Masculino", "Unisex"];
+  for (const genderName of genders) {
+    await prisma.genderSegment.upsert({
+      where: { name: genderName },
+      update: {},
+      create: {
+        name: genderName,
+        createdById: defaultAdmin.id,
+      },
+    });
+  }
+  console.log("Gender segments seeded successfully.");
+
+  // 6. Seed Base Categories (Categorías)
+  const categories = [
+    "Labiales",
+    "Bases y Correctores",
+    "Rubor y Bronzer",
+    "Sombras de Ojos",
+    "Delineadores",
+    "Máscaras de Pestañas",
+    "Esmaltes de Uñas",
+    "Brochas y Accesorios",
+
+    "Perfumes",
+
+    "Cuidado Facial",
+    "Cuidado Corporal",
+    "Protección Solar",
+
+    "Shampoos",
+    "Acondicionadores",
+    "Tratamiento Capilar",
+    "Desodorantes",
+
+    "Moda y Accesorios",
+    "Joyería",
+    "Electrodomésticos",
+    "Hogar y Cocina",
+  ];
+
+  for (const categoryName of categories) {
+    await prisma.category.upsert({
+      where: { name: categoryName },
+      update: {},
+      create: {
+        name: categoryName,
+        createdById: defaultAdmin.id,
+      },
+    });
+  }
+  console.log("Categories seeded successfully.");
+
+  // 7. Seed Base Companies (Empresas)
+  const companyNames = ["Belcorp", "Avon", "Yanbal"];
+  const companyMap = new Map<string, number>();
+
+  for (const companyName of companyNames) {
+    const company = await prisma.company.upsert({
+      where: { name: companyName },
+      update: {},
+      create: {
+        name: companyName,
+        createdById: defaultAdmin.id,
+      },
+    });
+    companyMap.set(companyName, company.id);
+  }
+  console.log("Companies seeded successfully.");
+
+  // 8. Seed Base Brands (Marcas)
+  const brandsData = [
+    // Belcorp
+    { name: "Esika", companyName: "Belcorp" },
+    { name: "Cyzone", companyName: "Belcorp" },
+    { name: "L'Bel", companyName: "Belcorp" },
+    // Avon
+    { name: "Avon", companyName: "Avon" },
+    // Yanbal
+    { name: "Unique", companyName: "Yanbal" },
+  ];
+
+  for (const brandItem of brandsData) {
+    const companyId = companyMap.get(brandItem.companyName);
+    if (!companyId) continue;
+
+    await prisma.brand.upsert({
+      where: {
+        companyId_name: {
+          companyId,
+          name: brandItem.name,
+        },
+      },
+      update: {},
+      create: {
+        name: brandItem.name,
+        companyId,
+        createdById: defaultAdmin.id,
+      },
+    });
+  }
+  console.log("Brands seeded successfully.");
+
   console.log("Seeding finished successfully.");
 }
 
