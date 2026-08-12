@@ -86,7 +86,6 @@ export default function TableUser({
               const name = user.name || "Sin nombre";
               const initials = getInitials(name);
               const colorClass = avatarColors[index % avatarColors.length];
-              const isAdmin = user.role.name === "ADMIN";
               const isSuspended = !!user.deletedAt;
 
               return (
@@ -143,15 +142,9 @@ export default function TableUser({
 
                   {/* Rol */}
                   <TableCell>
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border shadow-sm ${
-                        isAdmin
-                          ? "bg-warning-bg border-warning-text/25 text-warning-text"
-                          : "bg-info-bg border-info-text/20 text-info-text"
-                      }`}
-                    >
-                      <FiShield className="w-3 h-3" />
-                      {user.role.name}
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] uppercase font-semibold border border-border-default/80 bg-bg-surface text-text-secondary shadow-2xs">
+                      <FiShield className="w-3 h-3 text-text-tertiary" />
+                      {user.role?.name || "Sin rol"}
                     </span>
                   </TableCell>
 
