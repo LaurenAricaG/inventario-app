@@ -191,24 +191,24 @@ export default function Campaigns({
         ]}
         action={
           isCampaignsTab ? (
-            overallCount > 0 && canCreateCampaign ? (
+            canCreateCampaign ? (
               <Button
                 variant="primary"
                 onClick={() => handleOpenForm(null)}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
               >
                 <FiPlus className="w-4 h-4" />
-                Nueva campaña
+                <span>Nueva campaña</span>
               </Button>
             ) : undefined
-          ) : overallCount > 0 && canUploadCatalog ? (
+          ) : canUploadCatalog ? (
             <Button
               variant="primary"
               onClick={() => handleOpenCatalogForm(null)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
             >
               <FiPlus className="w-4 h-4" />
-              Subir catálogo
+              <span>Subir catálogo</span>
             </Button>
           ) : undefined
         }
@@ -259,157 +259,113 @@ export default function Campaigns({
       </div>
 
       {/* Contenido Principal */}
-      {overallCount === 0 ? (
-        /* Empty State */
-        <div className="flex flex-col items-center justify-center py-16 px-6 bg-bg-card border border-border-default/50 rounded-2xl text-center shadow-xs max-w-lg mx-auto my-8 select-none">
-          <div className="w-16 h-16 rounded-2xl bg-beauty-50 dark:bg-beauty-950 flex items-center justify-center text-beauty-600 mb-5 border border-beauty-100 dark:border-beauty-500 shadow-xs">
-            {isCampaignsTab ? (
-              <FiCalendar className="w-8 h-8" />
-            ) : (
-              <FiFileText className="w-8 h-8" />
-            )}
+      <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">
+        {/* Barra de Filtros */}
+        <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-bg-card">
+          <div className="flex-1 max-w-md">
+            <SearchInput
+              placeholder={
+                isCampaignsTab
+                  ? "Buscar por número de campaña..."
+                  : "Buscar por título, marca o campaña..."
+              }
+            />
           </div>
-          <h3 className="text-lg font-bold text-text-primary mb-2">
-            {isCampaignsTab
-              ? "No hay campañas registradas"
-              : "No hay catálogos PDF cargados"}
-          </h3>
-          <p className="text-xs text-text-secondary mb-8 leading-relaxed max-w-sm">
-            {isCampaignsTab
-              ? "Para comenzar a gestionar los períodos y catálogos de tus marcas, crea tu primera campaña."
-              : "Asocia archivos PDF de catálogos a las campañas activas y marcas del sistema."}
-          </p>
-          {isCampaignsTab
-            ? canCreateCampaign && (
-                <Button
-                  variant="primary"
-                  onClick={() => handleOpenForm(null)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
-                >
-                  <FiPlus className="w-4 h-4" />
-                  Nueva campaña
-                </Button>
-              )
-            : canUploadCatalog && (
-                <Button
-                  variant="primary"
-                  onClick={() => handleOpenCatalogForm(null)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
-                >
-                  <FiPlus className="w-4 h-4" />
-                  Subir catálogo
-                </Button>
+          {/* Toggle solo campaña activa (solo en pestaña de catálogos) */}
+          {!isCampaignsTab && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleToggleOnlyActive}
+              className={cn(
+                "px-4 py-3 rounded-xl text-xs font-semibold shrink-0 gap-2",
+                onlyActive
+                  ? "bg-beauty-400/10 border-beauty-400/30 text-beauty-600 dark:text-beauty-400 hover:bg-beauty-400/20"
+                  : "bg-bg-surface border-border-default text-text-secondary hover:text-text-primary",
               )}
-        </div>
-      ) : (
-        /* Tabla de Registros */
-        <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">
-          {/* Barra de Filtros */}
-          <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-bg-card">
-            <div className="flex-1 max-w-md">
-              <SearchInput
-                placeholder={
-                  isCampaignsTab
-                    ? "Buscar por número de campaña..."
-                    : "Buscar por título, marca o campaña..."
-                }
-              />
-            </div>
-            {/* Toggle solo campaña activa (solo en pestaña de catálogos) */}
-            {!isCampaignsTab && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleToggleOnlyActive}
-                className={cn(
-                  "px-4 py-3 rounded-xl text-xs font-semibold shrink-0 gap-2",
-                  onlyActive
-                    ? "bg-beauty-400/10 border-beauty-400/30 text-beauty-600 dark:text-beauty-400 hover:bg-beauty-400/20"
-                    : "bg-bg-surface border-border-default text-text-secondary hover:text-text-primary",
-                )}
-                title={
-                  onlyActive
-                    ? "Mostrando solo campaña activa."
-                    : "Mostrando todos los catálogos."
-                }
-              >
-                {onlyActive ? (
-                  <FiCheckCircle className="w-3.5 h-3.5" />
-                ) : (
-                  <FiCircle className="w-3.5 h-3.5" />
-                )}
-                Campaña activa
-              </Button>
-            )}
-            <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
-              {isCampaignsTab
-                ? search
-                  ? `Total: ${totalItems} de ${overallCount} campañas`
-                  : `Total: ${overallCount} campañas registradas`
-                : onlyActive
-                ? `Total: ${totalItems} ${totalItems === 1 ? "catálogo activo" : "catálogos activos"}`
-                : search
-                ? `Total: ${totalItems} de ${overallCount} catálogos`
-                : `Total: ${overallCount} catálogos registrados`}
-            </div>
-          </div>
-
-          {/* Sin Resultados de Búsqueda */}
-          {totalItems === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center select-none">
-              <div className="w-12 h-12 rounded-full bg-bg-surface flex items-center justify-center text-text-tertiary mb-3">
-                {isCampaignsTab ? (
-                  <FiCalendar className="w-6 h-6" />
-                ) : (
-                  <FiFileText className="w-6 h-6" />
-                )}
-              </div>
-              <h3 className="text-sm font-bold text-text-primary mb-1">
-                {isCampaignsTab
-                  ? "No se encontraron campañas"
-                  : "No se encontraron catálogos"}
-              </h3>
-              <p className="text-xs text-text-secondary max-w-xs leading-relaxed">
-                No hay resultados para "{search}". Intenta con otros términos de
-                búsqueda.
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* Renderizado Condicional de Tablas */}
-              {isCampaignsTab ? (
-                <TableCampaigns
-                  campaigns={initialCampanias}
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                  canUpdate={canUpdateCampaign}
-                  canDelete={canDeleteCampaign}
-                  onEdit={handleOpenForm}
-                  onDelete={handleOpenDelete}
-                />
+              title={
+                onlyActive
+                  ? "Mostrando solo campaña activa."
+                  : "Mostrando todos los catálogos."
+              }
+            >
+              {onlyActive ? (
+                <FiCheckCircle className="w-3.5 h-3.5" />
               ) : (
-                <TableCatalogPdfs
-                  catalogs={catalogPdfs}
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                  canUpdate={canUpdateCatalog}
-                  canDelete={canDeleteCatalog}
-                  onEdit={handleOpenCatalogForm}
-                  onDelete={handleOpenDeleteCatalog}
-                />
+                <FiCircle className="w-3.5 h-3.5" />
               )}
-
-              {/* Paginación */}
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalItems={totalItems}
-                itemsPerPage={itemsPerPage}
-              />
-            </>
+              Campaña activa
+            </Button>
           )}
+          <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
+            {isCampaignsTab
+              ? `Total: ${totalItems} ${totalItems === 1 ? "campaña encontrada" : "campañas encontradas"}`
+              : `Total: ${totalItems} ${totalItems === 1 ? "catálogo encontrado" : "catálogos encontrados"}`}
+          </div>
         </div>
-      )}
+
+        {/* Listado / Empty State */}
+        {(isCampaignsTab ? initialCampanias.length : catalogPdfs.length) === 0 ? (
+          <div className="p-12 text-center select-none bg-bg-card">
+            {isCampaignsTab ? (
+              <FiCalendar className="w-10 h-10 text-text-tertiary mx-auto mb-3" />
+            ) : (
+              <FiFileText className="w-10 h-10 text-text-tertiary mx-auto mb-3" />
+            )}
+            <h3 className="text-sm font-bold text-text-primary">
+              {overallCount === 0
+                ? isCampaignsTab
+                  ? "No hay campañas registradas"
+                  : "No hay catálogos PDF cargados"
+                : isCampaignsTab
+                ? "No se encontraron campañas"
+                : "No se encontraron catálogos"}
+            </h3>
+            <p className="text-xs text-text-secondary mt-1 max-w-sm mx-auto">
+              {overallCount === 0
+                ? isCampaignsTab
+                  ? "Para comenzar a gestionar los períodos y catálogos de tus marcas, crea tu primera campaña."
+                  : "Asocia archivos PDF de catálogos a las campañas activas y marcas del sistema."
+                : search
+                ? `No hay resultados para "${search}". Intenta con otros términos de búsqueda.`
+                : "Intenta cambiar los términos de búsqueda o filtros aplicados."}
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Renderizado Condicional de Tablas */}
+            {isCampaignsTab ? (
+              <TableCampaigns
+                campaigns={initialCampanias}
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                canUpdate={canUpdateCampaign}
+                canDelete={canDeleteCampaign}
+                onEdit={handleOpenForm}
+                onDelete={handleOpenDelete}
+              />
+            ) : (
+              <TableCatalogPdfs
+                catalogs={catalogPdfs}
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                canUpdate={canUpdateCatalog}
+                canDelete={canDeleteCatalog}
+                onEdit={handleOpenCatalogForm}
+                onDelete={handleOpenDeleteCatalog}
+              />
+            )}
+
+            {/* Paginación */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              itemsPerPage={itemsPerPage}
+            />
+          </>
+        )}
+      </div>
 
       {/* Modal Campañas */}
       <FormCampaigns

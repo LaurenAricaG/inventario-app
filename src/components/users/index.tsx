@@ -131,109 +131,85 @@ export default function Users({
           { label: "usuarios" },
         ]}
         action={
-          overallCount > 0 && canCreate ? (
+          canCreate ? (
             <Button
               variant="primary"
               onClick={() => handleOpenForm(null)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
             >
               <FiPlus className="w-4 h-4" />
-              Nuevo usuario
+              <span>Nuevo usuario</span>
             </Button>
           ) : undefined
         }
       />
 
       {/* Contenido Principal */}
-      {overallCount === 0 ? (
-        /* Empty State */
-        <div className="flex flex-col items-center justify-center py-16 px-6 bg-bg-card border border-border-default/50 rounded-2xl text-center shadow-sm max-w-lg mx-auto my-8 select-none">
-          <div className="w-16 h-16 rounded-2xl bg-beauty-50 dark:bg-beauty-950 flex items-center justify-center text-beauty-600 mb-5 border border-beauty-100 dark:border-beauty-900 shadow-xs">
-            <FiUser className="w-8 h-8" />
+      <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">
+        {/* Barra de Filtros */}
+        <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-bg-card">
+          <div className="flex-1 max-w-md">
+            <SearchInput placeholder="Buscar por nombre, usuario o email..." />
           </div>
-          <h3 className="text-lg font-bold text-text-primary mb-2">
-            No hay usuarios registrados
-          </h3>
-          <p className="text-xs text-text-secondary mb-8 leading-relaxed max-w-sm">
-            Para comenzar a gestionar los accesos, registra tu primer usuario del sistema.
-          </p>
-          {canCreate && (
-            <Button
-              variant="primary"
-              onClick={() => handleOpenForm(null)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
+          <div className="w-full md:w-52 shrink-0 select-none">
+            <Select
+              value={statusFilter}
+              onChange={handleStatusChange}
+              placeholder="Filtrar por estado"
+              icon={<FiFilter className="w-4 h-4" />}
             >
-              <FiPlus className="w-4 h-4 mr-2" />
-              Nuevo usuario
-            </Button>
-          )}
-        </div>
-      ) : (
-        /* Listado de Registros */
-        <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">
-          {/* Barra de Filtros */}
-          <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-bg-card">
-            <div className="flex-1 max-w-md">
-              <SearchInput placeholder="Buscar por nombre, usuario o email..." />
-            </div>
-            <div className="w-full md:w-52 shrink-0 select-none">
-              <Select
-                value={statusFilter}
-                onChange={handleStatusChange}
-                placeholder="Filtrar por estado"
-                icon={<FiFilter className="w-4 h-4" />}
-              >
-                <option value="active">Activos</option>
-                <option value="suspended">Suspendidos</option>
-                <option value="all">Todos los estados</option>
-              </Select>
-            </div>
-            <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
-              Total: {totalItems} usuarios encontrados
-            </div>
+              <option value="active">Activos</option>
+              <option value="suspended">Suspendidos</option>
+              <option value="all">Todos los estados</option>
+            </Select>
           </div>
-
-          {/* Sin resultados de búsqueda */}
-          {totalItems === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center select-none">
-              <div className="w-12 h-12 rounded-full bg-bg-surface flex items-center justify-center text-text-tertiary mb-3">
-                <FiUser className="w-6 h-6" />
-              </div>
-              <h3 className="text-sm font-bold text-text-primary mb-1">
-                No se encontraron usuarios
-              </h3>
-              <p className="text-xs text-text-secondary max-w-xs leading-relaxed">
-                No hay resultados para "{search}". Intenta con otros términos de búsqueda o filtros de estado.
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* Tabla de Usuarios */}
-              <div className="overflow-x-auto">
-                <TableUser
-                  users={initialUsers}
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                  canUpdate={canUpdate}
-                  canDelete={canDelete}
-                  canRestore={canRestore}
-                  onEdit={handleOpenForm}
-                  onDelete={handleOpenDelete}
-                  onReactivate={handleOpenReactivate}
-                />
-              </div>
-
-              {/* Paginación */}
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalItems={totalItems}
-                itemsPerPage={itemsPerPage}
-              />
-            </>
-          )}
+          <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
+            Total: {totalItems} {totalItems === 1 ? "usuario encontrado" : "usuarios encontrados"}
+          </div>
         </div>
-      )}
+
+        {/* Listado / Empty State */}
+        {initialUsers.length === 0 ? (
+          <div className="p-12 text-center select-none bg-bg-card">
+            <FiUser className="w-10 h-10 text-text-tertiary mx-auto mb-3" />
+            <h3 className="text-sm font-bold text-text-primary">
+              {overallCount === 0 ? "No hay usuarios registrados" : "No se encontraron usuarios"}
+            </h3>
+            <p className="text-xs text-text-secondary mt-1 max-w-sm mx-auto">
+              {overallCount === 0
+                ? "Para comenzar a gestionar los accesos, registra tu primer usuario del sistema."
+                : search
+                ? `No hay resultados para "${search}". Intenta con otros términos de búsqueda o filtros de estado.`
+                : "Intenta cambiar los términos de búsqueda o filtros de estado aplicados."}
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Tabla de Usuarios */}
+            <div className="overflow-x-auto">
+              <TableUser
+                users={initialUsers}
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                canUpdate={canUpdate}
+                canDelete={canDelete}
+                canRestore={canRestore}
+                onEdit={handleOpenForm}
+                onDelete={handleOpenDelete}
+                onReactivate={handleOpenReactivate}
+              />
+            </div>
+
+            {/* Paginación */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              itemsPerPage={itemsPerPage}
+            />
+          </>
+        )}
+      </div>
 
       {/* Formulario Modal (Nuevo / Editar) */}
       <FormUser

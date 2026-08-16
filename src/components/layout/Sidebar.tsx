@@ -9,6 +9,7 @@ import {
   FiHome,
   FiUsers,
   FiShoppingBag,
+  FiShoppingCart,
   FiDollarSign,
   FiPackage,
   FiCalendar,
@@ -24,6 +25,7 @@ import {
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { TbBrandAirtable } from "react-icons/tb";
 import { AiOutlineProduct } from "react-icons/ai";
+import { LuHistory } from "react-icons/lu";
 import BrandLogo from "@/components/ui/BrandLogo";
 
 interface SidebarProps {
@@ -128,7 +130,7 @@ export default function Sidebar({
           {
             label: "Ventas Directas",
             href: "/admin/ventas",
-            icon: FiDollarSign,
+            icon: FiShoppingCart,
           },
         ]
       : []),
@@ -166,7 +168,7 @@ export default function Sidebar({
       ? [{ label: "Deudas", href: "/admin/deudas", icon: FiAlertTriangle }]
       : []),
     ...(userPermissions.includes("audit:read")
-      ? [{ label: "Bitácora", href: "/admin/bitacora", icon: FiActivity }]
+      ? [{ label: "Bitácora", href: "/admin/bitacora", icon: LuHistory }]
       : []),
     ...(userPermissions.includes("config:read")
       ? [

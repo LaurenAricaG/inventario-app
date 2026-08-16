@@ -78,101 +78,75 @@ export default function Categories({
     <div className="space-y-6">
       <PageHeader
         title="Categorías"
-        subtitle="Administración de categorías para los productos del inventario."
+        subtitle="Administración de categorías para clasificación de productos."
         breadcrumbs={[
           { label: "admin", href: "/admin" },
-          { label: "categorias" },
+          { label: "categorías" },
         ]}
         action={
-          overallCount > 0 && canCreate ? (
+          canCreate ? (
             <Button
               variant="primary"
               onClick={() => handleOpenForm(null)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shrink-0"
             >
               <FiPlus className="w-4 h-4" />
-              Nueva categoría
+              <span>Nueva categoría</span>
             </Button>
           ) : undefined
         }
       />
 
       {/* Main Content */}
-      {overallCount === 0 ? (
-        /* Empty State */
-        <div className="flex flex-col items-center justify-center py-16 px-6 bg-bg-card border border-border-default/50 rounded-2xl text-center shadow-xs max-w-lg mx-auto my-8 select-none">
-          <div className="w-16 h-16 rounded-2xl bg-beauty-50 dark:bg-beauty-950 flex items-center justify-center text-beauty-600 mb-5 border border-beauty-100 dark:border-beauty-500 shadow-xs">
-            <FiTag className="w-8 h-8" />
+      <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">
+        {/* Filters Bar */}
+        <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-bg-card">
+          <div className="flex-1 max-w-md">
+            <SearchInput placeholder="Buscar por nombre de categoría..." />
           </div>
-          <h3 className="text-lg font-bold text-text-primary mb-2">
-            No hay categorías registradas
-          </h3>
-          <p className="text-xs text-text-secondary mb-8 leading-relaxed max-w-sm">
-            Para comenzar a organizar tus productos, crea tu primera categoría
-            global con el siguiente botón.
-          </p>
-          {canCreate && (
-            <Button
-              variant="primary"
-              onClick={() => handleOpenForm(null)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm"
-            >
-              <FiPlus className="w-4 h-4" />
-              Nueva categoría
-            </Button>
-          )}
-        </div>
-      ) : (
-        /* Records Table */
-        <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">
-          {/* Filters Bar */}
-          <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-bg-card">
-            <div className="flex-1 max-w-md">
-              <SearchInput placeholder="Buscar por nombre de categoría..." />
-            </div>
-            <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
-              Total: {overallCount} categorías registradas
-            </div>
+          <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
+            Total: {totalItems} {totalItems === 1 ? "categoría encontrada" : "categorías encontradas"}
           </div>
-
-          {/* Search No Results State */}
-          {totalItems === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center select-none">
-              <div className="w-12 h-12 rounded-full bg-bg-surface flex items-center justify-center text-text-tertiary mb-3">
-                <FiTag className="w-6 h-6" />
-              </div>
-              <h3 className="text-sm font-bold text-text-primary mb-1">
-                No se encontraron categorías
-              </h3>
-              <p className="text-xs text-text-secondary max-w-xs leading-relaxed">
-                No hay resultados para "{search}". Intenta con otros términos de
-                búsqueda.
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* Table Component */}
-              <TableCategories
-                categories={initialCategories}
-                currentPage={currentPage}
-                itemsPerPage={itemsPerPage}
-                canUpdate={canUpdate}
-                canDelete={canDelete}
-                onEdit={handleOpenForm}
-                onDelete={handleOpenDelete}
-              />
-
-              {/* Pagination */}
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalItems={totalItems}
-                itemsPerPage={itemsPerPage}
-              />
-            </>
-          )}
         </div>
-      )}
+
+        {/* Content / Empty State */}
+        {initialCategories.length === 0 ? (
+          <div className="p-12 text-center select-none bg-bg-card">
+            <FiTag className="w-10 h-10 text-text-tertiary mx-auto mb-3" />
+            <h3 className="text-sm font-bold text-text-primary">
+              {overallCount === 0 ? "No hay categorías registradas" : "No se encontraron categorías"}
+            </h3>
+            <p className="text-xs text-text-secondary mt-1 max-w-sm mx-auto">
+              {overallCount === 0
+                ? "Para comenzar a organizar tus productos, crea tu primera categoría global."
+                : search
+                ? `No hay resultados para "${search}". Intenta con otros términos de búsqueda.`
+                : "Intenta cambiar los términos de búsqueda o filtros aplicados."}
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Table Component */}
+            <TableCategories
+              categories={initialCategories}
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              canUpdate={canUpdate}
+              canDelete={canDelete}
+              onEdit={handleOpenForm}
+              onDelete={handleOpenDelete}
+            />
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              itemsPerPage={itemsPerPage}
+            />
+          </>
+        )}
+      </div>
 
       {/* Form Modal */}
       <FormCategories
