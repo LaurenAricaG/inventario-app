@@ -50,7 +50,7 @@ export default function PublicCatalogLoading() {
             <Skeleton className="h-9 w-full rounded-xl" />
           </div>
 
-          {/* Filtro: Marcas */}
+          {/* Filtro: Catálogo */}
           <div className="mb-5 space-y-2">
             <Skeleton className="h-3 w-16 rounded-md mb-3" />
             <Skeleton className="h-4 w-28 rounded-md" />

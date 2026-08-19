@@ -16,7 +16,7 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { ProductWithRelations } from "@/types/models";
 import { cn } from "@/utils/cn.utils";
-import { getBrandBadgeStyle, getCompanyBadgeStyle } from "@/utils/brand.utils";
+import { getBrandBadgeStyle } from "@/utils/brand.utils";
 
 interface DetailProductModalProps {
   isOpen: boolean;
@@ -73,7 +73,12 @@ export default function DetailProductModal({
           <div className="space-y-3.5">
             {/* Brand, Category, Gender & Visibility Badges */}
             <div className="flex flex-wrap gap-2 items-center select-none">
-              <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold tracking-wide uppercase border", getBrandBadgeStyle(product.brand.name))}>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold tracking-wide uppercase border",
+                  getBrandBadgeStyle(product.brand.name),
+                )}
+              >
                 <FiTag className="w-3 h-3" />
                 {product.brand.name}
               </span>
@@ -122,7 +127,9 @@ export default function DetailProductModal({
           <div
             className={cn(
               "grid gap-2.5 sm:gap-3 select-none",
-              canReadCost ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-2 sm:grid-cols-3"
+              canReadCost
+                ? "grid-cols-2 sm:grid-cols-4"
+                : "grid-cols-2 sm:grid-cols-3",
             )}
           >
             {/* Stock status */}
@@ -152,7 +159,8 @@ export default function DetailProductModal({
                 Catálogo
               </span>
               <span className="text-sm font-extrabold text-text-primary font-mono whitespace-nowrap">
-                {product.catalogPrice !== null && product.catalogPrice !== undefined
+                {product.catalogPrice !== null &&
+                product.catalogPrice !== undefined
                   ? `S/. ${product.catalogPrice.toFixed(2)}`
                   : "-"}
               </span>

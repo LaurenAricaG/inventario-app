@@ -1,25 +1,29 @@
 import Link from "next/link";
-import { FiShoppingBag } from "react-icons/fi";
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-bg-page flex flex-col items-center justify-center p-6 text-center transition-colors duration-300">
       <div className="w-full max-w-md rounded-3xl border border-border-default/80 bg-bg-card p-8 shadow-md relative overflow-hidden">
         {/* Decorative backdrop glow */}
-        <div className="absolute top-0 right-0 w-24 h-24 bg-beauty-400/5 dark:bg-beauty-400/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-beauty-400/5 dark:bg-beauty-400/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-beauty-500/10 dark:bg-beauty-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-beauty-500/10 dark:bg-beauty-500/20 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Icon Container */}
-        <div className="mx-auto w-14 h-14 rounded-2xl bg-beauty-50 dark:bg-beauty-900/30 text-beauty-500 dark:text-beauty-400 flex items-center justify-center mb-6 border border-beauty-100/50 dark:border-beauty-800/30 shadow-xs">
-          <FiShoppingBag className="w-6 h-6" />
+        {/* 404 Visual Number */}
+        <div className="mx-auto mb-5 flex flex-col items-center">
+          <span className="text-6xl sm:text-7xl font-black tracking-tight text-beauty-600 dark:text-beauty-400 select-none font-sans leading-none">
+            404
+          </span>
+          <span className="mt-2.5 inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-beauty-100 dark:bg-beauty-200/50 text-beauty-700 dark:text-beauty-800 border border-beauty-200 dark:border-beauty-400/40 select-none">
+            Página no encontrada
+          </span>
         </div>
 
         {/* Title and message */}
-        <h1 className="text-xl font-bold text-text-primary tracking-tight">
-          Enlace no disponible
+        <h1 className="text-xl sm:text-2xl font-bold text-text-primary tracking-tight">
+          ¿Te has perdido?
         </h1>
-        <p className="mt-3 text-xs sm:text-sm text-text-secondary leading-relaxed max-w-sm mx-auto">
-          El enlace del estado de cuenta o catálogo al que intentas acceder no es válido, ha caducado o fue actualizado por la consultora.
+        <p className="mt-2.5 text-xs sm:text-sm text-text-secondary leading-relaxed max-w-sm mx-auto">
+          La página o enlace al que intentas acceder no existe, ha caducado o fue movido.
         </p>
 
         {/* Action Button */}

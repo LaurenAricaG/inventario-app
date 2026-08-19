@@ -3,11 +3,13 @@
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import {
   FiMenu,
   FiChevronDown,
   FiLogOut,
+  FiGlobe,
 } from "react-icons/fi";
 import ButtonIcon from "@/components/ui/ButtonIcon";
 import { cn } from "@/utils/cn.utils";
@@ -170,14 +172,27 @@ export default function Header({
                 </div>
               </div>
 
-              {/* Botón de Cerrar Sesión */}
-              <div className="pt-1.5">
+              {/* Opciones del menú */}
+              <div className="pt-2.5 space-y-2">
+                {/* Botón Ver Catálogo Público (Tipo Beauty, alineado a la izquierda) */}
+                <Link
+                  href="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsDropdownOpen(false)}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold bg-beauty-400 hover:bg-beauty-600 text-white shadow-sm shadow-beauty-400/20 active:scale-98 transition-all duration-200 cursor-pointer select-none group/btn text-left"
+                >
+                  <FiGlobe className="w-4 h-4 transition-transform group-hover/btn:scale-110 shrink-0" />
+                  <span>Ver Catálogo Web</span>
+                </Link>
+
+                {/* Botón de Cerrar Sesión (Alineado a la izquierda) */}
                 <button
                   type="button"
                   onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-danger-text hover:bg-danger-bg/30 active:scale-98 transition-colors cursor-pointer text-left"
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl w-full text-danger-text border border-danger-text/20 hover:bg-danger-bg text-xs font-semibold transition-all duration-300 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-text/20 active:scale-98 text-left"
                 >
-                  <FiLogOut className="w-4 h-4 text-danger-text shrink-0" />
+                  <FiLogOut className="w-4 h-4 transition-transform duration-300 group-hover:scale-105 shrink-0" />
                   <span>Cerrar Sesión</span>
                 </button>
               </div>

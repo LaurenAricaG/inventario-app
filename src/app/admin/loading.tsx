@@ -9,11 +9,11 @@ export default function AdminDashboardLoading() {
     <div className="space-y-6 animate-pulse select-none">
       {/* Encabezado Skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1.5">
-          <Skeleton className="h-7 w-56 rounded-xl" />
-          <Skeleton className="h-4 w-72 rounded-lg" />
+        <div className="space-y-1.5 min-w-0">
+          <Skeleton className="h-7 w-56 max-w-full rounded-xl" />
+          <Skeleton className="h-4 w-72 max-w-full rounded-lg" />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Skeleton className="h-10 w-32 rounded-xl" />
           <Skeleton className="h-10 w-32 rounded-xl" />
         </div>
@@ -24,12 +24,12 @@ export default function AdminDashboardLoading() {
         {metricSkeletons.map((_, idx) => (
           <div
             key={idx}
-            className="bg-bg-card border border-border-default rounded-2xl p-5 flex items-start justify-between shadow-xs"
+            className="bg-bg-card border border-border-default rounded-2xl p-5 flex items-start justify-between shadow-xs overflow-hidden"
           >
-            <div className="space-y-2 flex-1">
-              <Skeleton className="h-3 w-24 rounded-md" />
-              <Skeleton className="h-6 w-32 rounded-lg" />
-              <Skeleton className="h-3.5 w-36 rounded-md" />
+            <div className="space-y-2 flex-1 min-w-0">
+              <Skeleton className="h-3 w-24 max-w-full rounded-md" />
+              <Skeleton className="h-6 w-32 max-w-full rounded-lg" />
+              <Skeleton className="h-3.5 w-36 max-w-full rounded-md" />
             </div>
             <Skeleton className="w-10 h-10 rounded-xl shrink-0 ml-3" />
           </div>
@@ -39,10 +39,10 @@ export default function AdminDashboardLoading() {
       {/* 2. Sección de Gráficos (4 Charts Grid) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Gráfico 1: Deuda Acumulada vs Cobros (col-span-2) */}
-        <div className="lg:col-span-2 bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-          <div className="space-y-1.5">
-            <Skeleton className="h-5 w-48 rounded-lg" />
-            <Skeleton className="h-3 w-80 rounded-md" />
+        <div className="lg:col-span-2 bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-4 overflow-hidden">
+          <div className="space-y-1.5 min-w-0">
+            <Skeleton className="h-5 w-48 max-w-full rounded-lg" />
+            <Skeleton className="h-3 w-80 max-w-full rounded-md" />
           </div>
           <div className="h-64 w-full flex items-end gap-3 pt-6 px-2">
             <Skeleton className="h-16 flex-1 rounded-t-lg" />
@@ -65,10 +65,10 @@ export default function AdminDashboardLoading() {
         </div>
 
         {/* Gráfico 2: Pedidos por Empresa Campaña Activa (col-span-1) */}
-        <div className="bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-          <div className="space-y-1.5">
-            <Skeleton className="h-5 w-44 rounded-lg" />
-            <Skeleton className="h-3 w-56 rounded-md" />
+        <div className="bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-4 overflow-hidden">
+          <div className="space-y-1.5 min-w-0">
+            <Skeleton className="h-5 w-44 max-w-full rounded-lg" />
+            <Skeleton className="h-3 w-56 max-w-full rounded-md" />
           </div>
           <div className="h-56 w-full flex items-end justify-center gap-6 px-4">
             <Skeleton className="h-36 w-12 rounded-t-xl" />
@@ -83,10 +83,10 @@ export default function AdminDashboardLoading() {
         </div>
 
         {/* Gráfico 3: Stock por Empresa Donut (col-span-1) */}
-        <div className="bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-          <div className="space-y-1.5">
-            <Skeleton className="h-5 w-36 rounded-lg" />
-            <Skeleton className="h-3 w-48 rounded-md" />
+        <div className="bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-4 overflow-hidden">
+          <div className="space-y-1.5 min-w-0">
+            <Skeleton className="h-5 w-36 max-w-full rounded-lg" />
+            <Skeleton className="h-3 w-48 max-w-full rounded-md" />
           </div>
           <div className="h-56 w-full flex items-center justify-center">
             <Skeleton className="w-40 h-40 rounded-full border-8 border-bg-surface" />
@@ -99,10 +99,10 @@ export default function AdminDashboardLoading() {
         </div>
 
         {/* Gráfico 4: Stock por Categoría Principal (col-span-2) */}
-        <div className="lg:col-span-2 bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-          <div className="space-y-1.5">
-            <Skeleton className="h-5 w-52 rounded-lg" />
-            <Skeleton className="h-3 w-64 rounded-md" />
+        <div className="lg:col-span-2 bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-4 overflow-hidden">
+          <div className="space-y-1.5 min-w-0">
+            <Skeleton className="h-5 w-52 max-w-full rounded-lg" />
+            <Skeleton className="h-3 w-64 max-w-full rounded-md" />
           </div>
           <div className="h-56 w-full space-y-3 pt-2">
             <div className="flex items-center gap-3">
@@ -130,28 +130,28 @@ export default function AdminDashboardLoading() {
         {/* Columna Izquierda (lg:col-span-2) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Tabla de Clientes con Deuda */}
-          <div className="bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs space-y-4">
+          <div className="bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs space-y-4 overflow-hidden">
             <div className="flex items-center justify-between">
-              <div className="space-y-1.5">
-                <Skeleton className="h-5 w-44 rounded-lg" />
-                <Skeleton className="h-3 w-56 rounded-md" />
+              <div className="space-y-1.5 min-w-0">
+                <Skeleton className="h-5 w-44 max-w-full rounded-lg" />
+                <Skeleton className="h-3 w-56 max-w-full rounded-md" />
               </div>
-              <Skeleton className="h-8 w-24 rounded-xl" />
+              <Skeleton className="h-8 w-24 rounded-xl shrink-0" />
             </div>
             <div className="space-y-2.5 pt-2">
               {tableRowSkeletons.map((_, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-3 rounded-xl bg-bg-surface/60"
+                  className="flex items-center justify-between p-3 rounded-xl bg-bg-surface/60 overflow-hidden gap-3"
                 >
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="w-8 h-8 rounded-full" />
-                    <div className="space-y-1">
-                      <Skeleton className="h-3.5 w-32 rounded-md" />
-                      <Skeleton className="h-2.5 w-20 rounded-md" />
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                    <div className="space-y-1 min-w-0 flex-1">
+                      <Skeleton className="h-3.5 w-32 max-w-full rounded-md" />
+                      <Skeleton className="h-2.5 w-20 max-w-full rounded-md" />
                     </div>
                   </div>
-                  <Skeleton className="h-4 w-20 rounded-md" />
+                  <Skeleton className="h-4 w-20 rounded-md shrink-0" />
                 </div>
               ))}
             </div>
@@ -159,16 +159,16 @@ export default function AdminDashboardLoading() {
 
           {/* Campañas Activas */}
           <div className="space-y-3">
-            <Skeleton className="h-5 w-40 rounded-lg" />
+            <Skeleton className="h-5 w-40 max-w-full rounded-lg" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-bg-card border border-border-default rounded-2xl p-5 space-y-3">
-                <Skeleton className="h-4 w-28 rounded-md" />
-                <Skeleton className="h-6 w-36 rounded-lg" />
+              <div className="bg-bg-card border border-border-default rounded-2xl p-5 space-y-3 overflow-hidden">
+                <Skeleton className="h-4 w-28 max-w-full rounded-md" />
+                <Skeleton className="h-6 w-36 max-w-full rounded-lg" />
                 <Skeleton className="h-3 w-full rounded-md" />
               </div>
-              <div className="bg-bg-card border border-border-default rounded-2xl p-5 space-y-3">
-                <Skeleton className="h-4 w-28 rounded-md" />
-                <Skeleton className="h-6 w-36 rounded-lg" />
+              <div className="bg-bg-card border border-border-default rounded-2xl p-5 space-y-3 overflow-hidden">
+                <Skeleton className="h-4 w-28 max-w-full rounded-md" />
+                <Skeleton className="h-6 w-36 max-w-full rounded-lg" />
                 <Skeleton className="h-3 w-full rounded-md" />
               </div>
             </div>
@@ -176,18 +176,18 @@ export default function AdminDashboardLoading() {
         </div>
 
         {/* Columna Derecha (lg:col-span-1) - Actividad Reciente */}
-        <div className="lg:col-span-1 bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs space-y-4">
-          <div className="space-y-1">
-            <Skeleton className="h-5 w-36 rounded-lg" />
-            <Skeleton className="h-3 w-48 rounded-md" />
+        <div className="lg:col-span-1 bg-bg-card border border-border-default rounded-2xl p-5 shadow-xs space-y-4 overflow-hidden">
+          <div className="space-y-1 min-w-0">
+            <Skeleton className="h-5 w-36 max-w-full rounded-lg" />
+            <Skeleton className="h-3 w-48 max-w-full rounded-md" />
           </div>
           <div className="space-y-3.5 pt-2">
             {activitySkeletons.map((_, i) => (
-              <div key={i} className="flex items-start gap-3">
+              <div key={i} className="flex items-start gap-3 overflow-hidden">
                 <Skeleton className="w-8 h-8 rounded-full shrink-0 mt-0.5" />
-                <div className="flex-1 space-y-1.5">
+                <div className="flex-1 space-y-1.5 min-w-0">
                   <Skeleton className="h-3.5 w-full rounded-md" />
-                  <Skeleton className="h-2.5 w-24 rounded-md" />
+                  <Skeleton className="h-2.5 w-24 max-w-full rounded-md" />
                 </div>
               </div>
             ))}
