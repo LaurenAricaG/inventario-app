@@ -153,7 +153,7 @@ export default function Products({
             </div>
             <Button
               variant="outline"
-              loading={isExportingPdf}
+              disabled={isExportingPdf}
               onClick={handleExportPdf}
               className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border-border-strong hover:bg-bg-surface text-text-primary shadow-xs shrink-0 cursor-pointer transition-colors"
               title="Descargar reporte general de productos en PDF"
