@@ -47,10 +47,10 @@ export default function TableProducts({
             <TableHead className="text-center w-16">N°</TableHead>
             <TableHead className="text-left w-28">Código</TableHead>
             <TableHead className="text-left">Producto</TableHead>
-            <TableHead className="text-left">Marca / Categoría</TableHead>
+            <TableHead className="text-left">Catálogo / Categoría</TableHead>
             <TableHead className="text-center w-24">Stock</TableHead>
-            <TableHead className="text-right w-28">Precio</TableHead>
-            {canReadCost && <TableHead className="text-right w-28">Costo</TableHead>}
+            <TableHead className="text-right w-28">P. Catálogo</TableHead>
+            <TableHead className="text-right w-28">P. Venta</TableHead>
             <TableHead className="text-center w-28">Estado</TableHead>
             <TableHead className="text-center w-32">Acciones</TableHead>
           </TableRow>
@@ -59,7 +59,7 @@ export default function TableProducts({
           {products.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={canReadCost ? 10 : 9}
+                colSpan={9}
                 className="text-center py-10 text-text-tertiary"
               >
                 No se encontraron productos registrados.
@@ -134,21 +134,19 @@ export default function TableProducts({
                     </div>
                   </TableCell>
 
+                  {/* Precio de Catálogo */}
+                  <TableCell className="text-right font-mono text-text-secondary text-xs">
+                    {product.catalogPrice !== null && product.catalogPrice !== undefined ? (
+                      `S/. ${product.catalogPrice.toFixed(2)}`
+                    ) : (
+                      <span className="text-text-tertiary italic">-</span>
+                    )}
+                  </TableCell>
+
                   {/* Precio de Venta */}
                   <TableCell className="text-right font-mono font-semibold text-text-primary text-sm">
                     S/. {product.price.toFixed(2)}
                   </TableCell>
-
-                  {/* Precio de Costo (Restringido) */}
-                  {canReadCost && (
-                    <TableCell className="text-right font-mono text-text-secondary text-xs">
-                      {product.costPrice !== null ? (
-                        `S/. ${product.costPrice.toFixed(2)}`
-                      ) : (
-                        <span className="text-text-tertiary italic">- no reg -</span>
-                      )}
-                    </TableCell>
-                  )}
 
                   {/* Estado de disponibilidad */}
                   <TableCell className="text-center select-none">

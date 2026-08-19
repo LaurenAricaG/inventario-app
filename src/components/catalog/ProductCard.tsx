@@ -20,6 +20,7 @@ interface ProductCardProps {
     name: string;
     description: string | null;
     price: number;
+    catalogPrice?: number | null;
     stock: number;
     brand: {
       name: string;
@@ -79,15 +80,23 @@ export default function ProductCard({
 
   // Generador de enlace de WhatsApp
   const generateWhatsAppLink = () => {
-    const priceText = showPrice
-      ? `S/. ${product.price.toFixed(2)}`
-      : "Consultar precio";
+    const priceLines = showPrice
+      ? [
+          product.catalogPrice
+            ? `*Precio Catálogo:* S/. ${product.catalogPrice.toFixed(2)}`
+            : null,
+          `*Precio Venta:* S/. ${product.price.toFixed(2)}`,
+        ]
+          .filter(Boolean)
+          .join("\n")
+      : "*Precio:* Consultar precio";
+
     const text = `¡Hola! Vi tu catálogo web y me interesa consultar por el siguiente producto:
 
 *Producto:* ${product.name}
 *Código:* ${product.code || "S/C"}
-*Empresa/Marca:* ${product.brand.company.name} / ${product.brand.name}
-*Precio:* ${priceText}
+*Catálogo:* ${product.brand.name}
+${priceLines}
 *Estado:* ${inStock ? "En Stock" : "Bajo Pedido"}
 
 ¿Me podrías confirmar disponibilidad? ¡Muchas gracias!`;
@@ -97,14 +106,14 @@ export default function ProductCard({
 
   return (
     <article className="group bg-bg-card border border-border-default hover:border-beauty-400 dark:hover:border-beauty-600 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg relative h-full">
-      {/* Badge de Empresa en esquina superior izquierda */}
+      {/* Badge de Marca / Catálogo en esquina superior izquierda */}
       <span
         className={cn(
           "absolute top-3 left-3 z-10 px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-wider border shadow-xs select-none backdrop-blur-xs",
-          getCompanyBadgeStyle(product.brand.company.name),
+          getBrandBadgeStyle(product.brand.name),
         )}
       >
-        {product.brand.company.name}
+        {product.brand.name}
       </span>
 
       {/* Botón Favorito */}
@@ -124,15 +133,15 @@ export default function ProductCard({
       </button>
 
       {/* Contenedor de Imagen con Control Deslizante (Slider) */}
-      <div className="aspect-4/3 w-full overflow-hidden bg-bg-surface relative border-b border-border-default/40 group-hover:opacity-95 transition-opacity">
+      <div className="aspect-4/3 w-full overflow-hidden bg-bg-surface relative border-b border-border-default/40 group-hover:border-border-default/80 transition-colors">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={images[currentImageIndex].url}
           alt={`${product.name} - Imagen ${currentImageIndex + 1}`}
           className={cn(
-            "w-full h-full select-none pointer-events-none",
+            "w-full h-full select-none pointer-events-none transition-transform duration-500 ease-out group-hover:scale-105",
             images[currentImageIndex].url === "/no-image.svg"
-              ? "object-contain p-8 opacity-40"
+              ? "object-contain p-8 opacity-40 group-hover:scale-100"
               : "object-contain",
           )}
           loading="lazy"
@@ -143,7 +152,7 @@ export default function ProductCard({
           <>
             <button
               onClick={handlePrevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white dark:bg-bg-card border border-border-strong flex items-center justify-center text-text-primary dark:text-text-primary hover:text-beauty-600 hover:border-beauty-300 dark:hover:text-beauty-400 dark:hover:border-beauty-700 disabled:pointer-events-none cursor-pointer shadow-md transition-all active:scale-90"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 dark:bg-bg-card/90 backdrop-blur-xs border border-border-strong flex items-center justify-center text-text-primary hover:text-beauty-600 hover:border-beauty-300 dark:hover:text-beauty-400 dark:hover:border-beauty-700 disabled:pointer-events-none cursor-pointer shadow-md transition-all active:scale-90"
               aria-label="Imagen anterior"
               title="Imagen anterior"
             >
@@ -151,7 +160,7 @@ export default function ProductCard({
             </button>
             <button
               onClick={handleNextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white dark:bg-bg-card border border-border-strong flex items-center justify-center text-text-primary dark:text-text-primary hover:text-beauty-600 hover:border-beauty-300 dark:hover:text-beauty-400 dark:hover:border-beauty-700 disabled:pointer-events-none cursor-pointer shadow-md transition-all active:scale-90"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 dark:bg-bg-card/90 backdrop-blur-xs border border-border-strong flex items-center justify-center text-text-primary hover:text-beauty-600 hover:border-beauty-300 dark:hover:text-beauty-400 dark:hover:border-beauty-700 disabled:pointer-events-none cursor-pointer shadow-md transition-all active:scale-90"
               aria-label="Imagen siguiente"
               title="Imagen siguiente"
             >
@@ -160,17 +169,17 @@ export default function ProductCard({
           </>
         )}
 
-        {/* Indicadores de Páginas/Imágenes (Dots de tipo Instagram) */}
+        {/* Indicador de posición de imágenes (Dots) */}
         {images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-black/30 dark:bg-black/60 px-2 py-1 rounded-full backdrop-blur-xs select-none">
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 px-2 py-1 rounded-full bg-black/40 backdrop-blur-xs">
             {images.map((_, idx) => (
               <span
                 key={idx}
                 className={cn(
                   "w-1.5 h-1.5 rounded-full transition-all duration-200",
-                  idx === currentImageIndex
-                    ? "bg-white scale-110"
-                    : "bg-white/40",
+                  currentImageIndex === idx
+                    ? "bg-white w-3"
+                    : "bg-white/50 hover:bg-white/75",
                 )}
               />
             ))}
@@ -179,30 +188,25 @@ export default function ProductCard({
       </div>
 
       {/* Contenido / Detalles del producto */}
-      <div className="p-4 flex-1 flex flex-col justify-between space-y-4">
+      <div className="p-4 flex-1 flex flex-col justify-between space-y-3.5">
         <div className="space-y-1.5">
-          {/* Marca, Categoría y Segmento */}
-          <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-text-tertiary font-extrabold gap-2">
-            <div className="flex items-center gap-1.5 truncate">
-              {/* Badge de Marca en su propio color */}
-              <span className={cn("px-2 py-0.5 rounded-md text-[9px] font-extrabold border select-none", getBrandBadgeStyle(product.brand.name))}>
-                {product.brand.name}
-              </span>
-              <span className="text-text-tertiary/50">•</span>
-              {/* Categoría */}
-              <span className="text-text-secondary font-extrabold truncate">
-                {product.category.name}
-              </span>
-            </div>
+          {/* Categoría y Segmento Unificados */}
+          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-text-tertiary">
+            <span className="truncate">
+              {product.category.name}
+            </span>
             {product.genderSegment && (
-              <span className="bg-bg-surface px-2 py-0.5 rounded-md font-bold text-text-secondary shrink-0">
-                {product.genderSegment.name}
-              </span>
+              <>
+                <span className="text-border-strong select-none">•</span>
+                <span className="shrink-0 text-text-secondary font-bold">
+                  {product.genderSegment.name}
+                </span>
+              </>
             )}
           </div>
 
           {/* Nombre del Producto */}
-          <h3 className="text-xs sm:text-sm font-bold text-text-primary line-clamp-1 group-hover:text-beauty-600 dark:group-hover:text-beauty-400 transition-colors leading-snug">
+          <h3 className="text-sm sm:text-base font-extrabold text-text-primary line-clamp-1 group-hover:text-beauty-600 dark:group-hover:text-beauty-400 transition-colors leading-snug tracking-tight">
             {product.name}
           </h3>
 
@@ -215,79 +219,136 @@ export default function ProductCard({
 
           {/* Descripción */}
           {product.description ? (
-            <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed pt-1">
+            <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed pt-0.5">
               {product.description}
             </p>
           ) : (
-            <p className="text-xs text-text-tertiary italic pt-1">
+            <p className="text-xs text-text-tertiary italic pt-0.5">
               Sin descripción detallada.
             </p>
           )}
         </div>
 
-        {/* Footer del Card: Precios, Stock y WhatsApp */}
-        <div className="pt-3.5 border-t border-border-default/40 flex items-center justify-between gap-3">
-          {/* Precio y Disponibilidad */}
+        {/* Footer del Card: Precios, Stock y Botón WhatsApp Full Width */}
+        <div className="pt-3 border-t border-border-default/40 flex flex-col gap-3">
+          {/* Precios y Stock */}
           <div className="flex flex-col min-w-0">
-            <span className="text-[9px] text-text-tertiary uppercase font-bold tracking-wider leading-none">
-              {showPrice ? "Precio" : "Consulta"}
-            </span>
-
             {showPrice ? (
-              <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-xs font-bold text-text-secondary">
-                  S/.
-                </span>
-                <span className="text-base sm:text-lg font-black text-text-primary tracking-tight leading-none">
-                  {product.price.toFixed(2)}
-                </span>
-              </div>
+              <>
+                {product.catalogPrice !== null &&
+                product.catalogPrice !== undefined &&
+                product.catalogPrice > 0 ? (
+                  <div className="flex items-center gap-1.5 text-[11px] leading-tight">
+                    <span className="text-[9px] text-text-tertiary uppercase font-bold tracking-wider">
+                      Catálogo:
+                    </span>
+                    <span className="text-[11px] font-semibold text-text-tertiary/80 line-through">
+                      S/ {product.catalogPrice.toFixed(2)}
+                    </span>
+                  </div>
+                ) : null}
+
+                {/* Fila de Precio Venta y Stock alineados */}
+                <div className="flex items-center justify-between gap-2 mt-0.5">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-[9px] text-text-tertiary uppercase font-bold tracking-wider">
+                      {product.catalogPrice !== null &&
+                      product.catalogPrice !== undefined &&
+                      product.catalogPrice > 0
+                        ? "Venta:"
+                        : "Precio:"}
+                    </span>
+                    <span className="text-xs font-bold text-text-secondary">
+                      S/
+                    </span>
+                    <span className="text-lg sm:text-xl font-black text-text-primary tracking-tight leading-none">
+                      {product.price.toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* Disponibilidad / Stock */}
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full select-none border transition-colors shrink-0",
+                      inStock
+                        ? "bg-success-bg text-success-text border-success-text/20"
+                        : "bg-warning-bg text-warning-text border-warning-text/20",
+                    )}
+                  >
+                    {inStock ? (
+                      <>
+                        <span className="w-1.5 h-1.5 rounded-full bg-success-text animate-pulse shrink-0" />
+                        {showStockCount ? (
+                          <span>
+                            Stock:{" "}
+                            <strong className="font-extrabold">
+                              {product.stock}
+                            </strong>
+                          </span>
+                        ) : (
+                          <span>En Stock</span>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <FiClock className="w-3 h-3 text-warning-text shrink-0" />
+                        <span>Bajo Pedido</span>
+                      </>
+                    )}
+                  </span>
+                </div>
+              </>
             ) : (
-              <div className="inline-flex items-center gap-1 mt-1 text-xs font-extrabold text-success-text">
-                <FiMessageCircle className="w-3.5 h-3.5 shrink-0" />
-                <span>Consultar</span>
+              <div className="flex items-center justify-between gap-2">
+                <div className="inline-flex items-center gap-1 text-xs font-extrabold text-success-text">
+                  <FiMessageCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>Consultar precio</span>
+                </div>
+
+                {/* Disponibilidad / Stock */}
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full select-none border transition-colors shrink-0",
+                    inStock
+                      ? "bg-success-bg text-success-text border-success-text/20"
+                      : "bg-warning-bg text-warning-text border-warning-text/20",
+                  )}
+                >
+                  {inStock ? (
+                    <>
+                      <span className="w-1.5 h-1.5 rounded-full bg-success-text animate-pulse shrink-0" />
+                      {showStockCount ? (
+                        <span>
+                          Stock:{" "}
+                          <strong className="font-extrabold">
+                            {product.stock}
+                          </strong>
+                        </span>
+                      ) : (
+                        <span>En Stock</span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <FiClock className="w-3 h-3 text-warning-text shrink-0" />
+                      <span>Bajo Pedido</span>
+                    </>
+                  )}
+                </span>
               </div>
             )}
-
-            {/* Disponibilidad / Stock */}
-            <span
-              className={cn(
-                "inline-flex items-center gap-1.5 text-[10px] font-bold mt-1.5 px-2 py-0.5 rounded-full w-fit select-none border transition-colors",
-                inStock
-                  ? "bg-success-bg text-success-text border-success-text/20"
-                  : "bg-warning-bg text-warning-text border-warning-text/20",
-              )}
-            >
-              {inStock ? (
-                <>
-                  <span className="w-1.5 h-1.5 rounded-full bg-success-text animate-pulse shrink-0" />
-                  {showStockCount ? (
-                    <span>
-                      Stock: <strong className="font-extrabold">{product.stock}</strong>
-                    </span>
-                  ) : (
-                    <span>En Stock</span>
-                  )}
-                </>
-              ) : (
-                <>
-                  <FiClock className="w-3 h-3 text-warning-text shrink-0" />
-                  <span>Bajo Pedido</span>
-                </>
-              )}
-            </span>
           </div>
 
-          {/* Botón de Contacto por WhatsApp */}
+          {/* Botón de WhatsApp Sólido */}
           <a
             href={generateWhatsAppLink()}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-xs hover:shadow-md hover:shadow-emerald-600/20 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 shrink-0"
-            title="Consultar por WhatsApp"
+            className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm transition-all duration-200 shadow-xs hover:shadow-md hover:shadow-emerald-600/20 active:scale-[0.98] select-none group/btn cursor-pointer"
+            title="Pedir por WhatsApp"
           >
-            <FaWhatsapp className="w-4 h-4 shrink-0 text-white" />
-            <span className="text-xs font-extrabold hidden sm:inline">Consultar</span>
+            <FaWhatsapp className="w-4 h-4 transition-transform group-hover/btn:scale-110" />
+            <span>Pedir por WhatsApp</span>
           </a>
         </div>
       </div>

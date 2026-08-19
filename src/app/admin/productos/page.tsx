@@ -49,6 +49,7 @@ export default async function ProductosPage(props: ProductosPageProps) {
           description: true,
           price: true,
           costPrice: true,
+          catalogPrice: true,
           stock: true,
           isAvailable: true,
           brandId: true,

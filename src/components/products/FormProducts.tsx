@@ -43,6 +43,7 @@ export default function FormProducts({
   const [descriptionInput, setDescriptionInput] = useState("");
   const [priceInput, setPriceInput] = useState("");
   const [costPriceInput, setCostPriceInput] = useState("");
+  const [catalogPriceInput, setCatalogPriceInput] = useState("");
   const [stockInput, setStockInput] = useState("0");
   const [isAvailableInput, setIsAvailableInput] = useState(true);
   const [imagesInput, setImagesInput] = useState<UploadedImage[]>([]);
@@ -68,6 +69,9 @@ export default function FormProducts({
       setPriceInput(product ? String(product.price) : "");
       setCostPriceInput(
         product && product.costPrice !== null ? String(product.costPrice) : "",
+      );
+      setCatalogPriceInput(
+        product && product.catalogPrice !== null ? String(product.catalogPrice) : "",
       );
       setStockInput(product ? String(product.stock) : "0");
       setIsAvailableInput(product ? product.isAvailable : true);
@@ -101,6 +105,7 @@ export default function FormProducts({
         description: descriptionInput || null,
         price: priceInput ? parseFloat(priceInput) : undefined,
         costPrice: costPriceInput ? parseFloat(costPriceInput) : null,
+        catalogPrice: catalogPriceInput ? parseFloat(catalogPriceInput) : null,
         stock: parseFloat(stockInput),
         isAvailable: isAvailableInput,
       });
@@ -289,8 +294,8 @@ export default function FormProducts({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Marca */}
-          <FormField label="Marca" error={errors.brandId}>
+          {/* Catálogo */}
+          <FormField label="Catálogo" error={errors.brandId}>
             <Select
               value={brandIdInput}
               onChange={(e) => {
@@ -349,7 +354,25 @@ export default function FormProducts({
           </FormField>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Precio de Catálogo */}
+          <FormField label="Precio Catálogo (S/.) (Opcional)">
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              value={catalogPriceInput}
+              onChange={(e) => {
+                setCatalogPriceInput(e.target.value);
+                if (e.target.value.trim())
+                  setErrors((prev) => ({ ...prev, catalogPrice: "" }));
+              }}
+              error={errors.catalogPrice}
+              disabled={isSubmitting}
+            />
+          </FormField>
+
           {/* Precio de Venta */}
           <FormField label="Precio de Venta (S/.)">
             <Input

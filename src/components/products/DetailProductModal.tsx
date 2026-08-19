@@ -10,6 +10,7 @@ import {
   FiHash,
   FiTrendingUp,
   FiCreditCard,
+  FiBookOpen,
 } from "react-icons/fi";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -117,12 +118,17 @@ export default function DetailProductModal({
             </div>
           </div>
 
-          {/* Sleek Summary Panel (Stock & Prices combined to avoid bulkiness) */}
-          <div className="bg-bg-surface/20 dark:bg-bg-surface/10 border border-border-soft dark:border-border-default/60 rounded-2xl p-4 divide-x divide-border-soft dark:divide-border-default/60 flex items-center justify-between shadow-2xs select-none">
+          {/* Sleek Summary Panel (Stock & Prices) */}
+          <div
+            className={cn(
+              "grid gap-2.5 sm:gap-3 select-none",
+              canReadCost ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-2 sm:grid-cols-3"
+            )}
+          >
             {/* Stock status */}
-            <div className="flex-1 flex flex-col items-center justify-center text-center px-1">
+            <div className="bg-bg-surface/50 dark:bg-bg-surface/30 border border-border-soft/60 rounded-xl p-2.5 flex flex-col items-center justify-center text-center shadow-2xs">
               <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1 flex items-center gap-1">
-                <FiPackage className="w-3 h-3" />
+                <FiPackage className="w-3.5 h-3.5 text-text-secondary" />
                 Stock
               </span>
               <span className="text-sm font-extrabold text-text-primary">
@@ -139,13 +145,29 @@ export default function DetailProductModal({
               </span>
             </div>
 
-            {/* Sale Price */}
-            <div className="flex-1 flex flex-col items-center justify-center text-center px-1">
+            {/* Catalog Price */}
+            <div className="bg-bg-surface/50 dark:bg-bg-surface/30 border border-border-soft/60 rounded-xl p-2.5 flex flex-col items-center justify-center text-center shadow-2xs">
               <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1 flex items-center gap-1">
-                <FiTrendingUp className="w-3 h-3" />
+                <FiBookOpen className="w-3.5 h-3.5 text-text-secondary" />
+                Catálogo
+              </span>
+              <span className="text-sm font-extrabold text-text-primary font-mono whitespace-nowrap">
+                {product.catalogPrice !== null && product.catalogPrice !== undefined
+                  ? `S/. ${product.catalogPrice.toFixed(2)}`
+                  : "-"}
+              </span>
+              <span className="text-[9px] font-bold text-text-tertiary mt-0.5">
+                P. Revista
+              </span>
+            </div>
+
+            {/* Sale Price */}
+            <div className="bg-bg-surface/50 dark:bg-bg-surface/30 border border-border-soft/60 rounded-xl p-2.5 flex flex-col items-center justify-center text-center shadow-2xs">
+              <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1 flex items-center gap-1">
+                <FiTrendingUp className="w-3.5 h-3.5 text-text-secondary" />
                 Venta
               </span>
-              <span className="text-sm font-black text-beauty-600 dark:text-beauty-400 font-mono">
+              <span className="text-sm font-extrabold text-text-primary font-mono whitespace-nowrap">
                 S/. {product.price.toFixed(2)}
               </span>
               <span className="text-[9px] font-bold text-text-tertiary mt-0.5">
@@ -154,26 +176,22 @@ export default function DetailProductModal({
             </div>
 
             {/* Cost Price */}
-            <div className="flex-1 flex flex-col items-center justify-center text-center px-1">
-              <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1 flex items-center gap-1">
-                <FiCreditCard className="w-3 h-3" />
-                Costo
-              </span>
-              {canReadCost ? (
-                <span className="text-sm font-extrabold text-text-primary font-mono">
+            {canReadCost && (
+              <div className="bg-bg-surface/50 dark:bg-bg-surface/30 border border-border-soft/60 rounded-xl p-2.5 flex flex-col items-center justify-center text-center shadow-2xs">
+                <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1 flex items-center gap-1">
+                  <FiCreditCard className="w-3.5 h-3.5 text-text-secondary" />
+                  Costo
+                </span>
+                <span className="text-sm font-extrabold text-text-primary font-mono whitespace-nowrap">
                   {product.costPrice !== null
                     ? `S/. ${product.costPrice.toFixed(2)}`
                     : "-"}
                 </span>
-              ) : (
-                <span className="text-[9px] font-semibold text-text-tertiary italic">
-                  Restringido
+                <span className="text-[9px] font-bold text-text-tertiary mt-0.5">
+                  P. Compra
                 </span>
-              )}
-              <span className="text-[9px] font-bold text-text-tertiary mt-0.5">
-                P. Compra
-              </span>
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Description Box (Fills remaining space to align columns) */}

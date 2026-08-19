@@ -23,6 +23,7 @@ interface CatalogPortalClientProps {
     name: string;
     description: string | null;
     price: number;
+    catalogPrice?: number | null;
     stock: number;
     brand: {
       id: number;
@@ -331,11 +332,11 @@ export default function CatalogPortalClient({
             </div>
           </div>
 
-          {/* Filtro: Marca */}
+          {/* Filtro: Catálogo */}
           {brands.length > 0 && (
             <div className="mb-5">
               <span className="block text-xs font-semibold text-text-secondary mb-3 uppercase tracking-wider">
-                Marca
+                Catálogo
               </span>
               <div className="space-y-2.5 max-h-40 overflow-y-auto -mx-1 p-1.5 scrollbar-thin">
                 {brands.map((brand) => (
@@ -556,11 +557,11 @@ export default function CatalogPortalClient({
 
             {/* Filtros Internos */}
             <div className="flex-1 overflow-y-auto p-4 space-y-6">
-              {/* Filtro: Marca */}
+              {/* Filtro: Catálogo */}
               {brands.length > 0 && (
                 <div>
                   <span className="block text-xs font-semibold text-text-secondary mb-2.5 uppercase tracking-wider">
-                    Marca
+                    Catálogo
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {brands.map((brand) => {

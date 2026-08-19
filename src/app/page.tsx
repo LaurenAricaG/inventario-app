@@ -39,6 +39,7 @@ export default async function Page() {
     name: product.name,
     description: product.description,
     price: product.price,
+    catalogPrice: product.catalogPrice,
     stock: product.stock,
     brand: {
       id: product.brand.id,

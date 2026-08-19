@@ -37,10 +37,10 @@ export default function ProductosLoading() {
               <TableHead className="text-center w-16">N°</TableHead>
               <TableHead className="text-left w-28">Código</TableHead>
               <TableHead className="text-left">Producto</TableHead>
-              <TableHead className="text-left">Marca / Categoría</TableHead>
+              <TableHead className="text-left">Catálogo / Categoría</TableHead>
               <TableHead className="text-center w-24">Stock</TableHead>
-              <TableHead className="text-right w-28">Precio</TableHead>
-              <TableHead className="text-right w-28">Costo</TableHead>
+              <TableHead className="text-right w-28">P. Catálogo</TableHead>
+              <TableHead className="text-right w-28">P. Venta</TableHead>
               <TableHead className="text-center w-28">Estado</TableHead>
               <TableHead className="text-center w-32">Acciones</TableHead>
             </TableRow>
@@ -63,7 +63,7 @@ export default function ProductosLoading() {
                   <Skeleton className="h-4 w-40 rounded" />
                 </TableCell>
 
-                {/* Marca / Categoría */}
+                {/* Catálogo / Categoría */}
                 <TableCell className="py-4 text-left">
                   <div className="flex items-center gap-1.5 mb-1">
                     <Skeleton className="h-5 w-16 rounded-md" />
@@ -77,12 +77,12 @@ export default function ProductosLoading() {
                   <Skeleton className="h-5 w-8 mx-auto rounded-full" />
                 </TableCell>
 
-                {/* Precio */}
+                {/* P. Catálogo */}
                 <TableCell className="py-4 text-right">
                   <Skeleton className="h-4 w-16 ml-auto rounded" />
                 </TableCell>
 
-                {/* Costo */}
+                {/* P. Venta */}
                 <TableCell className="py-4 text-right">
                   <Skeleton className="h-4 w-16 ml-auto rounded" />
                 </TableCell>

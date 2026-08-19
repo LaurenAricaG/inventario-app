@@ -30,9 +30,9 @@ export const productSchema = z.object({
     .max(100, "El nombre del producto no puede exceder los 100 caracteres."),
   
   brandId: z.coerce
-    .number({ message: "La marca seleccionada no es válida." })
+    .number({ message: "El catálogo seleccionado no es válido." })
     .int()
-    .positive("Debes seleccionar una marca de la lista."),
+    .positive("Debes seleccionar un catálogo de la lista."),
   
   categoryId: z.coerce
     .number({ message: "La categoría seleccionada no es válida." })
@@ -70,6 +70,12 @@ export const productSchema = z.object({
   costPrice: z.coerce
     .number()
     .min(0, "El precio de costo no puede ser menor a 0.")
+    .optional()
+    .nullable(),
+
+  catalogPrice: z.coerce
+    .number()
+    .min(0, "El precio de catálogo no puede ser menor a 0.")
     .optional()
     .nullable(),
 
