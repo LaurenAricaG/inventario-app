@@ -85,28 +85,55 @@ export default function PublicCatalogLoading() {
             </div>
           </div>
 
-          {/* Grid de Tarjetas de Producto */}
+          {/* Grid de Tarjetas de Producto Skeleton */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {cardSkeletons.map((_, idx) => (
               <div
                 key={idx}
-                className="bg-bg-card border border-border-default/80 rounded-2xl overflow-hidden shadow-xs flex flex-col"
+                className="bg-bg-card border border-border-default rounded-2xl overflow-hidden shadow-xs flex flex-col h-full"
               >
-                {/* Img Container */}
-                <div className="aspect-square bg-border-strong/15 rounded-t-2xl animate-pulse" />
-                {/* Detalle */}
-                <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Skeleton className="h-4 w-20 rounded-md" />
-                      <Skeleton className="h-4 w-12 rounded-md" />
-                    </div>
-                    <Skeleton className="h-5 w-4/5 rounded-md" />
-                    <Skeleton className="h-3.5 w-1/2 rounded-md" />
+                {/* Contenedor de Imagen Skeleton */}
+                <div className="aspect-4/3 bg-border-strong/15 relative border-b border-border-default/40">
+                  {/* Badge Marca Top-Left */}
+                  <div className="absolute top-3 left-3">
+                    <Skeleton className="h-5 w-16 rounded-lg" />
                   </div>
-                  <div className="flex items-center justify-between pt-3 border-t border-border-soft">
-                    <Skeleton className="h-6 w-20 rounded-md" />
-                    <Skeleton className="h-9 w-28 rounded-full" />
+                  {/* Botón Favorito Top-Right */}
+                  <div className="absolute top-3 right-3">
+                    <Skeleton className="w-8 h-8 rounded-full" />
+                  </div>
+                </div>
+
+                {/* Detalle del Producto Skeleton */}
+                <div className="p-4 space-y-3.5 flex-1 flex flex-col justify-between">
+                  <div className="space-y-1.5">
+                    {/* Categoría y Género */}
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-3 w-20 rounded-md" />
+                      <Skeleton className="h-3 w-14 rounded-md" />
+                    </div>
+                    {/* Nombre */}
+                    <Skeleton className="h-5 w-3/4 rounded-md" />
+                    {/* Descripción */}
+                    <Skeleton className="h-3.5 w-full rounded-md mt-1" />
+                    <Skeleton className="h-3.5 w-2/3 rounded-md" />
+                  </div>
+
+                  {/* Footer: Precios, Stock y Botón WhatsApp Full Width */}
+                  <div className="pt-3 border-t border-border-default/40 flex flex-col gap-3">
+                    <div className="flex items-end justify-between gap-2">
+                      <div className="space-y-1.5 flex-1">
+                        {/* P. Catálogo */}
+                        <Skeleton className="h-3 w-24 rounded-md" />
+                        {/* P. Venta */}
+                        <Skeleton className="h-6 w-28 rounded-md" />
+                      </div>
+                      {/* Badge Stock */}
+                      <Skeleton className="h-6 w-20 rounded-full shrink-0" />
+                    </div>
+
+                    {/* Botón Pedir por WhatsApp Full Width */}
+                    <Skeleton className="h-10 w-full rounded-xl" />
                   </div>
                 </div>
               </div>
