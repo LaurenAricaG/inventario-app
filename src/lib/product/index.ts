@@ -393,3 +393,84 @@ export async function deleteProductAction(id: number) {
     };
   }
 }
+
+export async function getProductsReportDataAction(search?: string) {
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      return { success: false, message: "No autenticado. Por favor inicia sesión.", data: null };
+    }
+    const permissions = session.user.permissions ?? [];
+    if (!permissions.includes("products:read")) {
+      return { success: false, message: "No autorizado para ver productos.", data: null };
+    }
+
+    const where: any = {
+      deletedAt: null,
+    };
+
+    if (search && search.trim() !== "") {
+      const term = search.trim();
+      where.OR = [
+        { name: { contains: term, mode: "insensitive" } },
+        { code: { contains: term, mode: "insensitive" } },
+        { brand: { name: { contains: term, mode: "insensitive" } } },
+        { category: { name: { contains: term, mode: "insensitive" } } },
+      ];
+    }
+
+    const products = await prisma.product.findMany({
+      where,
+      include: {
+        brand: {
+          include: {
+            company: true,
+          },
+        },
+        category: true,
+        genderSegment: true,
+      },
+      orderBy: [
+        { brand: { name: "asc" } },
+        { name: "asc" },
+      ],
+    });
+
+    return {
+      success: true,
+      data: products.map((p) => ({
+        id: p.id,
+        code: p.code,
+        name: p.name,
+        description: p.description,
+        price: p.price,
+        catalogPrice: p.catalogPrice,
+        costPrice: permissions.includes("products:cost-read") ? p.costPrice : null,
+        stock: p.stock,
+        isAvailable: p.isAvailable,
+        brand: {
+          id: p.brand.id,
+          name: p.brand.name,
+          company: {
+            id: p.brand.company.id,
+            name: p.brand.company.name,
+          },
+        },
+        category: {
+          id: p.category.id,
+          name: p.category.name,
+        },
+        genderSegment: p.genderSegment
+          ? {
+              id: p.genderSegment.id,
+              name: p.genderSegment.name,
+            }
+          : null,
+      })),
+    };
+  } catch (error: any) {
+    console.error("Error al obtener datos para el reporte de productos:", error);
+    return { success: false, message: "Error al generar datos del reporte.", data: null };
+  }
+}
+

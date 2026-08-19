@@ -20,12 +20,15 @@ export default function ProductosLoading() {
 
       {/* Contenedor Principal de la Tabla */}
       <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">
-        {/* Barra de Filtros / Búsqueda Skeleton */}
-        <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-bg-card">
-          <div className="flex-1 max-w-md">
-            <Skeleton className="h-10 w-full rounded-2xl" />
+        {/* Barra de Filtros / Búsqueda y Botón Exportar PDF Skeleton */}
+        <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-bg-card">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 min-w-0">
+            <div className="flex-1 max-w-md">
+              <Skeleton className="h-10 w-full rounded-2xl" />
+            </div>
+            <Skeleton className="h-10 w-36 rounded-xl shrink-0" />
           </div>
-          <div className="md:ml-auto select-none">
+          <div className="md:ml-auto select-none shrink-0">
             <Skeleton className="h-4 w-40" />
           </div>
         </div>

@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiFileText } from "react-icons/fi";
 import { AiOutlineProduct } from "react-icons/ai";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Pagination from "@/components/ui/Pagination";
 import SearchInput from "@/components/ui/SearchInput";
-import { deleteProductAction } from "@/lib/product";
+import { deleteProductAction, getProductsReportDataAction } from "@/lib/product";
 import { ProductWithRelations } from "@/types/models";
+import { useSystemConfig } from "@/context/SystemConfigContext";
+import { generatePdfProductsReport } from "@/utils/generate-pdf-products-report";
 import TableProducts from "./TableProducts";
 import FormProducts from "./FormProducts";
 import DetailProductModal from "./DetailProductModal";
@@ -46,6 +48,7 @@ export default function Products({
   const canUpdate = permissions.includes("products:update");
   const canDelete = permissions.includes("products:delete");
   const canReadCost = permissions.includes("products:cost-read");
+  const systemConfig = useSystemConfig();
 
   // Modals state
   const [isOpenFormModal, setIsOpenFormModal] = useState(false);
@@ -54,6 +57,34 @@ export default function Products({
   const [selectedProduct, setSelectedProduct] =
     useState<ProductWithRelations | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+
+  const handleExportPdf = async () => {
+    try {
+      setIsExportingPdf(true);
+      toast.loading("Generando reporte PDF...", { id: "pdf-products-loading" });
+      const res = await getProductsReportDataAction(search);
+      if (!res.success || !res.data || res.data.length === 0) {
+        toast.dismiss("pdf-products-loading");
+        toast.error(res.message || "No hay productos para exportar en este momento.");
+        return;
+      }
+
+      await generatePdfProductsReport(
+        res.data,
+        systemConfig?.systemName || "Eva's Shop",
+        systemConfig?.systemLogoUrl,
+      );
+      toast.dismiss("pdf-products-loading");
+      toast.success("Reporte PDF descargado con éxito.");
+    } catch (error) {
+      toast.dismiss("pdf-products-loading");
+      console.error("Error al exportar reporte PDF:", error);
+      toast.error("Ocurrió un error inesperado al generar el PDF.");
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
 
   const handleOpenForm = (product: ProductWithRelations | null = null) => {
     setSelectedProduct(product);
@@ -115,11 +146,23 @@ export default function Products({
       {/* Main Container */}
       <div className="bg-bg-card border border-border-default/80 rounded-2xl shadow-xs overflow-hidden">
         {/* Filters Bar */}
-        <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-bg-card">
-          <div className="flex-1 max-w-md">
-            <SearchInput placeholder="Buscar por nombre o código de producto..." />
+        <div className="px-6 py-4 border-b border-border-soft flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-bg-card">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 min-w-0">
+            <div className="flex-1 max-w-md">
+              <SearchInput placeholder="Buscar por nombre o código de producto..." />
+            </div>
+            <Button
+              variant="outline"
+              loading={isExportingPdf}
+              onClick={handleExportPdf}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border-border-strong hover:bg-bg-surface text-text-primary shadow-xs shrink-0 cursor-pointer transition-colors"
+              title="Descargar reporte general de productos en PDF"
+            >
+              <FiFileText className="w-4 h-4 text-beauty-600 dark:text-beauty-400" />
+              <span>Exportar PDF</span>
+            </Button>
           </div>
-          <div className="text-xs text-text-secondary md:ml-auto select-none font-medium">
+          <div className="text-xs text-text-secondary md:ml-auto select-none font-medium shrink-0">
             Total: {totalItems} {totalItems === 1 ? "producto encontrado" : "productos encontrados"}
           </div>
         </div>
